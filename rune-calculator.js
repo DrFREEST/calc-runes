@@ -1749,7 +1749,7 @@
         '강타 확률 증가',
         '추가타 확률 증가'
     ];
-    
+
     /**
      * 효과별 점수 가중치 (효율 순위 반영)
      * @constant {Object}
@@ -1766,7 +1766,7 @@
         '치명타 피해 증가': 9,
         '스킬 위력 증가': 7 // 효율 4위 (기타 효과)
     };
-    
+
     /**
      * 스탯 → 퍼센트 환산 비율
      * @constant {Object}
@@ -1780,7 +1780,7 @@
         '스킬위력': 85, // 85당 1%
         '추가타': 130 // 130당 1%
     };
-    
+
     /**
      * 시너지 룬 목록 (특정 룬 착용 시 효율 변화)
      * @constant {Object}
@@ -1788,19 +1788,31 @@
      */
     const SYNERGY_RUNES = {
         '현란': {
-            boost: { '치명타 확률 증가': 1.5, '치명타 피해 증가': 1.5 },
+            boost: {
+                '치명타 확률 증가': 1.5,
+                '치명타 피해 증가': 1.5
+            },
             description: '치명타 효율 50% 상승'
         },
         '아득': {
-            boost: { '치명타 확률 증가': 1.3, '치명타 피해 증가': 1.3 },
+            boost: {
+                '치명타 확률 증가': 1.3,
+                '치명타 피해 증가': 1.3
+            },
             description: '치명타 효율 30% 상승'
         },
         '각성': {
-            boost: { '치명타 확률 증가': 1.3, '치명타 피해 증가': 1.3 },
+            boost: {
+                '치명타 확률 증가': 1.3,
+                '치명타 피해 증가': 1.3
+            },
             description: '치명타 효율 30% 상승'
         },
         '압도': {
-            boost: { '치명타 확률 증가': 1.2, '치명타 피해 증가': 1.2 },
+            boost: {
+                '치명타 확률 증가': 1.2,
+                '치명타 피해 증가': 1.2
+            },
             description: '치명타 효율 20% 상승'
         }
     };
@@ -1820,7 +1832,7 @@
         var multiplier = 1 + (currentValue / 100);
         return addValue / multiplier;
     }
-    
+
     /**
      * 예상 DPS 증가율 계산
      * @param {Object} effectSummary - 효과 요약 객체
@@ -1831,7 +1843,7 @@
      */
     function calculateExpectedDPS(effectSummary, characterStats) {
         characterStats = characterStats || {};
-        
+
         // 효과 추출 (기본값 0)
         var atkIncrease = 0;
         var dmgIncrease = 0;
@@ -1840,7 +1852,7 @@
         var multiHit = 0;
         var strongHit = 0;
         var additionalHit = 0;
-        
+
         Object.entries(effectSummary).forEach(function([name, data]) {
             var value = data.total || 0;
             if (name.includes('공격력 증가')) atkIncrease += value;
@@ -1851,31 +1863,31 @@
             if (name.includes('강타')) strongHit += value;
             if (name.includes('추가타 확률')) additionalHit += value;
         });
-        
+
         // 캐릭터 기본 스탯 반영 (있는 경우)
         var baseCritChance = characterStats.critChance || 30; // 기본 30%
         var baseCritDmg = characterStats.critDmg || 150; // 기본 150%
         var baseMultiHit = characterStats.multiHit || 10; // 기본 10%
         var baseAdditionalHit = characterStats.additionalHit || 5; // 기본 5%
-        
+
         // 각 배율 계산
         var atkMultiplier = 1 + (atkIncrease / 100);
         var dmgMultiplier = 1 + (dmgIncrease / 100);
-        
+
         // 크리티컬 기대값: (1 - 크리확률) × 1 + 크리확률 × (크리피해/100)
         var totalCritChance = Math.min((baseCritChance + critChance) / 100, 1); // 최대 100%
         var totalCritDmg = (baseCritDmg + critDmg) / 100;
         var critMultiplier = (1 - totalCritChance) + (totalCritChance * totalCritDmg);
-        
+
         // 연타/추가타 기대값
         var totalMultiHit = (baseMultiHit + multiHit + strongHit) / 100;
         var totalAdditionalHit = (baseAdditionalHit + additionalHit) / 100;
         var hitMultiplier = 1 + totalMultiHit + totalAdditionalHit;
-        
+
         // 최종 DPS 배율
         var totalDPSMultiplier = atkMultiplier * dmgMultiplier * critMultiplier * hitMultiplier;
         var totalDPSIncrease = (totalDPSMultiplier - 1) * 100;
-        
+
         return {
             totalDPSIncrease: Math.round(totalDPSIncrease * 10) / 10,
             breakdown: {
@@ -1896,13 +1908,13 @@
             balance: {
                 atkToDmgRatio: dmgIncrease > 0 ? Math.round((atkIncrease / dmgIncrease) * 100) / 100 : 'N/A',
                 isBalanced: Math.abs(atkIncrease - dmgIncrease) < 20, // 20% 이내면 균형
-                recommendation: atkIncrease > dmgIncrease + 20 
-                    ? '피해량 증가 룬 추천' 
-                    : (dmgIncrease > atkIncrease + 20 ? '공격력 증가 룬 추천' : '균형 잡힌 세팅')
+                recommendation: atkIncrease > dmgIncrease + 20 ?
+                    '피해량 증가 룬 추천' :
+                    (dmgIncrease > atkIncrease + 20 ? '공격력 증가 룬 추천' : '균형 잡힌 세팅')
             }
         };
     }
-    
+
     /**
      * 시너지 룬 효과 체크
      * @param {Array} equippedRunes - 장착된 룬 목록
@@ -1912,14 +1924,14 @@
     function checkSynergyRunes(equippedRunes) {
         var synergies = [];
         var totalBoost = {};
-        
+
         if (!equippedRunes || !Array.isArray(equippedRunes)) {
             equippedRunes = Object.values(state.equippedRunes);
         }
-        
+
         equippedRunes.forEach(function(rune) {
             if (!rune || !rune.name) return;
-            
+
             Object.entries(SYNERGY_RUNES).forEach(function([synName, synData]) {
                 if (rune.name.includes(synName)) {
                     synergies.push({
@@ -1928,7 +1940,7 @@
                         description: synData.description,
                         boost: synData.boost
                     });
-                    
+
                     // 부스트 누적
                     Object.entries(synData.boost).forEach(function([effectName, multiplier]) {
                         if (!totalBoost[effectName]) {
@@ -1939,14 +1951,14 @@
                 }
             });
         });
-        
+
         return {
             synergies: synergies,
             totalBoost: totalBoost,
             hasSynergy: synergies.length > 0
         };
     }
-    
+
     /**
      * 룬의 총 효율 점수 계산 (새로운 방식)
      * @param {Object} rune - 룬 데이터
@@ -1965,7 +1977,7 @@
         equippedDotTypes = equippedDotTypes || [];
         awakeningCooldownReduction = awakeningCooldownReduction || 0;
         options = options || {};
-        
+
         // 옵션에서 추가 정보 추출
         var currentEffects = options.currentEffects || {}; // 현재 누적 효과 (한계효용 계산용)
         var characterStats = options.characterStats || {}; // 캐릭터 스탯
@@ -2001,12 +2013,12 @@
 
                 // DPS 핵심 효과별 점수 가중치 (새로운 가중치 테이블 사용)
                 var scoreWeight = EFFECT_SCORE_WEIGHT[effectName] || 10;
-                
+
                 // 시너지 룬 부스트 적용
                 if (synergyBoost[effectName]) {
                     scoreWeight *= synergyBoost[effectName];
                 }
-                
+
                 // 한계효용 감소 적용 (공격력/피해량 증가에만)
                 var effectiveValue = data.effective;
                 if ((effectName === '공격력 증가' || effectName === '피해량 증가') && currentEffects[effectName]) {
@@ -2028,7 +2040,7 @@
                 }
                 effectiveSummary[effectName].total += data.effective;
                 effectiveSummary[effectName].details.push(data);
-                
+
                 // 한계효용 감소가 적용되었는지 표시
                 if (effectiveValue !== data.effective) {
                     effectiveSummary[effectName].diminished = true;
@@ -2133,7 +2145,7 @@
 
         // DPS 분석 추가 (2025-12-10)
         var dpsAnalysis = calculateExpectedDPS(effectiveSummary, characterStats);
-        
+
         return {
             score: Math.round(totalScore * 10) / 10,
             breakdown: breakdown,
@@ -2189,13 +2201,13 @@
         // 모든 장착 룬의 지속 피해 유형 수집
         const allDotTypes = getAllEquippedDotTypes();
         const hasSynergy = allDotTypes.length > 0;
-        
+
         // 시너지 룬 체크
         const synergyResult = checkSynergyRunes(Object.values(state.equippedRunes));
-        
+
         // 현재 누적 효과 (한계효용 계산용)
         const currentEffects = {};
-        
+
         // 캐릭터 스탯 (추천 탭에서 입력한 값 사용)
         const characterStats = getCharacterStatsFromInput();
 
@@ -2222,7 +2234,7 @@
                     };
                 }
                 totalEffects[category][key].total += data.total;
-                
+
                 // 현재 효과 누적 (한계효용 계산용)
                 if (!currentEffects[key]) {
                     currentEffects[key] = 0;
@@ -2230,13 +2242,13 @@
                 currentEffects[key] += data.total;
             });
         });
-        
+
         // DPS 분석 계산
         const dpsAnalysis = calculateExpectedDPS(totalEffects.coreDPS, characterStats);
 
         renderEffectSummary(totalEffects, hasSynergy, allDotTypes, synergyResult, dpsAnalysis);
     }
-    
+
     /**
      * 캐릭터 스탯 입력값 가져오기
      * @returns {Object} 캐릭터 스탯 객체
@@ -2244,13 +2256,13 @@
      */
     function getCharacterStatsFromInput() {
         var stats = {};
-        
+
         // 추천 탭의 스탯 입력 필드에서 값 가져오기
         var critChanceInput = $('#stat-crit-chance');
         var critDmgInput = $('#stat-crit-damage');
         var multiHitInput = $('#stat-multi-hit');
         var additionalHitInput = $('#stat-additional-hit');
-        
+
         if (critChanceInput && critChanceInput.value) {
             stats.critChance = parseFloat(critChanceInput.value) || 30;
         }
@@ -2263,7 +2275,7 @@
         if (additionalHitInput && additionalHitInput.value) {
             stats.additionalHit = parseFloat(additionalHitInput.value) || 5;
         }
-        
+
         return stats;
     }
 
@@ -2280,9 +2292,16 @@
     function renderEffectSummary(totalEffects, hasSynergy, dotTypes, synergyResult, dpsAnalysis) {
         hasSynergy = hasSynergy || false;
         dotTypes = dotTypes || [];
-        synergyResult = synergyResult || { synergies: [], hasSynergy: false };
-        dpsAnalysis = dpsAnalysis || { totalDPSIncrease: 0, breakdown: {}, balance: {} };
-        
+        synergyResult = synergyResult || {
+            synergies: [],
+            hasSynergy: false
+        };
+        dpsAnalysis = dpsAnalysis || {
+            totalDPSIncrease: 0,
+            breakdown: {},
+            balance: {}
+        };
+
         const attackList = $('#effect-list-attack');
         const defenseList = $('#effect-list-defense');
         const miscList = $('#effect-list-misc');
@@ -2291,7 +2310,7 @@
         if (attackList) {
             const coreDPSEntries = Object.entries(totalEffects.coreDPS || {});
             let attackHtml = '';
-            
+
             if (coreDPSEntries.length > 0) {
                 attackHtml = `<div class="effect-section-header">⚡ DPS 핵심 효과</div>`;
                 attackHtml += coreDPSEntries.map(function([key, data]) {
@@ -2304,17 +2323,17 @@
                         </div>
                     `;
                 }).join('');
-                
+
                 // 공격력/피해량 비율 표시
                 var rawValues = dpsAnalysis.breakdown.rawValues || {};
                 var atkIncrease = rawValues.atkIncrease || 0;
                 var dmgIncrease = rawValues.dmgIncrease || 0;
-                
+
                 if (atkIncrease > 0 || dmgIncrease > 0) {
                     var balance = dpsAnalysis.balance || {};
                     var ratioText = '';
                     var ratioClass = '';
-                    
+
                     if (balance.isBalanced) {
                         ratioText = '✅ 균형 잡힌 세팅';
                         ratioClass = 'effect-item__value--balanced';
@@ -2325,7 +2344,7 @@
                         ratioText = '⚠️ 공격력 증가 룬 추천';
                         ratioClass = 'effect-item__value--warning';
                     }
-                    
+
                     attackHtml += `
                         <div class="effect-divider"></div>
                         <div class="effect-section-header">📊 공격력/피해량 비율</div>
@@ -2339,7 +2358,7 @@
                         </div>
                     `;
                 }
-                
+
                 // 예상 DPS 증가율 표시
                 attackHtml += `
                     <div class="effect-divider"></div>
@@ -2349,7 +2368,7 @@
                         <span class="effect-item__value effect-item__value--dps">+${dpsAnalysis.totalDPSIncrease.toFixed(1)}%</span>
                     </div>
                 `;
-                
+
                 // DPS 계산 상세 (접기)
                 var bd = dpsAnalysis.breakdown || {};
                 attackHtml += `
@@ -2362,7 +2381,7 @@
             } else {
                 attackHtml = '<p class="effect-empty">장착된 룬이 없습니다</p>';
             }
-            
+
             attackList.innerHTML = attackHtml;
         }
 

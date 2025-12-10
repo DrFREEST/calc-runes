@@ -1685,10 +1685,33 @@
 
         // 기본 공격 관련 효과 체크 (효율에서 제외할 것들)
         var isBasicAttackEffect = /기본\s*공격/.test(effectText);
-        
+
         // 무방비 공격 적중 시 효과 체크 (효율에서 제외) @added 2025-12-10
         // 브레이크 발동까지 시간이 오래 걸려 실제 DPS 기여도 낮음
         var isDefenseBreakEffect = /무방비\s*공격\s*적중\s*시/.test(effectText);
+        
+        // ========================================================
+        // 제한적 효과 체크 (효율에서 제외) @added 2025-12-10
+        // 특정 조건/스킬에서만 발동되어 범용성이 낮은 효과들
+        // ========================================================
+        
+        // 브레이크/무방비 피해 관련 (브레이크 발동 어려움)
+        var isBreakDamageEffect = /브레이크\s*(?:스킬.*)?피해|무방비\s*피해/.test(effectText);
+        
+        // 특정 스킬 피해량 (범용성 낮음)
+        // 예: "드래곤 헌터 스킬의 피해량이", "보조, 생존 스킬의 피해량이"
+        var isSpecificSkillDamage = /\S+\s*스킬의\s*피해량/.test(effectText) && !/스킬\s*피해량/.test(effectText);
+        
+        // 특정 지속 피해 보유 조건 (시너지 필요)
+        // 예: "지속 피해: 중독을 보유한 적에게"
+        var isDotConditionEffect = /지속\s*피해:\s*\S+을?\s*보유한\s*적/.test(effectText);
+        
+        // 특정 상태/범위 조건 (상황 의존)
+        // 예: "주변 3m 범위 내에 적이 없을 경우"
+        var isRangeConditionEffect = /범위\s*내에?\s*적이?\s*없을/.test(effectText);
+        
+        // 통합 제한적 효과 체크
+        var isLimitedEffect = isBreakDamageEffect || isSpecificSkillDamage || isDotConditionEffect || isRangeConditionEffect;
 
         var effectPatterns = [{
                 name: '공격력 증가',
@@ -1757,7 +1780,7 @@
                 pattern: /기본\s*공격\s*속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
             }
         ];
-        
+
         // 무방비 공격 적중 시 효과 패턴 (기타 효과로 분류) @added 2025-12-10
         // 브레이크 발동까지 시간이 오래 걸려 어비스/레이드에서 효율 낮음
         var defenseBreakPatterns = [{
@@ -1771,6 +1794,35 @@
             {
                 name: '무방비 스킬 속도 증가',
                 pattern: /(?:무방비\s*공격\s*적중\s*시.*?)?스킬\s*사용\s*속도.*?(\d+(?:\.\d+)?)\s*%?\s*증가/
+            }
+        ];
+        
+        // 제한적 효과 패턴 (기타 효과로 분류) @added 2025-12-10
+        // 브레이크/무방비/특정스킬 등 범용성 낮은 효과들
+        var limitedEffectPatterns = [
+            {
+                name: '브레이크 스킬 피해 증가',
+                pattern: /브레이크\s*스킬.*?피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '브레이크 피해 증가',
+                pattern: /브레이크\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '무방비 피해 증가',
+                pattern: /무방비\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '특정 스킬 피해량 증가',
+                pattern: /(\S+)\s*스킬의\s*피해량이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '지속 피해 조건 피해 증가',
+                pattern: /지속\s*피해.*?보유한\s*적.*?피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '거리 조건 피해 증가',
+                pattern: /범위\s*내에?\s*적이?\s*없을.*?피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
             }
         ];
 
@@ -1835,7 +1887,7 @@
                 }
             });
         }
-        
+
         // 무방비 공격 적중 시 효과 파싱 @added 2025-12-10
         // 브레이크 발동까지 시간이 오래 걸려 DPS 효율에서 제외
         if (isDefenseBreakEffect) {
@@ -1851,19 +1903,47 @@
             // 무방비 효과는 일반 효과에서 제외하고 리턴
             result.isDefenseBreakOnly = true;
         }
+        
+        // 제한적 효과 파싱 @added 2025-12-10
+        // 브레이크/무방비/특정스킬 등 범용성 낮은 효과들
+        if (isLimitedEffect) {
+            limitedEffectPatterns.forEach(function(item) {
+                var match = effectText.match(item.pattern);
+                if (match) {
+                    if (!result.limitedEffects) {
+                        result.limitedEffects = {};
+                    }
+                    // 특정 스킬의 경우 스킬명도 저장
+                    if (item.name === '특정 스킬 피해량 증가' && match[1] && match[2]) {
+                        var skillName = match[1];
+                        result.limitedEffects[skillName + ' 스킬 피해량 증가'] = parseFloat(match[2]);
+                    } else {
+                        result.limitedEffects[item.name] = parseFloat(match[1]);
+                    }
+                }
+            });
+            result.isLimitedEffect = true;
+        }
 
         // 전체 텍스트에서 효과 파싱 (수치 추출)
         // @updated 2025-12-10 - 기본 공격 관련 효과 제외 처리
         // @updated 2025-12-10 - 무방비 공격 적중 시 효과 제외 처리
+        // @updated 2025-12-10 - 제한적 효과 제외 처리
         effectPatterns.forEach(function(item) {
             // 기본 공격 관련 효과면서 제외 플래그가 있으면 스킵
             if (item.excludeIfBasicAttack && isBasicAttackEffect) {
                 return; // 스킵
             }
-            
+
             // 무방비 공격 적중 시 효과면 핵심 DPS 효과에서 제외
             if (isDefenseBreakEffect) {
                 return; // 스킵 - 무방비 효과는 별도 처리됨
+            }
+            
+            // 제한적 효과면 핵심 DPS 효과에서 제외 @added 2025-12-10
+            // 브레이크/무방비/특정스킬 등 범용성 낮은 효과
+            if (isLimitedEffect && (item.name === '피해량 증가' || item.name === '공격력 증가')) {
+                return; // 스킵 - 제한적 효과는 별도 처리됨
             }
 
             var match = effectText.match(item.pattern);
@@ -1889,13 +1969,14 @@
             }
         });
 
-        // 효과 또는 결함 또는 기본 공격/무방비 효과가 있으면 반환 @updated 2025-12-10
+        // 효과 또는 결함 또는 기본 공격/무방비/제한적 효과가 있으면 반환 @updated 2025-12-10
         var hasEffects = Object.keys(result.effects).length > 0;
         var hasDemerits = result.demerits && Object.keys(result.demerits).length > 0;
         var hasBasicAttackEffects = result.basicAttackEffects && Object.keys(result.basicAttackEffects).length > 0;
         var hasDefenseBreakEffects = result.defenseBreakEffects && Object.keys(result.defenseBreakEffects).length > 0;
+        var hasLimitedEffects = result.limitedEffects && Object.keys(result.limitedEffects).length > 0;
         
-        if (hasEffects || hasDemerits || hasBasicAttackEffects || hasDefenseBreakEffects) {
+        if (hasEffects || hasDemerits || hasBasicAttackEffects || hasDefenseBreakEffects || hasLimitedEffects) {
             return result;
         }
 
@@ -2506,6 +2587,32 @@
                         raw: value,
                         effective: value,
                         type: '무방비'
+                    });
+                });
+            }
+
+            // ====================================================
+            // 제한적 효과 처리 - 기타 효과로 분류 (점수 미반영)
+            // @added 2025-12-10
+            // 브레이크/무방비/특정스킬 등 범용성 낮은 효과들
+            // ====================================================
+            if (effect.limitedEffects && Object.keys(effect.limitedEffects).length > 0) {
+                Object.entries(effect.limitedEffects).forEach(function([effectName, value]) {
+                    // 제한적 효과는 기타 효과로 표시 (점수 미반영)
+                    var displayName = effectName + ' (제한적)';
+                    if (!effectiveSummary[displayName]) {
+                        effectiveSummary[displayName] = {
+                            total: 0,
+                            details: [],
+                            isCoreDPS: false,
+                            isLimitedEffect: true // 제한적 효과 표시
+                        };
+                    }
+                    effectiveSummary[displayName].total += value;
+                    effectiveSummary[displayName].details.push({
+                        raw: value,
+                        effective: value,
+                        type: '제한적'
                     });
                 });
             }

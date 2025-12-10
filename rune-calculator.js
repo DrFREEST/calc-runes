@@ -1680,13 +1680,20 @@
 
         // 효과 수치 파싱 (효과 부분에서)
         // @updated 2025-12-10 - 연타/강타/스킬위력 추가
+        // @updated 2025-12-10 - 기본 공격 관련 효과 제외 (DPS 비중 낮음)
+        
+        // 기본 공격 관련 효과 체크 (효율에서 제외할 것들)
+        var isBasicAttackEffect = /기본\s*공격/.test(effectText);
+        
         var effectPatterns = [{
                 name: '공격력 증가',
                 pattern: /공격력이?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/
             },
             {
                 name: '피해량 증가',
-                pattern: /(?:적에게\s*)?주는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/
+                pattern: /(?:적에게\s*)?주는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/,
+                // 기본 공격 피해량은 별도 효과로 처리
+                excludeIfBasicAttack: true
             },
             {
                 name: '치명타 확률 증가',
@@ -1706,7 +1713,10 @@
             },
             {
                 name: '추가타 확률 증가',
-                pattern: /추가타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+                // "기본 공격 추가타"가 아닌 일반 추가타만 매칭
+                pattern: /(?<!기본\s*공격\s*)(?<!기본\s*공격의?\s*)추가타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/,
+                // 기본 공격 추가타는 별도 효과로 처리
+                excludeIfBasicAttack: true
             },
             {
                 name: '스킬 위력 증가',
@@ -1714,7 +1724,9 @@
             },
             {
                 name: '공격 속도 증가',
-                pattern: /공격\s*속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+                pattern: /공격\s*속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/,
+                // 기본 공격 속도는 별도 효과로 처리
+                excludeIfBasicAttack: true
             },
             {
                 name: '받는 피해 감소',
@@ -1723,6 +1735,22 @@
             {
                 name: '회복력 증가',
                 pattern: /회복력이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            }
+        ];
+        
+        // 기본 공격 관련 효과 패턴 (기타 효과로 분류) @added 2025-12-10
+        var basicAttackPatterns = [
+            {
+                name: '기본 공격 추가타 확률 증가',
+                pattern: /기본\s*공격(?:의)?\s*추가타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '기본 공격 피해량 증가',
+                pattern: /기본\s*공격(?:의)?\s*피해량이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '기본 공격 속도 증가',
+                pattern: /기본\s*공격\s*속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
             }
         ];
 
@@ -1774,8 +1802,28 @@
         // 결함 영역 여부 확인 ("결함:" 이후의 텍스트인지)
         var isDemeritSection = /결함\s*[:：]/.test(effectText);
 
+        // 기본 공격 관련 효과 먼저 파싱 @added 2025-12-10
+        // 기본 공격 효과는 별도 필드에 저장 (DPS 효율에서 제외)
+        if (isBasicAttackEffect) {
+            basicAttackPatterns.forEach(function(item) {
+                var match = effectText.match(item.pattern);
+                if (match) {
+                    if (!result.basicAttackEffects) {
+                        result.basicAttackEffects = {};
+                    }
+                    result.basicAttackEffects[item.name] = parseFloat(match[1]);
+                }
+            });
+        }
+
         // 전체 텍스트에서 효과 파싱 (수치 추출)
+        // @updated 2025-12-10 - 기본 공격 관련 효과 제외 처리
         effectPatterns.forEach(function(item) {
+            // 기본 공격 관련 효과면서 제외 플래그가 있으면 스킵
+            if (item.excludeIfBasicAttack && isBasicAttackEffect) {
+                return; // 스킵
+            }
+            
             var match = effectText.match(item.pattern);
             if (match) {
                 result.effects[item.name] = parseFloat(match[1]);
@@ -1799,8 +1847,12 @@
             }
         });
 
-        // 효과 또는 결함이 있으면 반환
-        if (Object.keys(result.effects).length > 0 || (result.demerits && Object.keys(result.demerits).length > 0)) {
+        // 효과 또는 결함 또는 기본 공격 효과가 있으면 반환 @updated 2025-12-10
+        var hasEffects = Object.keys(result.effects).length > 0;
+        var hasDemerits = result.demerits && Object.keys(result.demerits).length > 0;
+        var hasBasicAttackEffects = result.basicAttackEffects && Object.keys(result.basicAttackEffects).length > 0;
+        
+        if (hasEffects || hasDemerits || hasBasicAttackEffects) {
             return result;
         }
 
@@ -1915,15 +1967,15 @@
      * @added 2025-12-10
      */
     const CORE_DPS_DEMERITS = [
-        '피해량 감소',           // 적에게 주는 피해 감소
-        '멀티히트 피해 감소',    // 멀티히트 피해 감소
-        '치명타 확률 감소',      // 치명타 확률 감소
-        '치명타 피해 감소',      // 치명타 피해 감소
-        '공격력 감소',           // 공격력 감소
+        '피해량 감소', // 적에게 주는 피해 감소
+        '멀티히트 피해 감소', // 멀티히트 피해 감소
+        '치명타 확률 감소', // 치명타 확률 감소
+        '치명타 피해 감소', // 치명타 피해 감소
+        '공격력 감소', // 공격력 감소
         // @added 2025-12-10 - 추가 결함 효과
         '쿨타임 회복 속도 감소', // 재사용 대기 시간 회복 속도 감소 (스킬 DPS 감소)
-        '스킬 사용 속도 감소',   // 스킬 시전 속도 감소 (DPS 감소)
-        '캐스팅 속도 감소'       // 캐스팅/차지 속도 감소 (DPS 감소)
+        '스킬 사용 속도 감소', // 스킬 시전 속도 감소 (DPS 감소)
+        '캐스팅 속도 감소' // 캐스팅/차지 속도 감소 (DPS 감소)
     ];
 
     /**
@@ -1958,14 +2010,14 @@
         '스킬 위력 증가': 7, // 효율 4위 (기타 효과)
         // 결함 효과 가중치 (감소분이므로 음수로 적용됨)
         '피해량 감소': 10,
-        '멀티히트 피해 감소': 8,   // 멀티히트 비중 고려
+        '멀티히트 피해 감소': 8, // 멀티히트 비중 고려
         '치명타 확률 감소': 9,
         '치명타 피해 감소': 9,
         '공격력 감소': 10,
         // @added 2025-12-10 - 추가 결함 효과 가중치
         '쿨타임 회복 속도 감소': 8, // 스킬 DPS 약 8~9% 영향 (쿨감 = 스킬 사용 빈도)
-        '스킬 사용 속도 감소': 6,   // 시전 속도 감소 (DPS 약 6% 영향)
-        '캐스팅 속도 감소': 5       // 캐스팅/차지 속도 (마법사 계열 DPS 영향)
+        '스킬 사용 속도 감소': 6, // 시전 속도 감소 (DPS 약 6% 영향)
+        '캐스팅 속도 감소': 5 // 캐스팅/차지 속도 (마법사 계열 DPS 영향)
     };
 
     /**
@@ -2064,9 +2116,9 @@
         var critDmgDecrease = 0;
         var atkDecrease = 0;
         // @added 2025-12-10 - 추가 결함 효과
-        var cooldownRecoveryDecrease = 0;  // 쿨타임 회복 속도 감소
-        var skillSpeedDecrease = 0;        // 스킬 사용 속도 감소
-        var castingSpeedDecrease = 0;      // 캐스팅/차지 속도 감소
+        var cooldownRecoveryDecrease = 0; // 쿨타임 회복 속도 감소
+        var skillSpeedDecrease = 0; // 스킬 사용 속도 감소
+        var castingSpeedDecrease = 0; // 캐스팅/차지 속도 감소
 
         Object.entries(effectSummary).forEach(function([name, data]) {
             var value = data.total || 0;
@@ -2361,6 +2413,31 @@
                             isDemerit: true
                         });
                     }
+                });
+            }
+
+            // ====================================================
+            // 기본 공격 효과 처리 - 기타 효과로 분류 (점수 미반영)
+            // @added 2025-12-10
+            // ====================================================
+            if (effect.basicAttackEffects && Object.keys(effect.basicAttackEffects).length > 0) {
+                Object.entries(effect.basicAttackEffects).forEach(function([effectName, value]) {
+                    // 기본 공격 효과는 기타 효과로 표시 (점수 미반영)
+                    var displayName = effectName + ' (기본공격)';
+                    if (!effectiveSummary[displayName]) {
+                        effectiveSummary[displayName] = {
+                            total: 0,
+                            details: [],
+                            isCoreDPS: false,
+                            isBasicAttack: true // 기본 공격 효과 표시
+                        };
+                    }
+                    effectiveSummary[displayName].total += value;
+                    effectiveSummary[displayName].details.push({
+                        raw: value,
+                        effective: value,
+                        type: '기본 공격'
+                    });
                 });
             }
         });
@@ -2686,9 +2763,9 @@
                 // DPS 계산 상세 (접기)
                 var bd = dpsAnalysis.breakdown || {};
                 // 속도 페널티가 있으면 표시 @updated 2025-12-10
-                var speedMultiplierText = bd.speedMultiplier && bd.speedMultiplier < 1 
-                    ? ` × 속도 ×${bd.speedMultiplier}` 
-                    : '';
+                var speedMultiplierText = bd.speedMultiplier && bd.speedMultiplier < 1 ?
+                    ` × 속도 ×${bd.speedMultiplier}` :
+                    '';
                 attackHtml += `
                     <div class="effect-item effect-item--detail">
                         <span class="effect-item__name" style="font-size: var(--font-size-xs); color: var(--color-text-muted);">

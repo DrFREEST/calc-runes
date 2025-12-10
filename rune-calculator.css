@@ -1716,3 +1716,49 @@ img {
     }
 }
 
+/* ============================================
+   DPS 핵심 효과 스타일
+   @added 2025-12-10
+   ============================================ */
+
+/* 효과 섹션 헤더 */
+.effect-section-header {
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    color: var(--color-accent-secondary);
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* DPS 핵심 효과 아이템 */
+.effect-item--core {
+    background: rgba(59, 130, 246, 0.1);
+    border-left: 3px solid var(--color-accent-primary);
+    padding-left: var(--spacing-sm);
+    margin-left: calc(-1 * var(--spacing-sm));
+}
+
+/* 기타 효과 아이템 */
+.effect-item--other {
+    opacity: 0.7;
+}
+
+/* 강조 값 */
+.effect-item__value--highlight {
+    color: var(--color-accent-secondary) !important;
+    font-weight: 700;
+}
+
+/* 흐린 값 */
+.effect-item__value--muted {
+    color: var(--color-text-muted);
+}
+
+/* DPS 핵심 효과 태그 */
+.effect-tag--core {
+    background: rgba(59, 130, 246, 0.2);
+    border: 1px solid var(--color-accent-primary);
+    color: var(--color-accent-secondary);
+    font-weight: 600;
+}

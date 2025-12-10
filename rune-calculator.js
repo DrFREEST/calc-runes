@@ -1125,11 +1125,25 @@
     }
 
     /**
+     * DPS 핵심 효과 목록
+     * @constant {Array}
+     * @description 효율 점수 계산에 포함되는 핵심 DPS 효과
+     * @updated 2025-12-10 - 공격력, 피해량, 치명타만 포함 (속도, 상태피해 제외)
+     */
+    const CORE_DPS_EFFECTS = [
+        '공격력 증가',
+        '피해량 증가',
+        '치명타 확률 증가',
+        '치명타 피해 증가'
+    ];
+
+    /**
      * 룬의 총 효율 점수 계산 (새로운 방식)
      * @param {Object} rune - 룬 데이터
      * @param {number} enhanceLevel - 강화 단계
      * @param {Array} equippedDotTypes - 장착된 룬들의 지속 피해 유형
      * @returns {Object} { score, breakdown, effectiveSummary }
+     * @updated 2025-12-10 - DPS 핵심 효과만 점수 계산에 포함
      */
     function calculateRuneEfficiencyScore(rune, enhanceLevel = 0, equippedDotTypes = []) {
         const parsed = parseRuneEffectsAdvanced(rune, enhanceLevel);
@@ -1145,32 +1159,33 @@
             const effective = calculateEffectiveValue(effect, hasSynergy);
             
             Object.entries(effective).forEach(([effectName, data]) => {
-                // 효과별 점수 가중치 (역할에 따라 다름)
-                let scoreWeight = 1.0;
+                // DPS 핵심 효과만 점수 계산에 포함
+                if (!CORE_DPS_EFFECTS.includes(effectName)) {
+                    // 효과 요약에는 포함하지만 점수에는 반영하지 않음
+                    if (!effectiveSummary[effectName]) {
+                        effectiveSummary[effectName] = { total: 0, details: [], isCoreDPS: false };
+                    }
+                    effectiveSummary[effectName].total += data.effective;
+                    effectiveSummary[effectName].details.push(data);
+                    return; // 점수 계산 스킵
+                }
                 
-                // 공격 관련 효과에 높은 가중치
-                if (['공격력 증가', '피해량 증가', '무방비 피해 증가'].includes(effectName)) {
-                    scoreWeight = 10;
-                } else if (['치명타 확률 증가', '치명타 피해 증가', '추가타 확률 증가'].includes(effectName)) {
-                    scoreWeight = 7;
-                } else if (['공격 속도 증가', '스킬 사용 속도 증가', '재사용 대기시간 감소'].includes(effectName)) {
-                    scoreWeight = 5;
-                } else if (['받는 피해 감소', '회복력 증가'].includes(effectName)) {
-                    scoreWeight = 4;
-                } else if (effectName === '받는 피해 증가') {
-                    scoreWeight = -5; // 디메리트
-                } else if (effectName === '재사용 대기시간 증가') {
-                    scoreWeight = -3; // 디메리트
+                // DPS 핵심 효과별 점수 가중치
+                let scoreWeight = 10; // 기본 가중치
+                
+                if (['치명타 확률 증가', '치명타 피해 증가'].includes(effectName)) {
+                    scoreWeight = 8; // 치명타는 약간 낮은 가중치
                 }
                 
                 const effectScore = data.effective * scoreWeight;
                 totalScore += effectScore;
                 
-                // 요약에 추가
+                // 요약에 추가 (DPS 핵심 효과로 표시)
                 if (!effectiveSummary[effectName]) {
                     effectiveSummary[effectName] = {
                         total: 0,
-                        details: []
+                        details: [],
+                        isCoreDPS: true // DPS 핵심 효과 표시
                     };
                 }
                 effectiveSummary[effectName].total += data.effective;
@@ -1189,7 +1204,8 @@
             score: Math.round(totalScore * 10) / 10,
             breakdown,
             effectiveSummary,
-            dotTypes: parsed.dotTypes
+            dotTypes: parsed.dotTypes,
+            coreDPSEffects: CORE_DPS_EFFECTS // 핵심 효과 목록 반환
         };
     }
 
@@ -1220,12 +1236,12 @@
     /**
      * 장착된 모든 룬의 효과 합산
      * @updated 2025-12-10 - 고급 효과 파싱 엔진 사용
+     * @updated 2025-12-10 - DPS 핵심 효과 구분 표시
      */
     function calculateTotalEffects() {
         const totalEffects = {
-            attack: {},
-            defense: {},
-            misc: {}
+            coreDPS: {},  // DPS 핵심 효과
+            other: {}     // 기타 효과
         };
         
         // 모든 장착 룬의 지속 피해 유형 수집
@@ -1239,23 +1255,14 @@
             const efficiency = calculateRuneEfficiencyScore(rune, state.enhanceLevel, allDotTypes);
             
             Object.entries(efficiency.effectiveSummary).forEach(([key, data]) => {
-                // 효과 분류
-                let category = 'misc';
-                if ([
-                    '공격력 증가', '피해량 증가', '무방비 피해 증가',
-                    '공격 속도 증가', '스킬 피해량 증가', '기본 공격 피해량 증가',
-                    '치명타 확률 증가', '치명타 피해 증가', '추가타 확률 증가'
-                ].includes(key)) {
-                    category = 'attack';
-                } else if ([
-                    '받는 피해 감소', '받는 피해 증가',
-                    '회복력 증가', '회복량 증가'
-                ].includes(key)) {
-                    category = 'defense';
-                }
+                // DPS 핵심 효과와 기타 효과 분류
+                const category = data.isCoreDPS ? 'coreDPS' : 'other';
                 
                 // 실효값 사용
-                totalEffects[category][key] = (totalEffects[category][key] || 0) + data.total;
+                if (!totalEffects[category][key]) {
+                    totalEffects[category][key] = { total: 0, isCoreDPS: data.isCoreDPS };
+                }
+                totalEffects[category][key].total += data.total;
             });
         });
         
@@ -1264,27 +1271,28 @@
 
     /**
      * 효과 합산 결과 렌더링
-     * @param {Object} totalEffects - 합산된 효과
+     * @param {Object} totalEffects - 합산된 효과 { coreDPS: {}, other: {} }
      * @param {boolean} hasSynergy - 시너지 보유 여부
      * @param {Array} dotTypes - 보유 지속 피해 유형
-     * @updated 2025-12-10 - 시너지 정보 표시 추가
+     * @updated 2025-12-10 - DPS 핵심 효과와 기타 효과 분리 표시
      */
     function renderEffectSummary(totalEffects, hasSynergy = false, dotTypes = []) {
         const attackList = $('#effect-list-attack');
         const defenseList = $('#effect-list-defense');
         const miscList = $('#effect-list-misc');
         
-        // 공격 효과
+        // DPS 핵심 효과 (공격 섹션에 표시)
         if (attackList) {
-            const attackEntries = Object.entries(totalEffects.attack);
-            if (attackEntries.length > 0) {
-                attackList.innerHTML = attackEntries.map(([key, value]) => {
-                    const isNegative = key.includes('증가') && key.includes('받는');
+            const coreDPSEntries = Object.entries(totalEffects.coreDPS || {});
+            if (coreDPSEntries.length > 0) {
+                attackList.innerHTML = `
+                    <div class="effect-section-header">⚡ DPS 핵심 효과</div>
+                ` + coreDPSEntries.map(([key, data]) => {
                     return `
-                        <div class="effect-item">
+                        <div class="effect-item effect-item--core">
                             <span class="effect-item__name">${escapeHtml(key)}</span>
-                            <span class="effect-item__value ${isNegative ? 'effect-item__value--negative' : ''}">
-                                ${value >= 0 ? '+' : ''}${value.toFixed(1)}%
+                            <span class="effect-item__value effect-item__value--highlight">
+                                +${data.total.toFixed(1)}%
                             </span>
                         </div>
                     `;
@@ -1294,49 +1302,37 @@
             }
         }
         
-        // 방어 효과
+        // 기타 효과 (방어 섹션에 표시)
         if (defenseList) {
-            const defenseEntries = Object.entries(totalEffects.defense);
-            if (defenseEntries.length > 0) {
-                defenseList.innerHTML = defenseEntries.map(([key, value]) => {
-                    const isNegative = key === '받는 피해 증가';
+            const otherEntries = Object.entries(totalEffects.other || {});
+            if (otherEntries.length > 0) {
+                defenseList.innerHTML = `
+                    <div class="effect-section-header">📋 기타 효과 (점수 미반영)</div>
+                ` + otherEntries.map(([key, data]) => {
+                    const isNegative = key.includes('증가') && (key.includes('받는') || key.includes('재사용'));
+                    const value = data.total;
                     return `
-                        <div class="effect-item">
+                        <div class="effect-item effect-item--other">
                             <span class="effect-item__name">${escapeHtml(key)}</span>
-                            <span class="effect-item__value ${isNegative ? 'effect-item__value--negative' : ''}">
-                                ${isNegative ? '+' : (key.includes('감소') ? '-' : '+')}${Math.abs(value).toFixed(1)}%
-                            </span>
-                        </div>
-                    `;
-                }).join('');
-            } else {
-                defenseList.innerHTML = '<p class="effect-empty">장착된 룬이 없습니다</p>';
-            }
-        }
-        
-        // 기타 효과
-        if (miscList) {
-            let miscHtml = '';
-            
-            const miscEntries = Object.entries(totalEffects.misc);
-            if (miscEntries.length > 0) {
-                miscHtml = miscEntries.map(([key, value]) => {
-                    const isNegative = key.includes('증가') && (key.includes('재사용') || key.includes('받는'));
-                    return `
-                        <div class="effect-item">
-                            <span class="effect-item__name">${escapeHtml(key)}</span>
-                            <span class="effect-item__value ${isNegative ? 'effect-item__value--negative' : ''}">
+                            <span class="effect-item__value ${isNegative ? 'effect-item__value--negative' : 'effect-item__value--muted'}">
                                 ${value >= 0 ? '+' : ''}${value.toFixed(1)}%
                             </span>
                         </div>
                     `;
                 }).join('');
+            } else {
+                defenseList.innerHTML = '<p class="effect-empty">기타 효과 없음</p>';
             }
+        }
+        
+        // 시너지 정보 (기타 섹션에 표시)
+        if (miscList) {
+            let miscHtml = '';
             
             // 시너지 정보 추가
             if (dotTypes.length > 0) {
                 miscHtml += `
-                    <div class="effect-item" style="border-top: 1px solid var(--color-border); padding-top: var(--spacing-sm); margin-top: var(--spacing-sm);">
+                    <div class="effect-item">
                         <span class="effect-item__name">🔗 시너지 활성화</span>
                         <span class="effect-item__value" style="color: var(--color-accent-warning);">
                             ${dotTypes.length}종
@@ -1550,18 +1546,18 @@
                     // 고급 효과 분석 사용
                     const efficiency = calculateRuneEfficiencyScore(rune, 15, []);
                     
-                    // 주요 효과 3개까지 표시
+                    // DPS 핵심 효과만 우선 정렬하여 표시
+                    // @updated 2025-12-10 - 핵심 DPS 효과만 표시
                     const effectEntries = Object.entries(efficiency.effectiveSummary)
+                        .filter(([name, data]) => data.isCoreDPS) // 핵심 DPS 효과만
                         .sort((a, b) => Math.abs(b[1].total) - Math.abs(a[1].total))
-                        .slice(0, 3);
+                        .slice(0, 4); // 최대 4개
                     
                     const effectHtml = effectEntries.map(([name, data]) => {
                         const sign = data.total >= 0 ? '+' : '';
-                        const typeIcon = data.details[0]?.type === 'passive' ? '🔵' :
-                                        data.details[0]?.type === 'trigger' ? '🟡' :
-                                        data.details[0]?.type === 'state' ? '🟠' :
-                                        data.details[0]?.type === 'enemy' ? '🔴' : '⚪';
-                        return `<span class="effect-tag" title="${data.details[0]?.type || 'unknown'}">${typeIcon} ${name} ${sign}${data.total.toFixed(1)}%</span>`;
+                        // DPS 핵심 효과는 ⚡ 아이콘
+                        const typeIcon = '⚡';
+                        return `<span class="effect-tag effect-tag--core" title="DPS 핵심 효과">${typeIcon} ${name} ${sign}${data.total.toFixed(1)}%</span>`;
                     }).join(' ');
                     
                     // 등급 정보

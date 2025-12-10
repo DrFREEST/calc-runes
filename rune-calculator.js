@@ -1621,17 +1621,17 @@
      */
     function parseHealthConditionEffect(text) {
         if (!text) return null;
-        
+
         // 업타임 기준 (어비스/레이드 기준)
         // 체력 75% 이상 유지: 70% 업타임 (적절한 플레이 기준)
         // 체력 50% 이하 유지: 15% 업타임 (위험 상태, 지양)
         // 자원 50% 미만: 40% 업타임 (자원 관리에 따라 다름)
         // 자원 33% 미만: 25% 업타임 (더 제한적)
         // 적 체력 50% 이하: 50% 업타임 (처형 효과)
-        
+
         var conditionPatterns = [
             // 내 체력 조건
-            { 
+            {
                 pattern: /체력이?\s*(\d+)\s*%\s*이상일?\s*(?:경우|때)/,
                 type: 'health_above',
                 uptimeCalc: function(threshold) {
@@ -1674,14 +1674,14 @@
                 }
             }
         ];
-        
+
         for (var i = 0; i < conditionPatterns.length; i++) {
             var condPattern = conditionPatterns[i];
             var match = text.match(condPattern.pattern);
             if (match) {
                 var threshold = parseFloat(match[1]);
                 var uptime = condPattern.uptimeCalc(threshold);
-                
+
                 return {
                     hasCondition: true,
                     type: condPattern.type,
@@ -1691,7 +1691,7 @@
                 };
             }
         }
-        
+
         return null;
     }
 
@@ -1850,8 +1850,12 @@
         // 예: "주변 3m 범위 내에 적이 없을 경우"
         var isRangeConditionEffect = /범위\s*내에?\s*적이?\s*없을/.test(effectText);
 
+        // 궁극기/각성 사용 시 효과 (직업군/시너지 의존) @added 2025-12-10
+        // 궁극기 충전 속도가 직업마다 다르고 시너지 룬에 따라 크게 달라짐
+        var isUltimateConditionEffect = /궁극기\s*사용\s*시|각성\s*(?:혹은\s*)?궁극기\s*사용\s*시/.test(effectText);
+
         // 통합 제한적 효과 체크
-        var isLimitedEffect = isBreakDamageEffect || isSpecificSkillDamage || isDotConditionEffect || isRangeConditionEffect;
+        var isLimitedEffect = isBreakDamageEffect || isSpecificSkillDamage || isDotConditionEffect || isRangeConditionEffect || isUltimateConditionEffect;
 
         // ========================================================
         // 시간 감소 효과 체크 @added 2025-12-10
@@ -1976,6 +1980,15 @@
             {
                 name: '거리 조건 피해 증가',
                 pattern: /범위\s*내에?\s*적이?\s*없을.*?피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            // 궁극기/각성 사용 시 효과 @added 2025-12-10
+            {
+                name: '궁극기 사용 시 공격력 증가',
+                pattern: /궁극기\s*사용\s*시.*?공격력이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '궁극기 사용 시 피해량 증가',
+                pattern: /궁극기\s*사용\s*시.*?피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
             }
         ];
 
@@ -2132,7 +2145,7 @@
                     if (!result.conditionEffects) {
                         result.conditionEffects = {};
                     }
-                    
+
                     // 조건 타입에 따른 라벨
                     var conditionLabel = '';
                     switch (healthConditionInfo.type) {
@@ -2151,7 +2164,7 @@
                         default:
                             conditionLabel = '조건부';
                     }
-                    
+
                     var effectiveValue = effectValue * healthConditionInfo.uptime;
                     result.conditionEffects[item.name + ' (' + conditionLabel + ')'] = {
                         rawValue: effectValue,
@@ -2161,7 +2174,7 @@
                     // 조건부 효과는 일반 효과에서 제외
                     return;
                 }
-                
+
                 result.effects[item.name] = effectValue;
             }
         });
@@ -2191,7 +2204,7 @@
         var hasLimitedEffects = result.limitedEffects && Object.keys(result.limitedEffects).length > 0;
         var hasDecayEffects = result.decayEffects && Object.keys(result.decayEffects).length > 0;
         var hasConditionEffects = result.conditionEffects && Object.keys(result.conditionEffects).length > 0;
-        
+
         if (hasEffects || hasDemerits || hasBasicAttackEffects || hasDefenseBreakEffects || hasLimitedEffects || hasDecayEffects || hasConditionEffects) {
             return result;
         }
@@ -2892,10 +2905,10 @@
                     var rawValue = data.rawValue;
                     var effectiveValue = data.effectiveValue;
                     var conditionInfo = data.conditionInfo;
-                    
+
                     // 효과 타입 추출 (공격력 증가, 피해량 증가 등)
                     var baseEffectName = effectName.replace(/\s*\([^)]+\)\s*$/, '');
-                    
+
                     // 핵심 DPS 효과인 경우만 점수에 반영
                     var isCoreDPS = CORE_DPS_EFFECTS.indexOf(baseEffectName) !== -1;
                     if (isCoreDPS) {
@@ -2903,7 +2916,7 @@
                         var effectScore = effectiveValue * scoreWeight;
                         totalScore += effectScore;
                     }
-                    
+
                     // 조건 효과로 표시
                     var displayName = effectName;
                     if (!effectiveSummary[displayName]) {
@@ -2923,7 +2936,7 @@
                         conditionType: conditionInfo.type,
                         uptime: conditionInfo.uptimePercent
                     });
-                    
+
                     breakdown.push({
                         effectName: displayName,
                         raw: rawValue,
@@ -3142,7 +3155,9 @@
             if (data.isCoreDPS !== false) { // 핵심 DPS 효과인 상태 조건만 포함
                 var baseEffectName = key.replace(/\s*\([^)]+\)\s*$/, '');
                 if (!combinedCoreDPS[baseEffectName]) {
-                    combinedCoreDPS[baseEffectName] = { total: 0 };
+                    combinedCoreDPS[baseEffectName] = {
+                        total: 0
+                    };
                 }
                 combinedCoreDPS[baseEffectName].total += data.total;
             }
@@ -3294,7 +3309,7 @@
                         <div class="effect-section-header" style="color: #93c5fd;">📊 상태 조건 효과 (업타임 적용)</div>
                     `;
                     attackHtml += conditionEntries.map(function([key, data]) {
-                        var uptimeText = data.conditionInfo ? 
+                        var uptimeText = data.conditionInfo ?
                             `(업타임 ${data.conditionInfo.uptimePercent}%)` : '';
                         return `
                             <div class="effect-item effect-item--condition">

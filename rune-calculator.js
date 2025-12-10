@@ -1587,19 +1587,31 @@
         console.warn('🎯 추천 시작...');
 
         // 스텟 수집
+        var statStr = $('#stat-str');
+        var statDex = $('#stat-dex');
+        var statInt = $('#stat-int');
+        var statWil = $('#stat-wil');
+        var statLuk = $('#stat-luk');
+        var statAtk = $('#stat-atk');
+        var statDef = $('#stat-def');
+        
         const stats = {
-            str: parseInt($('#stat-str') ? .value) || 0,
-            dex: parseInt($('#stat-dex') ? .value) || 0,
-            int: parseInt($('#stat-int') ? .value) || 0,
-            wil: parseInt($('#stat-wil') ? .value) || 0,
-            luk: parseInt($('#stat-luk') ? .value) || 0,
-            atk: parseInt($('#stat-atk') ? .value) || 0,
-            def: parseInt($('#stat-def') ? .value) || 0
+            str: parseInt(statStr ? statStr.value : 0) || 0,
+            dex: parseInt(statDex ? statDex.value : 0) || 0,
+            int: parseInt(statInt ? statInt.value : 0) || 0,
+            wil: parseInt(statWil ? statWil.value : 0) || 0,
+            luk: parseInt(statLuk ? statLuk.value : 0) || 0,
+            atk: parseInt(statAtk ? statAtk.value : 0) || 0,
+            def: parseInt(statDef ? statDef.value : 0) || 0
         };
 
-        const role = $('#recommend-role') ? .value || 'dealer';
-        const selectedClass = $('#recommend-class') ? .value || '00';
-        const minGrade = $('#recommend-min-grade') ? .value || '4'; // priority 기반 (4 = 전설(시즌0) 이상)
+        var roleEl = $('#recommend-role');
+        var classEl = $('#recommend-class');
+        var gradeEl = $('#recommend-min-grade');
+        
+        const role = (roleEl ? roleEl.value : null) || 'dealer';
+        const selectedClass = (classEl ? classEl.value : null) || '00';
+        const minGrade = (gradeEl ? gradeEl.value : null) || '4'; // priority 기반 (4 = 전설(시즌0) 이상)
 
         // 카테고리별 룬 필터링
         // @updated 2025-12-10 - 카테고리 코드 수정 (02: 방어구, 04: 엠블럼)
@@ -2013,8 +2025,11 @@
      * @updated 2025-12-10 - 전설(시즌0) 통합 필터 (legendary_s0) 지원
      */
     function filterModalRunes() {
-        const searchValue = $('#modal-search') ? .value ? .toLowerCase() || '';
-        const gradeValue = $('#modal-grade') ? .value || 'all';
+        var modalSearch = $('#modal-search');
+        var modalGrade = $('#modal-grade');
+        var searchVal = modalSearch ? modalSearch.value : '';
+        const searchValue = searchVal ? searchVal.toLowerCase() : '';
+        const gradeValue = (modalGrade ? modalGrade.value : null) || 'all';
         const slotConfig = SLOT_CONFIG[state.selectedSlot];
 
         if (!slotConfig) return;
@@ -2100,7 +2115,8 @@
      */
     function savePreset() {
         const nameInput = $('#preset-name-input');
-        const name = nameInput ? .value ? .trim();
+        var nameVal = nameInput ? nameInput.value : '';
+        const name = nameVal ? nameVal.trim() : '';
 
         if (!name) {
             showToast('프리셋 이름을 입력해주세요.', 'error');
@@ -2390,9 +2406,19 @@
         }
 
         // 모달 닫기 버튼
-        $('#modal-close') ? .addEventListener('click', () => closeModal('rune-select-modal'));
-        $('#detail-modal-close') ? .addEventListener('click', () => closeModal('rune-detail-modal'));
-        $('#preset-modal-close') ? .addEventListener('click', () => closeModal('preset-modal'));
+        var modalClose = $('#modal-close');
+        var detailModalClose = $('#detail-modal-close');
+        var presetModalClose = $('#preset-modal-close');
+        
+        if (modalClose) {
+            modalClose.addEventListener('click', function() { closeModal('rune-select-modal'); });
+        }
+        if (detailModalClose) {
+            detailModalClose.addEventListener('click', function() { closeModal('rune-detail-modal'); });
+        }
+        if (presetModalClose) {
+            presetModalClose.addEventListener('click', function() { closeModal('preset-modal'); });
+        }
 
         // 모달 오버레이 클릭 시 닫기
         $$('.modal__overlay').forEach(overlay => {

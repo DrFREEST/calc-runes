@@ -1226,10 +1226,10 @@
         }
 
         // 업타임 비율
-        const uptime = parsedEffect.timing ? .uptime || 1.0;
+        const uptime = (parsedEffect.timing && parsedEffect.timing.uptime) || 1.0;
 
         // 스택 배율
-        const stackMultiplier = parsedEffect.stackInfo ? .maxStacks || 1;
+        const stackMultiplier = (parsedEffect.stackInfo && parsedEffect.stackInfo.maxStacks) || 1;
 
         // 각 효과에 가중치 적용
         Object.entries(parsedEffect.effects).forEach(([effectName, value]) => {

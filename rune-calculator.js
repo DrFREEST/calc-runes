@@ -1613,6 +1613,89 @@
     }
 
     /**
+     * 상태 조건 효과 파싱 (체력/자원 조건)
+     * @param {string} text - 효과 텍스트
+     * @returns {Object|null} 조건 효과 정보
+     * @description 체력/자원 조건에 따른 효과 업타임 계산
+     * @added 2025-12-10
+     */
+    function parseHealthConditionEffect(text) {
+        if (!text) return null;
+        
+        // 업타임 기준 (어비스/레이드 기준)
+        // 체력 75% 이상 유지: 70% 업타임 (적절한 플레이 기준)
+        // 체력 50% 이하 유지: 15% 업타임 (위험 상태, 지양)
+        // 자원 50% 미만: 40% 업타임 (자원 관리에 따라 다름)
+        // 자원 33% 미만: 25% 업타임 (더 제한적)
+        // 적 체력 50% 이하: 50% 업타임 (처형 효과)
+        
+        var conditionPatterns = [
+            // 내 체력 조건
+            { 
+                pattern: /체력이?\s*(\d+)\s*%\s*이상일?\s*(?:경우|때)/,
+                type: 'health_above',
+                uptimeCalc: function(threshold) {
+                    // 체력이 높을수록 유지하기 쉬움
+                    if (threshold >= 75) return 0.70; // 75% 이상: 70% 업타임
+                    if (threshold >= 50) return 0.80; // 50% 이상: 80% 업타임
+                    return 0.90; // 그 이하: 90% 업타임
+                }
+            },
+            {
+                pattern: /체력이?\s*(\d+)\s*%\s*이하(?:로\s*감소하면|일?\s*(?:경우|때))/,
+                type: 'health_below',
+                uptimeCalc: function(threshold) {
+                    // 체력이 낮을수록 위험 - 유지 어려움
+                    if (threshold <= 25) return 0.05; // 25% 이하: 5% 업타임 (매우 위험)
+                    if (threshold <= 50) return 0.15; // 50% 이하: 15% 업타임 (위험)
+                    return 0.30; // 그 이상: 30% 업타임
+                }
+            },
+            // 자원 조건
+            {
+                pattern: /(?:보유\s*)?자원이?\s*(\d+)\s*%\s*미만일?\s*(?:경우|때)/,
+                type: 'resource_below',
+                uptimeCalc: function(threshold) {
+                    // 자원 관리에 따라 다름
+                    if (threshold <= 33) return 0.25; // 33% 미만: 25% 업타임
+                    if (threshold <= 50) return 0.40; // 50% 미만: 40% 업타임
+                    return 0.50; // 그 이상: 50% 업타임
+                }
+            },
+            // 적 체력 조건
+            {
+                pattern: /(?:남은\s*)?체력이?\s*(\d+)\s*%\s*이하인?\s*적/,
+                type: 'enemy_health_below',
+                uptimeCalc: function(threshold) {
+                    // 처형 효과 - 보스전 기준 후반부에만 유효
+                    if (threshold <= 25) return 0.25; // 25% 이하: 25% 업타임
+                    if (threshold <= 50) return 0.50; // 50% 이하: 50% 업타임
+                    return 0.60;
+                }
+            }
+        ];
+        
+        for (var i = 0; i < conditionPatterns.length; i++) {
+            var condPattern = conditionPatterns[i];
+            var match = text.match(condPattern.pattern);
+            if (match) {
+                var threshold = parseFloat(match[1]);
+                var uptime = condPattern.uptimeCalc(threshold);
+                
+                return {
+                    hasCondition: true,
+                    type: condPattern.type,
+                    threshold: threshold,
+                    uptime: uptime,
+                    uptimePercent: Math.round(uptime * 100)
+                };
+            }
+        }
+        
+        return null;
+    }
+
+    /**
      * 시간 감소 효과 파싱
      * @param {string} text - 효과 텍스트
      * @returns {Object|null} 감소 효과 정보 { hasDecay, initialValue, decayRate, decayInterval, decayDuration, effectiveValue }
@@ -1621,41 +1704,41 @@
      */
     function parseDecayEffect(text) {
         if (!text) return null;
-        
+
         // 패턴: "전투 시작 시, 공격력이 30% 증가한다. 증가한 공격력은 매 3초마다 2%씩 감소한다."
         var combatStartPattern = /전투\s*시작\s*시.*?(\d+(?:\.\d+)?)\s*%\s*증가/;
         var decayPattern = /매\s*(\d+(?:\.\d+)?)\s*초마다\s*(\d+(?:\.\d+)?)\s*%씩?\s*감소/;
-        
+
         var startMatch = text.match(combatStartPattern);
         var decayMatch = text.match(decayPattern);
-        
+
         if (!startMatch || !decayMatch) {
             return null;
         }
-        
-        var initialValue = parseFloat(startMatch[1]);  // 초기값 (예: 30%)
+
+        var initialValue = parseFloat(startMatch[1]); // 초기값 (예: 30%)
         var decayInterval = parseFloat(decayMatch[1]); // 감소 주기 (예: 3초)
-        var decayRate = parseFloat(decayMatch[2]);     // 감소량 (예: 2%)
-        
+        var decayRate = parseFloat(decayMatch[2]); // 감소량 (예: 2%)
+
         // 효과 소멸 시간 계산 (초)
         // 30% / 2% = 15회, 15회 × 3초 = 45초
         var decayCount = Math.ceil(initialValue / decayRate);
         var decayDuration = decayCount * decayInterval;
-        
+
         // 어비스/레이드 기준 전투 시간 (초) - 평균 120초 (2분) 가정
         var combatDuration = 120;
-        
+
         // 평균 효과값 계산 (선형 감소)
         // 처음: initialValue, 끝: 0, 평균 = initialValue / 2
         var averageValue = initialValue / 2;
-        
+
         // 업타임 계산
         // 감소 완료 시간이 전투 시간보다 짧으면 일부만 효과
         var effectiveUptime = Math.min(decayDuration, combatDuration) / combatDuration;
-        
+
         // 실효값 = 평균값 × 업타임
         var effectiveValue = averageValue * effectiveUptime;
-        
+
         return {
             hasDecay: true,
             initialValue: initialValue,
@@ -1769,7 +1852,7 @@
 
         // 통합 제한적 효과 체크
         var isLimitedEffect = isBreakDamageEffect || isSpecificSkillDamage || isDotConditionEffect || isRangeConditionEffect;
-        
+
         // ========================================================
         // 시간 감소 효과 체크 @added 2025-12-10
         // "전투 시작 시 X% 증가, 매 N초마다 Y%씩 감소" 패턴
@@ -1777,6 +1860,12 @@
         // ========================================================
         var decayEffectInfo = parseDecayEffect(effectText);
         var hasDecayEffect = decayEffectInfo && decayEffectInfo.hasDecay;
+
+        // ========================================================
+        // 상태 조건 효과 체크 @added 2025-12-10
+        // 체력/자원 조건에 따른 효과 - 업타임 제한적
+        // ========================================================
+        var healthConditionInfo = parseHealthConditionEffect(effectText);
 
         var effectPatterns = [{
                 name: '공격력 증가',
@@ -2013,7 +2102,7 @@
             var match = effectText.match(item.pattern);
             if (match) {
                 var effectValue = parseFloat(match[1]);
-                
+
                 // 시간 감소 효과 적용 @added 2025-12-10
                 // "전투 시작 시 X% 증가, 매 N초마다 Y%씩 감소" 패턴인 경우
                 if (hasDecayEffect && item.name === '공격력 증가') {
@@ -2035,6 +2124,42 @@
                         // 상시 효과 없이 전투 시작 효과만 있으면 스킵
                         return;
                     }
+                }
+
+                // 상태 조건 효과 처리 @added 2025-12-10
+                // 체력/자원 조건이 있으면 업타임 적용한 실효값으로 저장
+                if (healthConditionInfo && healthConditionInfo.hasCondition) {
+                    if (!result.conditionEffects) {
+                        result.conditionEffects = {};
+                    }
+                    
+                    // 조건 타입에 따른 라벨
+                    var conditionLabel = '';
+                    switch (healthConditionInfo.type) {
+                        case 'health_above':
+                            conditionLabel = '체력 ' + healthConditionInfo.threshold + '% 이상';
+                            break;
+                        case 'health_below':
+                            conditionLabel = '체력 ' + healthConditionInfo.threshold + '% 이하';
+                            break;
+                        case 'resource_below':
+                            conditionLabel = '자원 ' + healthConditionInfo.threshold + '% 미만';
+                            break;
+                        case 'enemy_health_below':
+                            conditionLabel = '적 체력 ' + healthConditionInfo.threshold + '% 이하';
+                            break;
+                        default:
+                            conditionLabel = '조건부';
+                    }
+                    
+                    var effectiveValue = effectValue * healthConditionInfo.uptime;
+                    result.conditionEffects[item.name + ' (' + conditionLabel + ')'] = {
+                        rawValue: effectValue,
+                        effectiveValue: Math.round(effectiveValue * 10) / 10,
+                        conditionInfo: healthConditionInfo
+                    };
+                    // 조건부 효과는 일반 효과에서 제외
+                    return;
                 }
                 
                 result.effects[item.name] = effectValue;
@@ -2065,8 +2190,9 @@
         var hasDefenseBreakEffects = result.defenseBreakEffects && Object.keys(result.defenseBreakEffects).length > 0;
         var hasLimitedEffects = result.limitedEffects && Object.keys(result.limitedEffects).length > 0;
         var hasDecayEffects = result.decayEffects && Object.keys(result.decayEffects).length > 0;
+        var hasConditionEffects = result.conditionEffects && Object.keys(result.conditionEffects).length > 0;
         
-        if (hasEffects || hasDemerits || hasBasicAttackEffects || hasDefenseBreakEffects || hasLimitedEffects || hasDecayEffects) {
+        if (hasEffects || hasDemerits || hasBasicAttackEffects || hasDefenseBreakEffects || hasLimitedEffects || hasDecayEffects || hasConditionEffects) {
             return result;
         }
 
@@ -2718,12 +2844,12 @@
                     var initialValue = data.initialValue;
                     var effectiveValue = data.effectiveValue;
                     var decayInfo = data.decayInfo;
-                    
+
                     // 실효값으로 점수 계산
                     var scoreWeight = EFFECT_SCORE_WEIGHT['공격력 증가'] || 10;
                     var effectScore = effectiveValue * scoreWeight;
                     totalScore += effectScore;
-                    
+
                     // 시간 감소 효과로 표시
                     var displayName = effectName;
                     if (!effectiveSummary[displayName]) {
@@ -2743,7 +2869,7 @@
                         decayDuration: decayInfo.decayDuration,
                         effectiveUptime: Math.round(decayInfo.effectiveUptime * 100)
                     });
-                    
+
                     breakdown.push({
                         effectName: displayName,
                         raw: initialValue,
@@ -2752,6 +2878,60 @@
                         scoreWeight: scoreWeight,
                         contribution: effectScore,
                         decayInfo: '초기 ' + initialValue + '% → ' + decayInfo.decayDuration + '초 후 소멸'
+                    });
+                });
+            }
+
+            // ====================================================
+            // 상태 조건 효과 처리 - 업타임 적용하여 점수 계산
+            // @added 2025-12-10
+            // 체력/자원 조건에 따른 효과는 업타임이 제한적
+            // ====================================================
+            if (effect.conditionEffects && Object.keys(effect.conditionEffects).length > 0) {
+                Object.entries(effect.conditionEffects).forEach(function([effectName, data]) {
+                    var rawValue = data.rawValue;
+                    var effectiveValue = data.effectiveValue;
+                    var conditionInfo = data.conditionInfo;
+                    
+                    // 효과 타입 추출 (공격력 증가, 피해량 증가 등)
+                    var baseEffectName = effectName.replace(/\s*\([^)]+\)\s*$/, '');
+                    
+                    // 핵심 DPS 효과인 경우만 점수에 반영
+                    var isCoreDPS = CORE_DPS_EFFECTS.indexOf(baseEffectName) !== -1;
+                    if (isCoreDPS) {
+                        var scoreWeight = EFFECT_SCORE_WEIGHT[baseEffectName] || 10;
+                        var effectScore = effectiveValue * scoreWeight;
+                        totalScore += effectScore;
+                    }
+                    
+                    // 조건 효과로 표시
+                    var displayName = effectName;
+                    if (!effectiveSummary[displayName]) {
+                        effectiveSummary[displayName] = {
+                            total: 0,
+                            details: [],
+                            isCoreDPS: isCoreDPS,
+                            isConditionEffect: true,
+                            conditionInfo: conditionInfo
+                        };
+                    }
+                    effectiveSummary[displayName].total += effectiveValue;
+                    effectiveSummary[displayName].details.push({
+                        raw: rawValue,
+                        effective: effectiveValue,
+                        type: '상태 조건',
+                        conditionType: conditionInfo.type,
+                        uptime: conditionInfo.uptimePercent
+                    });
+                    
+                    breakdown.push({
+                        effectName: displayName,
+                        raw: rawValue,
+                        effective: effectiveValue,
+                        type: '상태 조건',
+                        scoreWeight: isCoreDPS ? (EFFECT_SCORE_WEIGHT[baseEffectName] || 10) : 0,
+                        contribution: isCoreDPS ? (effectiveValue * (EFFECT_SCORE_WEIGHT[baseEffectName] || 10)) : 0,
+                        conditionInfo: '업타임 ' + conditionInfo.uptimePercent + '%'
                     });
                 });
             }
@@ -2890,6 +3070,7 @@
         const totalEffects = {
             coreDPS: {}, // DPS 핵심 효과
             demerits: {}, // 결함 효과 @added 2025-12-10
+            conditionEffects: {}, // 상태 조건 효과 @added 2025-12-10
             other: {} // 기타 효과
         };
 
@@ -2920,10 +3101,13 @@
             });
 
             Object.entries(efficiency.effectiveSummary).forEach(([key, data]) => {
-                // 결함 효과 분류 @added 2025-12-10
+                // 효과 분류 @updated 2025-12-10
                 let category;
                 if (data.isDemerit) {
                     category = 'demerits';
+                } else if (data.isConditionEffect) {
+                    // 상태 조건 효과 (체력/자원 조건)
+                    category = 'conditionEffects';
                 } else if (data.isCoreDPS) {
                     category = 'coreDPS';
                 } else {
@@ -2936,6 +3120,8 @@
                         total: 0,
                         isCoreDPS: data.isCoreDPS,
                         isDemerit: data.isDemerit,
+                        isConditionEffect: data.isConditionEffect,
+                        conditionInfo: data.conditionInfo,
                         diminished: data.diminished
                     };
                 }
@@ -2949,8 +3135,19 @@
             });
         });
 
-        // DPS 분석 계산 (결함 효과 포함) @updated 2025-12-10
-        const dpsAnalysis = calculateExpectedDPS(totalEffects.coreDPS, characterStats, totalEffects.demerits);
+        // DPS 분석 계산 (결함 효과, 상태 조건 효과 포함) @updated 2025-12-10
+        // 상태 조건 효과의 실효값을 coreDPS에 추가하여 계산
+        const combinedCoreDPS = Object.assign({}, totalEffects.coreDPS);
+        Object.entries(totalEffects.conditionEffects || {}).forEach(function([key, data]) {
+            if (data.isCoreDPS !== false) { // 핵심 DPS 효과인 상태 조건만 포함
+                var baseEffectName = key.replace(/\s*\([^)]+\)\s*$/, '');
+                if (!combinedCoreDPS[baseEffectName]) {
+                    combinedCoreDPS[baseEffectName] = { total: 0 };
+                }
+                combinedCoreDPS[baseEffectName].total += data.total;
+            }
+        });
+        const dpsAnalysis = calculateExpectedDPS(combinedCoreDPS, characterStats, totalEffects.demerits);
 
         renderEffectSummary(totalEffects, hasSynergy, allDotTypes, synergyResult, dpsAnalysis);
     }
@@ -3088,6 +3285,27 @@
                         </span>
                     </div>
                 `;
+
+                // 상태 조건 효과 표시 @added 2025-12-10
+                const conditionEntries = Object.entries(totalEffects.conditionEffects || {});
+                if (conditionEntries.length > 0) {
+                    attackHtml += `
+                        <div class="effect-divider"></div>
+                        <div class="effect-section-header" style="color: #93c5fd;">📊 상태 조건 효과 (업타임 적용)</div>
+                    `;
+                    attackHtml += conditionEntries.map(function([key, data]) {
+                        var uptimeText = data.conditionInfo ? 
+                            `(업타임 ${data.conditionInfo.uptimePercent}%)` : '';
+                        return `
+                            <div class="effect-item effect-item--condition">
+                                <span class="effect-item__name">${escapeHtml(key)}</span>
+                                <span class="effect-item__value" style="color: #93c5fd;">
+                                    +${data.total.toFixed(1)}% ${uptimeText}
+                                </span>
+                            </div>
+                        `;
+                    }).join('');
+                }
 
                 // 결함 효과 표시 @added 2025-12-10
                 const demeritEntries = Object.entries(totalEffects.demerits || {});

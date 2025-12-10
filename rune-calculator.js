@@ -937,6 +937,7 @@
     const EFFECT_TYPE = {
         PASSIVE: 'passive', // 상시 효과 (100%)
         TRIGGER: 'trigger', // 트리거 효과 (80%)
+        STACKING: 'stacking', // 누적/축적 효과 (95%) @added 2025-12-10
         STATE_CONDITION: 'state', // 상태 조건 효과 (70%)
         ENEMY_CONDITION: 'enemy', // 적 상태 조건 (시너지 의존)
         ENHANCEMENT: 'enhance' // 강화 단계별 효과
@@ -949,6 +950,7 @@
     const EFFECT_TYPE_WEIGHT = {
         [EFFECT_TYPE.PASSIVE]: 1.0, // 100%
         [EFFECT_TYPE.TRIGGER]: 0.8, // 80%
+        [EFFECT_TYPE.STACKING]: 0.95, // 95% - 누적/축적 효과는 쉽게 최대 중첩 유지 @added 2025-12-10
         [EFFECT_TYPE.STATE_CONDITION]: 0.7, // 70%
         [EFFECT_TYPE.ENEMY_CONDITION]: 0.5, // 50% (시너지 없을 때)
         [EFFECT_TYPE.ENHANCEMENT]: 1.0 // 100% (강화 조건 충족 시)
@@ -1347,6 +1349,12 @@
      * @returns {string} 효과 유형
      */
     function detectEffectType(text) {
+        // 누적/축적 효과 체크 (우선순위 높음) @added 2025-12-10
+        // 전투 중 쉽게 최대 중첩 유지 가능하므로 높은 가중치 적용
+        if (/누적:|축적:|최대\s*\d+\s*회까지\s*중첩/.test(text)) {
+            return EFFECT_TYPE.STACKING;
+        }
+
         // 적 상태 조건 체크
         for (const keyword of ENEMY_CONDITION_KEYWORDS) {
             if (new RegExp(keyword, 'i').test(text)) {

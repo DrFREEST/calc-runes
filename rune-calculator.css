@@ -35,16 +35,16 @@
     --color-bg-tertiary: #21262d;
     --color-bg-card: #1c2128;
     --color-bg-hover: #2d333b;
-    
+
     /* 텍스트 색상 */
     --color-text-primary: #e6edf3;
     --color-text-secondary: #8b949e;
     --color-text-muted: #6e7681;
-    
+
     /* 테두리 색상 */
     --color-border: #30363d;
     --color-border-light: #444c56;
-    
+
     /* 액센트 색상 */
     --color-accent-primary: #58a6ff;
     --color-accent-secondary: #3fb950;
@@ -52,7 +52,7 @@
     --color-accent-danger: #f85149;
     --color-accent-purple: #a371f7;
     --color-accent-pink: #db61a2;
-    
+
     /* 등급별 색상 */
     --color-grade-8: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77);
     --color-grade-7: #a855f7;
@@ -62,20 +62,20 @@
     --color-grade-3: #9ca3af;
     --color-grade-2: #78716c;
     --color-grade-1: #57534e;
-    
+
     /* 5대 스텟 색상 */
     --color-stat-str: #ef4444;
     --color-stat-dex: #eab308;
     --color-stat-int: #06b6d4;
     --color-stat-wil: #a855f7;
     --color-stat-luk: #22c55e;
-    
+
     /* 그림자 */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
     --shadow-glow: 0 0 20px rgba(88, 166, 255, 0.3);
-    
+
     /* 간격 */
     --spacing-xs: 4px;
     --spacing-sm: 8px;
@@ -83,7 +83,7 @@
     --spacing-lg: 24px;
     --spacing-xl: 32px;
     --spacing-2xl: 48px;
-    
+
     /* 폰트 */
     --font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-size-xs: 0.75rem;
@@ -93,19 +93,19 @@
     --font-size-xl: 1.25rem;
     --font-size-2xl: 1.5rem;
     --font-size-3xl: 2rem;
-    
+
     /* 둥근 모서리 */
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 12px;
     --radius-xl: 16px;
     --radius-full: 9999px;
-    
+
     /* 전환 효과 */
     --transition-fast: 150ms ease;
     --transition-normal: 250ms ease;
     --transition-slow: 350ms ease;
-    
+
     /* z-index 레이어 */
     --z-dropdown: 100;
     --z-modal: 1000;
@@ -135,9 +135,9 @@ body {
     color: var(--color-text-primary);
     background: var(--color-bg-primary);
     min-height: 100vh;
-    
+
     /* 배경 그라디언트 패턴 */
-    background-image: 
+    background-image:
         radial-gradient(ellipse at top, #1a2332 0%, transparent 50%),
         radial-gradient(ellipse at bottom, #0d1117 0%, transparent 50%);
 }
@@ -445,65 +445,70 @@ img {
 
 /* 등급별 테두리 효과 */
 /* @updated 2025-12-10 - 새로운 등급 체계 (신화/전설/유니크) */
+/* @updated 2025-12-10 - 등급 색상 변경 (신화: 노란색, 전설: 주황색, 유니크: 베이지) */
 
-/* 신화 등급 - 무지개 그라디언트 */
+/* 신화 등급 - 노란색 (골드) */
 .rune-card--grade-myth {
-    border: 2px solid transparent;
-    background: 
-        linear-gradient(var(--color-bg-card), var(--color-bg-card)) padding-box,
-        linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #a855f7) border-box;
+    border: 2px solid #ffd700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
     animation: mythGlow 3s ease-in-out infinite;
 }
 
-/* 전설(시즌1) 등급 - 금색 */
+/* 전설(시즌1) 등급 - 주황색 */
 .rune-card--grade-legend-s1 {
-    border-color: #ffd700;
-    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+    border-color: #ff8c00;
+    box-shadow: 0 0 10px rgba(255, 140, 0, 0.4);
 }
 
-/* 전설(시즌0) 등급 - 보라색 */
+/* 전설(시즌0) 등급 - 주황색 */
 .rune-card--grade-legend {
-    border-color: #a855f7;
-    box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+    border-color: #ff8c00;
+    box-shadow: 0 0 10px rgba(255, 140, 0, 0.4);
 }
 
-/* 유니크 등급 - 파란색 */
+/* 유니크 등급 - 밝은 베이지색 */
 .rune-card--grade-unique {
-    border-color: #3b82f6;
+    border-color: #d4c4a8;
+    box-shadow: 0 0 8px rgba(212, 196, 168, 0.3);
 }
 
 /* 등급 뱃지 색상 */
+/* @updated 2025-12-10 - 등급 색상 변경 */
+
+/* 신화 - 노란색 */
 .rune-card__badge--rainbow {
-    background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77);
+    background: linear-gradient(135deg, #ffd700, #ffec8b);
     color: #000;
     font-weight: 700;
 }
 
+/* 전설(시즌1) - 주황색 */
 .rune-card__badge--gold {
-    background: linear-gradient(135deg, #ffd700, #ffaa00);
+    background: linear-gradient(135deg, #ff8c00, #ffa500);
     color: #000;
     font-weight: 700;
 }
 
+/* 전설(시즌0) - 주황색 */
 .rune-card__badge--purple {
-    background: #a855f7;
-    color: white;
+    background: #ff8c00;
+    color: #000;
+    font-weight: 600;
 }
 
+/* 유니크 - 밝은 베이지색 */
 .rune-card__badge--blue {
-    background: #3b82f6;
-    color: white;
+    background: #d4c4a8;
+    color: #333;
 }
 
+/* 신화 등급 노란색 글로우 애니메이션 */
 @keyframes mythGlow {
     0%, 100% {
-        box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
     }
-    33% {
-        box-shadow: 0 0 15px rgba(255, 217, 61, 0.4);
-    }
-    66% {
-        box-shadow: 0 0 15px rgba(107, 203, 119, 0.4);
+    50% {
+        box-shadow: 0 0 25px rgba(255, 236, 139, 0.7);
     }
 }
 
@@ -1030,11 +1035,25 @@ img {
 }
 
 /* 5대 스텟 색상 */
-.stat-input__label--str { color: var(--color-stat-str); }
-.stat-input__label--dex { color: var(--color-stat-dex); }
-.stat-input__label--int { color: var(--color-stat-int); }
-.stat-input__label--wil { color: var(--color-stat-wil); }
-.stat-input__label--luk { color: var(--color-stat-luk); }
+.stat-input__label--str {
+    color: var(--color-stat-str);
+}
+
+.stat-input__label--dex {
+    color: var(--color-stat-dex);
+}
+
+.stat-input__label--int {
+    color: var(--color-stat-int);
+}
+
+.stat-input__label--wil {
+    color: var(--color-stat-wil);
+}
+
+.stat-input__label--luk {
+    color: var(--color-stat-luk);
+}
 
 .stat-input__field {
     padding: var(--spacing-sm);
@@ -1208,10 +1227,21 @@ img {
 }
 
 /* 효과 유형 색상 */
-.effect-tag[title="passive"] { border-left: 2px solid #3b82f6; }
-.effect-tag[title="trigger"] { border-left: 2px solid #eab308; }
-.effect-tag[title="state"] { border-left: 2px solid #f97316; }
-.effect-tag[title="enemy"] { border-left: 2px solid #ef4444; }
+.effect-tag[title="passive"] {
+    border-left: 2px solid #3b82f6;
+}
+
+.effect-tag[title="trigger"] {
+    border-left: 2px solid #eab308;
+}
+
+.effect-tag[title="state"] {
+    border-left: 2px solid #f97316;
+}
+
+.effect-tag[title="enemy"] {
+    border-left: 2px solid #ef4444;
+}
 
 .recommend-apply {
     margin-top: var(--spacing-lg);
@@ -1580,17 +1610,31 @@ img {
    15. 애니메이션
    ============================================ */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 @keyframes sparkle {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
 }
 
 @keyframes modalSlideIn {
@@ -1598,6 +1642,7 @@ img {
         opacity: 0;
         transform: translateY(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -1609,6 +1654,7 @@ img {
         opacity: 0;
         transform: translateX(100%);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -1619,6 +1665,7 @@ img {
    16. 반응형 디자인
    ============================================ */
 @media (max-width: 1200px) {
+
     .simulator-container,
     .recommend-container {
         grid-template-columns: 1fr;
@@ -1629,57 +1676,57 @@ img {
     .header__title {
         font-size: var(--font-size-2xl);
     }
-    
+
     .tab-nav {
         justify-content: flex-start;
     }
-    
+
     .tab-nav__btn {
         padding: var(--spacing-sm) var(--spacing-md);
         font-size: var(--font-size-sm);
     }
-    
+
     .filter-section__row {
         grid-template-columns: 1fr;
     }
-    
+
     .rune-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .stat-group__grid--5col {
         grid-template-columns: repeat(3, 1fr);
     }
-    
+
     .stat-group__grid--4col {
         grid-template-columns: repeat(2, 1fr);
     }
-    
+
     .recommend-options__grid {
         grid-template-columns: 1fr;
     }
-    
+
     .slot-group__slots {
         justify-content: center;
     }
-    
+
     .slot-actions {
         flex-direction: column;
     }
-    
+
     .slot-actions .btn {
         width: 100%;
     }
-    
+
     .recommend-actions {
         flex-direction: column;
     }
-    
+
     .modal__content {
         width: 95%;
         max-height: 90vh;
     }
-    
+
     .toast-container {
         left: var(--spacing-md);
         right: var(--spacing-md);
@@ -1691,26 +1738,26 @@ img {
     .main-container {
         padding: var(--spacing-sm);
     }
-    
+
     .header {
         padding: var(--spacing-md);
     }
-    
+
     .header__title {
         font-size: var(--font-size-xl);
     }
-    
+
     .tab-nav__btn {
         flex-direction: column;
         gap: var(--spacing-xs);
         padding: var(--spacing-sm);
     }
-    
+
     .rune-slot {
         width: 80px;
         height: 100px;
     }
-    
+
     .stat-group__grid--5col {
         grid-template-columns: repeat(2, 1fr);
     }

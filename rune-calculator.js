@@ -66,11 +66,31 @@
      * - grade 06 + stars 5 → 유니크(시즌0)
      */
     const GRADE_MAP = {
-        '08_8': { name: '신화', color: 'rainbow', priority: 1 },
-        '05_8': { name: '전설(시즌1)', color: 'gold', priority: 2 },
-        '07_6': { name: '전설(시즌0)', color: 'purple', priority: 3 },
-        '05_6': { name: '전설(시즌0)', color: 'purple', priority: 3 },  // 07_6과 동일 priority
-        '06_5': { name: '유니크(시즌0)', color: 'blue', priority: 4 }
+        '08_8': {
+            name: '신화',
+            color: 'rainbow',
+            priority: 1
+        },
+        '05_8': {
+            name: '전설(시즌1)',
+            color: 'gold',
+            priority: 2
+        },
+        '07_6': {
+            name: '전설(시즌0)',
+            color: 'purple',
+            priority: 3
+        },
+        '05_6': {
+            name: '전설(시즌0)',
+            color: 'purple',
+            priority: 3
+        }, // 07_6과 동일 priority
+        '06_5': {
+            name: '유니크(시즌0)',
+            color: 'blue',
+            priority: 4
+        }
     };
 
     /**
@@ -142,16 +162,46 @@
      * @updated 2025-12-10 - 카테고리 코드 수정 (방어구: 02, 엠블럼: 04)
      */
     const SLOT_CONFIG = {
-        'weapon-1': { category: '01', name: '무기' },
-        'emblem-1': { category: '04', name: '엠블럼' },
-        'accessory-1': { category: '03', name: '장신구 1' },
-        'accessory-2': { category: '03', name: '장신구 2' },
-        'accessory-3': { category: '03', name: '장신구 3' },
-        'armor-1': { category: '02', name: '방어구 1' },
-        'armor-2': { category: '02', name: '방어구 2' },
-        'armor-3': { category: '02', name: '방어구 3' },
-        'armor-4': { category: '02', name: '방어구 4' },
-        'armor-5': { category: '02', name: '방어구 5' }
+        'weapon-1': {
+            category: '01',
+            name: '무기'
+        },
+        'emblem-1': {
+            category: '04',
+            name: '엠블럼'
+        },
+        'accessory-1': {
+            category: '03',
+            name: '장신구 1'
+        },
+        'accessory-2': {
+            category: '03',
+            name: '장신구 2'
+        },
+        'accessory-3': {
+            category: '03',
+            name: '장신구 3'
+        },
+        'armor-1': {
+            category: '02',
+            name: '방어구 1'
+        },
+        'armor-2': {
+            category: '02',
+            name: '방어구 2'
+        },
+        'armor-3': {
+            category: '02',
+            name: '방어구 3'
+        },
+        'armor-4': {
+            category: '02',
+            name: '방어구 4'
+        },
+        'armor-5': {
+            category: '02',
+            name: '방어구 5'
+        }
     };
 
     /**
@@ -311,17 +361,17 @@
             if (!response.ok) {
                 throw new Error(`HTTP 오류: ${response.status}`);
             }
-            
+
             const data = await response.json();
-            
+
             // 유효한 등급의 룬만 필터링
             const validRunes = data.filter(rune => isValidGrade(rune));
-            
+
             state.allRunes = validRunes;
             state.filteredRunes = [...validRunes];
-            
+
             console.log(`✅ 룬 데이터 로드 완료: 전체 ${data.length}개 중 유효 등급 ${validRunes.length}개`);
-            
+
             // 등급별 통계 출력
             const gradeStats = {};
             validRunes.forEach(rune => {
@@ -331,15 +381,15 @@
                 }
             });
             console.log('📊 등급별 룬 수:', gradeStats);
-            
+
             // 초기 렌더링
             renderRuneList();
             updateFilterCount();
-            
+
         } catch (error) {
             console.error('❌ 룬 데이터 로드 실패:', error);
             showToast('룬 데이터를 불러오는데 실패했습니다.', 'error');
-            
+
             // 에러 메시지 표시
             const grid = $('#rune-grid');
             if (grid) {
@@ -366,8 +416,13 @@
      * @updated 2025-12-10 - 전설(시즌0) 통합 필터 (legendary_s0) 지원
      */
     function filterRunes() {
-        const { search, category, grade, klass } = state.filters;
-        
+        const {
+            search,
+            category,
+            grade,
+            klass
+        } = state.filters;
+
         state.filteredRunes = state.allRunes.filter(rune => {
             // 검색어 필터
             if (search) {
@@ -376,12 +431,12 @@
                 const descMatch = rune.description && stripHtml(rune.description).toLowerCase().includes(searchLower);
                 if (!nameMatch && !descMatch) return false;
             }
-            
+
             // 카테고리 필터
             if (category !== 'all' && rune.category !== category) {
                 return false;
             }
-            
+
             // 등급 필터 (새로운 체계: grade_stars 키 사용)
             if (grade !== 'all') {
                 const gradeKey = getGradeKey(rune);
@@ -394,7 +449,7 @@
                     return false;
                 }
             }
-            
+
             // 클래스 필터
             if (klass !== 'all') {
                 // '00'은 전체 클래스, 선택한 클래스와 일치하거나 '00'인 경우만 표시
@@ -402,10 +457,10 @@
                     return false;
                 }
             }
-            
+
             return true;
         });
-        
+
         // 등급 우선순위 정렬 (신화 > 전설(시즌1) > 전설(시즌0) > 유니크)
         state.filteredRunes.sort((a, b) => {
             const gradeInfoA = getGradeInfo(a);
@@ -414,7 +469,7 @@
             const priorityB = gradeInfoB ? gradeInfoB.priority : 999;
             return priorityA - priorityB;
         });
-        
+
         // 페이지 초기화 및 렌더링
         state.currentPage = 1;
         renderRuneList();
@@ -452,18 +507,18 @@
             grade: 'all',
             klass: 'all'
         };
-        
+
         // 입력 필드 초기화
         const searchInput = $('#search-input');
         const categorySelect = $('#filter-category');
         const gradeSelect = $('#filter-grade');
         const classSelect = $('#filter-class');
-        
+
         if (searchInput) searchInput.value = '';
         if (categorySelect) categorySelect.value = 'all';
         if (gradeSelect) gradeSelect.value = 'all';
         if (classSelect) classSelect.value = 'all';
-        
+
         filterRunes();
         showToast('필터가 초기화되었습니다.', 'success');
     }
@@ -479,11 +534,11 @@
     function renderRuneList() {
         const grid = $('#rune-grid');
         if (!grid) return;
-        
+
         const startIndex = (state.currentPage - 1) * ITEMS_PER_PAGE;
         const endIndex = startIndex + ITEMS_PER_PAGE;
         const pageRunes = state.filteredRunes.slice(startIndex, endIndex);
-        
+
         if (pageRunes.length === 0) {
             grid.innerHTML = `
                 <div class="loading-indicator">
@@ -492,7 +547,7 @@
             `;
             return;
         }
-        
+
         grid.innerHTML = pageRunes.map(rune => createRuneCard(rune)).join('');
     }
 
@@ -503,19 +558,22 @@
      * @updated 2025-12-10 - 새로운 등급 체계(신화/전설/유니크) 적용
      */
     function createRuneCard(rune) {
-        const gradeInfo = getGradeInfo(rune) || { name: '??', color: 'gray' };
+        const gradeInfo = getGradeInfo(rune) || {
+            name: '??',
+            color: 'gray'
+        };
         const categoryName = CATEGORY_MAP[rune.category] || '기타';
         const className = CLASS_MAP[rune.klass] || '알 수 없음';
         const isFavorite = state.favorites.includes(rune.id);
         const description = stripHtml(rune.description) || '설명 없음';
-        
+
         // 등급별 카드 클래스
         const gradeKey = getGradeKey(rune);
         const gradeClass = gradeKey === '08_8' ? 'rune-card--grade-myth' :
-                          gradeKey === '05_8' ? 'rune-card--grade-legend-s1' :
-                          (gradeKey === '07_6' || gradeKey === '05_6') ? 'rune-card--grade-legend' :
-                          gradeKey === '06_5' ? 'rune-card--grade-unique' : '';
-        
+            gradeKey === '05_8' ? 'rune-card--grade-legend-s1' :
+            (gradeKey === '07_6' || gradeKey === '05_6') ? 'rune-card--grade-legend' :
+            gradeKey === '06_5' ? 'rune-card--grade-unique' : '';
+
         return `
             <div class="rune-card ${gradeClass}" data-rune-id="${rune.id}">
                 <div class="rune-card__header">
@@ -560,39 +618,39 @@
     function renderPagination() {
         const paginationEl = $('#pagination');
         if (!paginationEl) return;
-        
+
         const totalPages = Math.ceil(state.filteredRunes.length / ITEMS_PER_PAGE);
-        
+
         if (totalPages <= 1) {
             paginationEl.innerHTML = '';
             return;
         }
-        
+
         let html = '';
-        
+
         // 이전 버튼
         html += `
             <button class="pagination__btn" data-page="prev" ${state.currentPage === 1 ? 'disabled' : ''}>
                 ◀
             </button>
         `;
-        
+
         // 페이지 번호
         const maxVisible = 5;
         let startPage = Math.max(1, state.currentPage - Math.floor(maxVisible / 2));
         let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-        
+
         if (endPage - startPage < maxVisible - 1) {
             startPage = Math.max(1, endPage - maxVisible + 1);
         }
-        
+
         if (startPage > 1) {
             html += `<button class="pagination__btn" data-page="1">1</button>`;
             if (startPage > 2) {
                 html += `<span class="pagination__dots">...</span>`;
             }
         }
-        
+
         for (let i = startPage; i <= endPage; i++) {
             html += `
                 <button class="pagination__btn ${i === state.currentPage ? 'pagination__btn--active' : ''}" 
@@ -601,21 +659,21 @@
                 </button>
             `;
         }
-        
+
         if (endPage < totalPages) {
             if (endPage < totalPages - 1) {
                 html += `<span class="pagination__dots">...</span>`;
             }
             html += `<button class="pagination__btn" data-page="${totalPages}">${totalPages}</button>`;
         }
-        
+
         // 다음 버튼
         html += `
             <button class="pagination__btn" data-page="next" ${state.currentPage === totalPages ? 'disabled' : ''}>
                 ▶
             </button>
         `;
-        
+
         paginationEl.innerHTML = html;
     }
 
@@ -625,7 +683,7 @@
      */
     function changePage(page) {
         const totalPages = Math.ceil(state.filteredRunes.length / ITEMS_PER_PAGE);
-        
+
         if (page === 'prev') {
             state.currentPage = Math.max(1, state.currentPage - 1);
         } else if (page === 'next') {
@@ -633,12 +691,15 @@
         } else {
             state.currentPage = parseInt(page);
         }
-        
+
         renderRuneList();
         renderPagination();
-        
+
         // 스크롤 위로
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     }
 
     // ============================================
@@ -694,10 +755,10 @@
     function renderSlot(slotId) {
         const slotEl = $(`.rune-slot[data-slot="${slotId}"]`);
         if (!slotEl) return;
-        
+
         const rune = state.equippedRunes[slotId];
         const slotConfig = SLOT_CONFIG[slotId];
-        
+
         if (rune) {
             slotEl.classList.add('rune-slot--filled');
             slotEl.innerHTML = `
@@ -745,14 +806,14 @@
     function renderEquippedRuneList() {
         const listEl = $('#equipped-runes-list');
         if (!listEl) return;
-        
+
         const equippedList = Object.entries(state.equippedRunes);
-        
+
         if (equippedList.length === 0) {
             listEl.innerHTML = '<p class="effect-empty">장착된 룬이 없습니다</p>';
             return;
         }
-        
+
         listEl.innerHTML = equippedList.map(([slotId, rune]) => {
             const slotConfig = SLOT_CONFIG[slotId];
             return `
@@ -780,11 +841,11 @@
      * @constant {Object}
      */
     const EFFECT_TYPE = {
-        PASSIVE: 'passive',           // 상시 효과 (100%)
-        TRIGGER: 'trigger',           // 트리거 효과 (80%)
-        STATE_CONDITION: 'state',     // 상태 조건 효과 (70%)
-        ENEMY_CONDITION: 'enemy',     // 적 상태 조건 (시너지 의존)
-        ENHANCEMENT: 'enhance'        // 강화 단계별 효과
+        PASSIVE: 'passive', // 상시 효과 (100%)
+        TRIGGER: 'trigger', // 트리거 효과 (80%)
+        STATE_CONDITION: 'state', // 상태 조건 효과 (70%)
+        ENEMY_CONDITION: 'enemy', // 적 상태 조건 (시너지 의존)
+        ENHANCEMENT: 'enhance' // 강화 단계별 효과
     };
 
     /**
@@ -792,11 +853,11 @@
      * @constant {Object}
      */
     const EFFECT_TYPE_WEIGHT = {
-        [EFFECT_TYPE.PASSIVE]: 1.0,        // 100%
-        [EFFECT_TYPE.TRIGGER]: 0.8,        // 80%
+        [EFFECT_TYPE.PASSIVE]: 1.0, // 100%
+        [EFFECT_TYPE.TRIGGER]: 0.8, // 80%
         [EFFECT_TYPE.STATE_CONDITION]: 0.7, // 70%
         [EFFECT_TYPE.ENEMY_CONDITION]: 0.5, // 50% (시너지 없을 때)
-        [EFFECT_TYPE.ENHANCEMENT]: 1.0      // 100% (강화 조건 충족 시)
+        [EFFECT_TYPE.ENHANCEMENT]: 1.0 // 100% (강화 조건 충족 시)
     };
 
     /**
@@ -872,13 +933,13 @@
         if (!rune || !rune.description) return [];
         const text = stripHtml(rune.description);
         const dotTypes = [];
-        
+
         DOT_KEYWORDS.forEach(keyword => {
             if (text.includes(keyword.replace('지속 피해: ', ''))) {
                 dotTypes.push(keyword);
             }
         });
-        
+
         return dotTypes;
     }
 
@@ -908,21 +969,21 @@
                 return EFFECT_TYPE.ENEMY_CONDITION;
             }
         }
-        
+
         // 상태 조건 체크
         for (const keyword of STATE_CONDITION_KEYWORDS) {
             if (new RegExp(keyword, 'i').test(text)) {
                 return EFFECT_TYPE.STATE_CONDITION;
             }
         }
-        
+
         // 트리거 체크
         for (const keyword of TRIGGER_KEYWORDS) {
             if (text.includes(keyword)) {
                 return EFFECT_TYPE.TRIGGER;
             }
         }
-        
+
         // 기본은 상시 효과
         return EFFECT_TYPE.PASSIVE;
     }
@@ -936,14 +997,14 @@
         // "최대 N회까지 중첩" 패턴
         const stackPattern = /최대\s*(\d+)\s*회까지\s*중첩/;
         const stackMatch = text.match(stackPattern);
-        
+
         if (stackMatch) {
             return {
                 maxStacks: parseInt(stackMatch[1]),
                 hasStack: true
             };
         }
-        
+
         return null;
     }
 
@@ -955,24 +1016,24 @@
     function parseDurationAndCooldown(text) {
         let duration = null;
         let cooldown = null;
-        
+
         // 지속 시간 패턴: "N초 동안"
         const durationPattern = /(\d+(?:\.\d+)?)\s*초\s*동안/;
         const durationMatch = text.match(durationPattern);
         if (durationMatch) {
             duration = parseFloat(durationMatch[1]);
         }
-        
+
         // 쿨타임 패턴: "(재사용 대기 시간: N초)"
         const cooldownPattern = /재사용\s*대기\s*시간[:\s]*(?:각\s*)?(\d+(?:\.\d+)?)\s*초/;
         const cooldownMatch = text.match(cooldownPattern);
         if (cooldownMatch) {
             cooldown = parseFloat(cooldownMatch[1]);
         }
-        
+
         // 업타임 계산
         let uptime = 1.0; // 기본 100%
-        
+
         if (duration !== null && cooldown !== null) {
             // 지속시간 / (지속시간 + 쿨타임)
             uptime = duration / (duration + cooldown);
@@ -980,8 +1041,12 @@
             // 쿨타임 없으면 트리거 조건만 필요 (80% 가정)
             uptime = 0.8;
         }
-        
-        return { duration, cooldown, uptime };
+
+        return {
+            duration,
+            cooldown,
+            uptime
+        };
     }
 
     /**
@@ -1000,7 +1065,7 @@
             enhanceLevel: 0,
             rawText: effectText
         };
-        
+
         // 강화 효과 체크
         if (/\+10.*강화/.test(effectText)) {
             result.isEnhanceBonus = true;
@@ -1012,41 +1077,97 @@
             result.enhanceLevel = 15;
             if (enhanceLevel < 15) return null; // 강화 조건 미충족
         }
-        
+
         // 효과 수치 파싱
-        const effectPatterns = [
-            { name: '공격력 증가', pattern: /공격력이?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/ },
-            { name: '피해량 증가', pattern: /(?:적에게\s*)?주는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/ },
-            { name: '무방비 피해 증가', pattern: /무방비\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '공격 속도 증가', pattern: /공격\s*속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '스킬 사용 속도 증가', pattern: /스킬\s*사용\s*속도.*?(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '이동 속도 증가', pattern: /이동\s*속도.*?(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '캐스팅 속도 증가', pattern: /캐스팅.*?속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '치명타 확률 증가', pattern: /치명타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '치명타 피해 증가', pattern: /치명타\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '추가타 확률 증가', pattern: /추가타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '받는 피해 감소', pattern: /받는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/ },
-            { name: '받는 피해 증가', pattern: /받는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '회복력 증가', pattern: /회복력이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '회복량 증가', pattern: /회복량이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '재사용 대기시간 감소', pattern: /재사용\s*대기\s*시간이?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/ },
-            { name: '재사용 대기시간 증가', pattern: /재사용\s*대기시간이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '스킬 피해량 증가', pattern: /스킬.*?피해량이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '기본 공격 피해량 증가', pattern: /기본\s*공격.*?피해량이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ }
+        const effectPatterns = [{
+                name: '공격력 증가',
+                pattern: /공격력이?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/
+            },
+            {
+                name: '피해량 증가',
+                pattern: /(?:적에게\s*)?주는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/
+            },
+            {
+                name: '무방비 피해 증가',
+                pattern: /무방비\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '공격 속도 증가',
+                pattern: /공격\s*속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '스킬 사용 속도 증가',
+                pattern: /스킬\s*사용\s*속도.*?(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '이동 속도 증가',
+                pattern: /이동\s*속도.*?(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '캐스팅 속도 증가',
+                pattern: /캐스팅.*?속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '치명타 확률 증가',
+                pattern: /치명타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '치명타 피해 증가',
+                pattern: /치명타\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '추가타 확률 증가',
+                pattern: /추가타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '받는 피해 감소',
+                pattern: /받는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/
+            },
+            {
+                name: '받는 피해 증가',
+                pattern: /받는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '회복력 증가',
+                pattern: /회복력이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '회복량 증가',
+                pattern: /회복량이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '재사용 대기시간 감소',
+                pattern: /재사용\s*대기\s*시간이?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/
+            },
+            {
+                name: '재사용 대기시간 증가',
+                pattern: /재사용\s*대기시간이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '스킬 피해량 증가',
+                pattern: /스킬.*?피해량이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '기본 공격 피해량 증가',
+                pattern: /기본\s*공격.*?피해량이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            }
         ];
-        
-        effectPatterns.forEach(({ name, pattern }) => {
+
+        effectPatterns.forEach(({
+            name,
+            pattern
+        }) => {
             const match = effectText.match(pattern);
             if (match) {
                 result.effects[name] = parseFloat(match[1]);
             }
         });
-        
+
         // 효과가 파싱되었으면 반환
         if (Object.keys(result.effects).length > 0) {
             return result;
         }
-        
+
         return null;
     }
 
@@ -1058,23 +1179,27 @@
      */
     function parseRuneEffectsAdvanced(rune, enhanceLevel = 0) {
         if (!rune || !rune.description) {
-            return { effects: [], totalScore: 0, summary: {} };
+            return {
+                effects: [],
+                totalScore: 0,
+                summary: {}
+            };
         }
-        
+
         const text = stripHtml(rune.description);
-        
+
         // 문장 단위로 분리 (줄바꿈, 마침표 기준)
         const sentences = text.split(/[\n\r]+|(?<=[다요음])\.\s*/).filter(s => s.trim());
-        
+
         const parsedEffects = [];
-        
+
         sentences.forEach(sentence => {
             const parsed = parseSingleEffect(sentence.trim(), enhanceLevel);
             if (parsed) {
                 parsedEffects.push(parsed);
             }
         });
-        
+
         return {
             effects: parsedEffects,
             runeName: rune.name,
@@ -1091,26 +1216,26 @@
      */
     function calculateEffectiveValue(parsedEffect, hasSynergy = false) {
         const result = {};
-        
+
         // 기본 가중치
         let typeWeight = EFFECT_TYPE_WEIGHT[parsedEffect.type] || 1.0;
-        
+
         // 적 상태 조건 + 시너지 보너스
         if (parsedEffect.type === EFFECT_TYPE.ENEMY_CONDITION && hasSynergy) {
             typeWeight = 0.9; // 50% -> 90%로 상승
         }
-        
+
         // 업타임 비율
-        const uptime = parsedEffect.timing?.uptime || 1.0;
-        
+        const uptime = parsedEffect.timing ? .uptime || 1.0;
+
         // 스택 배율
-        const stackMultiplier = parsedEffect.stackInfo?.maxStacks || 1;
-        
+        const stackMultiplier = parsedEffect.stackInfo ? .maxStacks || 1;
+
         // 각 효과에 가중치 적용
         Object.entries(parsedEffect.effects).forEach(([effectName, value]) => {
             // 실효값 = 기본값 × 스택 × 가중치 × 업타임
             const effectiveValue = value * stackMultiplier * typeWeight * uptime;
-            
+
             result[effectName] = {
                 raw: value,
                 stacks: stackMultiplier,
@@ -1120,7 +1245,7 @@
                 type: parsedEffect.type
             };
         });
-        
+
         return result;
     }
 
@@ -1147,39 +1272,43 @@
      */
     function calculateRuneEfficiencyScore(rune, enhanceLevel = 0, equippedDotTypes = []) {
         const parsed = parseRuneEffectsAdvanced(rune, enhanceLevel);
-        
+
         // 시너지 체크 (적 상태 조건용)
         const hasSynergy = equippedDotTypes.length > 0;
-        
+
         let totalScore = 0;
         const breakdown = [];
         const effectiveSummary = {};
-        
+
         parsed.effects.forEach(effect => {
             const effective = calculateEffectiveValue(effect, hasSynergy);
-            
+
             Object.entries(effective).forEach(([effectName, data]) => {
                 // DPS 핵심 효과만 점수 계산에 포함
                 if (!CORE_DPS_EFFECTS.includes(effectName)) {
                     // 효과 요약에는 포함하지만 점수에는 반영하지 않음
                     if (!effectiveSummary[effectName]) {
-                        effectiveSummary[effectName] = { total: 0, details: [], isCoreDPS: false };
+                        effectiveSummary[effectName] = {
+                            total: 0,
+                            details: [],
+                            isCoreDPS: false
+                        };
                     }
                     effectiveSummary[effectName].total += data.effective;
                     effectiveSummary[effectName].details.push(data);
                     return; // 점수 계산 스킵
                 }
-                
+
                 // DPS 핵심 효과별 점수 가중치
                 let scoreWeight = 10; // 기본 가중치
-                
+
                 if (['치명타 확률 증가', '치명타 피해 증가'].includes(effectName)) {
                     scoreWeight = 8; // 치명타는 약간 낮은 가중치
                 }
-                
+
                 const effectScore = data.effective * scoreWeight;
                 totalScore += effectScore;
-                
+
                 // 요약에 추가 (DPS 핵심 효과로 표시)
                 if (!effectiveSummary[effectName]) {
                     effectiveSummary[effectName] = {
@@ -1190,7 +1319,7 @@
                 }
                 effectiveSummary[effectName].total += data.effective;
                 effectiveSummary[effectName].details.push(data);
-                
+
                 breakdown.push({
                     effectName,
                     ...data,
@@ -1199,7 +1328,7 @@
                 });
             });
         });
-        
+
         return {
             score: Math.round(totalScore * 10) / 10,
             breakdown,
@@ -1217,15 +1346,19 @@
      */
     function parseRuneEffects(description, enhanceLevel = 0) {
         // 임시 룬 객체 생성
-        const tempRune = { description, name: '', id: 0 };
+        const tempRune = {
+            description,
+            name: '',
+            id: 0
+        };
         const result = calculateRuneEfficiencyScore(tempRune, enhanceLevel, getAllEquippedDotTypes());
-        
+
         // 기존 형식으로 변환
         const simpleEffects = {};
         Object.entries(result.effectiveSummary).forEach(([name, data]) => {
             simpleEffects[name] = Math.round(data.total * 10) / 10;
         });
-        
+
         return simpleEffects;
     }
 
@@ -1240,32 +1373,35 @@
      */
     function calculateTotalEffects() {
         const totalEffects = {
-            coreDPS: {},  // DPS 핵심 효과
-            other: {}     // 기타 효과
+            coreDPS: {}, // DPS 핵심 효과
+            other: {} // 기타 효과
         };
-        
+
         // 모든 장착 룬의 지속 피해 유형 수집
         const allDotTypes = getAllEquippedDotTypes();
         const hasSynergy = allDotTypes.length > 0;
-        
+
         Object.values(state.equippedRunes).forEach(rune => {
             if (!rune) return;
-            
+
             // 고급 효과 계산 사용
             const efficiency = calculateRuneEfficiencyScore(rune, state.enhanceLevel, allDotTypes);
-            
+
             Object.entries(efficiency.effectiveSummary).forEach(([key, data]) => {
                 // DPS 핵심 효과와 기타 효과 분류
                 const category = data.isCoreDPS ? 'coreDPS' : 'other';
-                
+
                 // 실효값 사용
                 if (!totalEffects[category][key]) {
-                    totalEffects[category][key] = { total: 0, isCoreDPS: data.isCoreDPS };
+                    totalEffects[category][key] = {
+                        total: 0,
+                        isCoreDPS: data.isCoreDPS
+                    };
                 }
                 totalEffects[category][key].total += data.total;
             });
         });
-        
+
         renderEffectSummary(totalEffects, hasSynergy, allDotTypes);
     }
 
@@ -1280,7 +1416,7 @@
         const attackList = $('#effect-list-attack');
         const defenseList = $('#effect-list-defense');
         const miscList = $('#effect-list-misc');
-        
+
         // DPS 핵심 효과 (공격 섹션에 표시)
         if (attackList) {
             const coreDPSEntries = Object.entries(totalEffects.coreDPS || {});
@@ -1301,7 +1437,7 @@
                 attackList.innerHTML = '<p class="effect-empty">장착된 룬이 없습니다</p>';
             }
         }
-        
+
         // 기타 효과 (방어 섹션에 표시)
         if (defenseList) {
             const otherEntries = Object.entries(totalEffects.other || {});
@@ -1324,11 +1460,11 @@
                 defenseList.innerHTML = '<p class="effect-empty">기타 효과 없음</p>';
             }
         }
-        
+
         // 시너지 정보 (기타 섹션에 표시)
         if (miscList) {
             let miscHtml = '';
-            
+
             // 시너지 정보 추가
             if (dotTypes.length > 0) {
                 miscHtml += `
@@ -1345,7 +1481,7 @@
                     </div>
                 `;
             }
-            
+
             if (miscHtml) {
                 miscList.innerHTML = miscHtml;
             } else {
@@ -1370,10 +1506,10 @@
         // 새로운 고급 효율 계산 사용
         const equippedDots = getAllEquippedDotTypes();
         const efficiency = calculateRuneEfficiencyScore(rune, 15, equippedDots);
-        
+
         // 기본 점수 (새 엔진의 점수)
         let score = efficiency.score;
-        
+
         // 역할별 추가 가중치 적용
         const roleMultipliers = {
             dealer: {
@@ -1410,9 +1546,9 @@
                 '회복력 증가': 0.8
             }
         };
-        
+
         const multipliers = roleMultipliers[role] || roleMultipliers.balanced;
-        
+
         // 역할별 가중치로 점수 조정
         let roleAdjustment = 0;
         Object.entries(efficiency.effectiveSummary).forEach(([effectName, data]) => {
@@ -1420,27 +1556,27 @@
             // 기본 점수에 역할 가중치 반영
             roleAdjustment += data.total * (multiplier - 1.0) * 5;
         });
-        
+
         score += roleAdjustment;
-        
+
         // 등급 보너스 (새 등급 체계)
         // @updated 2025-12-10 - 전설(시즌0) 통합으로 priority 조정 (유니크: 4)
         const gradeInfo = getGradeInfo(rune);
         if (gradeInfo) {
             const gradeBonus = {
                 1: 100, // 신화
-                2: 70,  // 전설(시즌1)
-                3: 50,  // 전설(시즌0) - 통합
-                4: 30   // 유니크(시즌0)
+                2: 70, // 전설(시즌1)
+                3: 50, // 전설(시즌0) - 통합
+                4: 30 // 유니크(시즌0)
             };
             score += gradeBonus[gradeInfo.priority] || 0;
         }
-        
+
         // 지속 피해 부여 룬은 시너지 보너스
         if (efficiency.dotTypes.length > 0) {
             score += efficiency.dotTypes.length * 10;
         }
-        
+
         return Math.round(score * 10) / 10;
     }
 
@@ -1449,68 +1585,84 @@
      */
     function runRecommendation() {
         console.warn('🎯 추천 시작...');
-        
+
         // 스텟 수집
         const stats = {
-            str: parseInt($('#stat-str')?.value) || 0,
-            dex: parseInt($('#stat-dex')?.value) || 0,
-            int: parseInt($('#stat-int')?.value) || 0,
-            wil: parseInt($('#stat-wil')?.value) || 0,
-            luk: parseInt($('#stat-luk')?.value) || 0,
-            atk: parseInt($('#stat-atk')?.value) || 0,
-            def: parseInt($('#stat-def')?.value) || 0
+            str: parseInt($('#stat-str') ? .value) || 0,
+            dex: parseInt($('#stat-dex') ? .value) || 0,
+            int: parseInt($('#stat-int') ? .value) || 0,
+            wil: parseInt($('#stat-wil') ? .value) || 0,
+            luk: parseInt($('#stat-luk') ? .value) || 0,
+            atk: parseInt($('#stat-atk') ? .value) || 0,
+            def: parseInt($('#stat-def') ? .value) || 0
         };
-        
-        const role = $('#recommend-role')?.value || 'dealer';
-        const selectedClass = $('#recommend-class')?.value || '00';
-        const minGrade = $('#recommend-min-grade')?.value || '4'; // priority 기반 (4 = 전설(시즌0) 이상)
-        
+
+        const role = $('#recommend-role') ? .value || 'dealer';
+        const selectedClass = $('#recommend-class') ? .value || '00';
+        const minGrade = $('#recommend-min-grade') ? .value || '4'; // priority 기반 (4 = 전설(시즌0) 이상)
+
         // 카테고리별 룬 필터링
         // @updated 2025-12-10 - 카테고리 코드 수정 (02: 방어구, 04: 엠블럼)
         const categories = {
-            '01': { count: 1, name: '무기 룬', slots: ['weapon-1'] },
-            '04': { count: 1, name: '엠블럼 룬', slots: ['emblem-1'] },
-            '03': { count: 3, name: '장신구 룬', slots: ['accessory-1', 'accessory-2', 'accessory-3'] },
-            '02': { count: 5, name: '방어구 룬', slots: ['armor-1', 'armor-2', 'armor-3', 'armor-4', 'armor-5'] }
+            '01': {
+                count: 1,
+                name: '무기 룬',
+                slots: ['weapon-1']
+            },
+            '04': {
+                count: 1,
+                name: '엠블럼 룬',
+                slots: ['emblem-1']
+            },
+            '03': {
+                count: 3,
+                name: '장신구 룬',
+                slots: ['accessory-1', 'accessory-2', 'accessory-3']
+            },
+            '02': {
+                count: 5,
+                name: '방어구 룬',
+                slots: ['armor-1', 'armor-2', 'armor-3', 'armor-4', 'armor-5']
+            }
         };
-        
+
         const recommendations = {};
-        
+
         Object.entries(categories).forEach(([categoryCode, config]) => {
             // 해당 카테고리 룬 필터링
             // @updated 2025-12-10 - 새로운 등급 체계 기반 필터링
             let categoryRunes = state.allRunes.filter(rune => {
                 // 카테고리 필터
                 if (rune.category !== categoryCode) return false;
-                
+
                 // 등급 필터 (priority 기반)
                 if (minGrade !== 'all') {
                     const gradeInfo = getGradeInfo(rune);
                     const minPriority = parseInt(minGrade) || 5;
                     if (!gradeInfo || gradeInfo.priority > minPriority) return false;
                 }
-                
+
                 // 클래스 필터
                 if (selectedClass !== '00') {
                     if (rune.klass !== selectedClass && rune.klass !== '00') return false;
                 }
-                
+
                 return true;
             });
-            
+
             // 점수 계산 및 정렬
             categoryRunes = categoryRunes.map(rune => ({
                 ...rune,
                 score: calculateRuneScore(rune, stats, role)
             })).sort((a, b) => b.score - a.score);
-            
+
             // 상위 N개 선택
             recommendations[categoryCode] = {
                 ...config,
                 runes: categoryRunes.slice(0, config.count)
             };
         });
-        
+
         renderRecommendations(recommendations);
     }
 
@@ -1523,47 +1675,47 @@
         const emptyEl = $('#recommend-empty');
         const slotsEl = $('#recommend-slots');
         const applyEl = $('#recommend-apply');
-        
+
         if (!slotsEl) return;
-        
+
         // 빈 상태 숨기기
         if (emptyEl) emptyEl.style.display = 'none';
         slotsEl.style.display = 'block';
         if (applyEl) applyEl.style.display = 'block';
-        
+
         let html = '';
-        
+
         Object.entries(recommendations).forEach(([categoryCode, data]) => {
             html += `
                 <div class="recommend-slot-group" data-category="${categoryCode}">
                     <h4 class="recommend-slot-group__title">${data.name} (${data.count}개)</h4>
             `;
-            
+
             if (data.runes.length === 0) {
                 html += `<p class="effect-empty">추천할 룬이 없습니다</p>`;
             } else {
                 data.runes.forEach((rune, index) => {
                     // 고급 효과 분석 사용
                     const efficiency = calculateRuneEfficiencyScore(rune, 15, []);
-                    
+
                     // DPS 핵심 효과만 우선 정렬하여 표시
                     // @updated 2025-12-10 - 핵심 DPS 효과만 표시
                     const effectEntries = Object.entries(efficiency.effectiveSummary)
                         .filter(([name, data]) => data.isCoreDPS) // 핵심 DPS 효과만
                         .sort((a, b) => Math.abs(b[1].total) - Math.abs(a[1].total))
                         .slice(0, 4); // 최대 4개
-                    
+
                     const effectHtml = effectEntries.map(([name, data]) => {
                         const sign = data.total >= 0 ? '+' : '';
                         // DPS 핵심 효과는 ⚡ 아이콘
                         const typeIcon = '⚡';
                         return `<span class="effect-tag effect-tag--core" title="DPS 핵심 효과">${typeIcon} ${name} ${sign}${data.total.toFixed(1)}%</span>`;
                     }).join(' ');
-                    
+
                     // 등급 정보
                     const gradeInfo = getGradeInfo(rune);
                     const gradeName = gradeInfo ? gradeInfo.name : '??';
-                    
+
                     html += `
                         <div class="recommend-rune-item" data-rune-id="${rune.id}" data-slot="${data.slots[index]}">
                             <img class="recommend-rune-item__image" 
@@ -1587,15 +1739,15 @@
                     `;
                 });
             }
-            
+
             html += `</div>`;
         });
-        
+
         slotsEl.innerHTML = html;
-        
+
         // 추천 결과를 state에 저장
         state.lastRecommendations = recommendations;
-        
+
         showToast('최적 룬 조합이 계산되었습니다!', 'success');
     }
 
@@ -1607,10 +1759,10 @@
             showToast('추천 결과가 없습니다.', 'error');
             return;
         }
-        
+
         // 기존 슬롯 초기화
         state.equippedRunes = {};
-        
+
         // 추천 룬 장착
         Object.values(state.lastRecommendations).forEach(data => {
             data.runes.forEach((rune, index) => {
@@ -1620,16 +1772,16 @@
                 }
             });
         });
-        
+
         // 슬롯 렌더링
         Object.keys(SLOT_CONFIG).forEach(slotId => renderSlot(slotId));
         calculateTotalEffects();
         renderEquippedRuneList();
         saveEquippedRunes();
-        
+
         // 시뮬레이터 탭으로 이동
         switchTab('simulator');
-        
+
         showToast('추천 룬이 시뮬레이터에 적용되었습니다!', 'success');
     }
 
@@ -1641,16 +1793,16 @@
         statInputs.forEach(input => {
             input.value = '';
         });
-        
+
         // 추천 결과 초기화
         const emptyEl = $('#recommend-empty');
         const slotsEl = $('#recommend-slots');
         const applyEl = $('#recommend-apply');
-        
+
         if (emptyEl) emptyEl.style.display = 'flex';
         if (slotsEl) slotsEl.style.display = 'none';
         if (applyEl) applyEl.style.display = 'none';
-        
+
         showToast('스텟이 초기화되었습니다.', 'success');
     }
 
@@ -1664,7 +1816,7 @@
      */
     function toggleFavorite(runeId) {
         const index = state.favorites.indexOf(runeId);
-        
+
         if (index === -1) {
             state.favorites.push(runeId);
             showToast('즐겨찾기에 추가되었습니다.', 'success');
@@ -1672,7 +1824,7 @@
             state.favorites.splice(index, 1);
             showToast('즐겨찾기에서 제거되었습니다.', 'success');
         }
-        
+
         saveFavorites();
         renderRuneList(); // 목록 업데이트
         renderFavorites(); // 즐겨찾기 탭 업데이트
@@ -1698,18 +1850,18 @@
     function renderFavorites() {
         const grid = $('#favorites-grid');
         const emptyEl = $('#favorites-empty');
-        
+
         if (!grid) return;
-        
+
         const favoriteRunes = state.allRunes.filter(rune => state.favorites.includes(rune.id));
-        
+
         if (favoriteRunes.length === 0) {
             if (emptyEl) emptyEl.style.display = 'flex';
             grid.innerHTML = '';
             grid.appendChild(emptyEl);
             return;
         }
-        
+
         if (emptyEl) emptyEl.style.display = 'none';
         grid.innerHTML = favoriteRunes.map(rune => createRuneCard(rune)).join('');
     }
@@ -1726,10 +1878,10 @@
     function openRuneSelectModal(slotId) {
         const modal = $('#rune-select-modal');
         if (!modal) return;
-        
+
         state.selectedSlot = slotId;
         const slotConfig = SLOT_CONFIG[slotId];
-        
+
         // 해당 카테고리의 룬만 필터링
         const categoryRunes = state.allRunes.filter(rune => {
             return rune.category === slotConfig.category;
@@ -1741,7 +1893,7 @@
             const priorityB = gradeInfoB ? gradeInfoB.priority : 999;
             return priorityA - priorityB;
         });
-        
+
         renderModalRuneList(categoryRunes);
         modal.classList.add('modal--open');
     }
@@ -1754,14 +1906,17 @@
     function renderModalRuneList(runes) {
         const listEl = $('#modal-rune-list');
         if (!listEl) return;
-        
+
         if (runes.length === 0) {
             listEl.innerHTML = '<p class="effect-empty">해당하는 룬이 없습니다.</p>';
             return;
         }
-        
+
         listEl.innerHTML = runes.map(rune => {
-            const gradeInfo = getGradeInfo(rune) || { name: '??', color: 'gray' };
+            const gradeInfo = getGradeInfo(rune) || {
+                name: '??',
+                color: 'gray'
+            };
             return `
                 <div class="modal-rune-item" data-rune-id="${rune.id}">
                     <img class="modal-rune-item__image" 
@@ -1786,19 +1941,22 @@
         const modal = $('#rune-detail-modal');
         const contentEl = $('#rune-detail-content');
         const titleEl = $('#detail-modal-title');
-        
+
         if (!modal || !contentEl) return;
-        
+
         const rune = state.allRunes.find(r => r.id === runeId);
         if (!rune) return;
-        
-        const gradeInfo = getGradeInfo(rune) || { name: '??', color: 'gray' };
+
+        const gradeInfo = getGradeInfo(rune) || {
+            name: '??',
+            color: 'gray'
+        };
         const categoryName = CATEGORY_MAP[rune.category] || '기타';
         const className = CLASS_MAP[rune.klass] || '전체';
         const effects = parseRuneEffects(rune.description, 15);
-        
+
         if (titleEl) titleEl.textContent = rune.name;
-        
+
         contentEl.innerHTML = `
             <img class="rune-detail__image" 
                  src="${rune.image || 'https://via.placeholder.com/80'}" 
@@ -1833,7 +1991,7 @@
                 </div>
             ` : ''}
         `;
-        
+
         modal.classList.add('modal--open');
     }
 
@@ -1855,21 +2013,21 @@
      * @updated 2025-12-10 - 전설(시즌0) 통합 필터 (legendary_s0) 지원
      */
     function filterModalRunes() {
-        const searchValue = $('#modal-search')?.value?.toLowerCase() || '';
-        const gradeValue = $('#modal-grade')?.value || 'all';
+        const searchValue = $('#modal-search') ? .value ? .toLowerCase() || '';
+        const gradeValue = $('#modal-grade') ? .value || 'all';
         const slotConfig = SLOT_CONFIG[state.selectedSlot];
-        
+
         if (!slotConfig) return;
-        
+
         const filteredRunes = state.allRunes.filter(rune => {
             // 카테고리 필터
             if (rune.category !== slotConfig.category) return false;
-            
+
             // 검색어 필터
             if (searchValue && !rune.name.toLowerCase().includes(searchValue)) {
                 return false;
             }
-            
+
             // 등급 필터 (새로운 체계: grade_stars 키 사용)
             if (gradeValue !== 'all') {
                 const gradeKey = getGradeKey(rune);
@@ -1882,7 +2040,7 @@
                     return false;
                 }
             }
-            
+
             return true;
         }).sort((a, b) => {
             // 등급 우선순위 정렬
@@ -1892,7 +2050,7 @@
             const priorityB = gradeInfoB ? gradeInfoB.priority : 999;
             return priorityA - priorityB;
         });
-        
+
         renderModalRuneList(filteredRunes);
     }
 
@@ -1908,13 +2066,13 @@
         const titleEl = $('#preset-modal-title');
         const saveForm = $('#preset-save-form');
         const listEl = $('#preset-list');
-        
+
         if (!modal) return;
-        
+
         if (titleEl) titleEl.textContent = '프리셋 저장';
         if (saveForm) saveForm.style.display = 'flex';
         if (listEl) listEl.style.display = 'none';
-        
+
         modal.classList.add('modal--open');
     }
 
@@ -1926,13 +2084,13 @@
         const titleEl = $('#preset-modal-title');
         const saveForm = $('#preset-save-form');
         const listEl = $('#preset-list');
-        
+
         if (!modal) return;
-        
+
         if (titleEl) titleEl.textContent = '프리셋 불러오기';
         if (saveForm) saveForm.style.display = 'none';
         if (listEl) listEl.style.display = 'block';
-        
+
         renderPresetList();
         modal.classList.add('modal--open');
     }
@@ -1942,26 +2100,28 @@
      */
     function savePreset() {
         const nameInput = $('#preset-name-input');
-        const name = nameInput?.value?.trim();
-        
+        const name = nameInput ? .value ? .trim();
+
         if (!name) {
             showToast('프리셋 이름을 입력해주세요.', 'error');
             return;
         }
-        
+
         const preset = {
             id: Date.now(),
             name: name,
             date: new Date().toLocaleDateString('ko-KR'),
-            runes: { ...state.equippedRunes }
+            runes: {
+                ...state.equippedRunes
+            }
         };
-        
+
         state.presets.push(preset);
         saveToStorage(STORAGE_KEYS.PRESETS, state.presets);
-        
+
         closeModal('preset-modal');
         if (nameInput) nameInput.value = '';
-        
+
         showToast(`프리셋 "${name}"이 저장되었습니다.`, 'success');
     }
 
@@ -1972,14 +2132,16 @@
     function loadPreset(presetId) {
         const preset = state.presets.find(p => p.id === presetId);
         if (!preset) return;
-        
-        state.equippedRunes = { ...preset.runes };
-        
+
+        state.equippedRunes = {
+            ...preset.runes
+        };
+
         Object.keys(SLOT_CONFIG).forEach(slotId => renderSlot(slotId));
         calculateTotalEffects();
         renderEquippedRuneList();
         saveEquippedRunes();
-        
+
         closeModal('preset-modal');
         showToast(`프리셋 "${preset.name}"을 불러왔습니다.`, 'success');
     }
@@ -1991,11 +2153,11 @@
     function deletePreset(presetId) {
         const index = state.presets.findIndex(p => p.id === presetId);
         if (index === -1) return;
-        
+
         const preset = state.presets[index];
         state.presets.splice(index, 1);
         saveToStorage(STORAGE_KEYS.PRESETS, state.presets);
-        
+
         renderPresetList();
         showToast(`프리셋 "${preset.name}"이 삭제되었습니다.`, 'success');
     }
@@ -2006,12 +2168,12 @@
     function renderPresetList() {
         const listEl = $('#preset-list');
         if (!listEl) return;
-        
+
         if (state.presets.length === 0) {
             listEl.innerHTML = '<p class="effect-empty">저장된 프리셋이 없습니다.</p>';
             return;
         }
-        
+
         listEl.innerHTML = state.presets.map(preset => `
             <div class="preset-item" data-preset-id="${preset.id}">
                 <div>
@@ -2045,13 +2207,13 @@
     function showToast(message, type = 'success', duration = 3000) {
         const container = $('#toast-container');
         if (!container) return;
-        
+
         const icons = {
             success: '✅',
             error: '❌',
             warning: '⚠️'
         };
-        
+
         const toast = document.createElement('div');
         toast.className = `toast toast--${type}`;
         toast.innerHTML = `
@@ -2059,14 +2221,14 @@
             <span class="toast__message">${escapeHtml(message)}</span>
             <button class="toast__close">×</button>
         `;
-        
+
         container.appendChild(toast);
-        
+
         // 닫기 버튼 이벤트
         toast.querySelector('.toast__close').addEventListener('click', () => {
             toast.remove();
         });
-        
+
         // 자동 제거
         setTimeout(() => {
             toast.style.animation = 'fadeOut var(--transition-normal)';
@@ -2087,12 +2249,12 @@
         $$('.tab-nav__btn').forEach(btn => {
             btn.classList.toggle('tab-nav__btn--active', btn.dataset.tab === tabId);
         });
-        
+
         // 탭 컨텐츠 활성화
         $$('.tab-content').forEach(content => {
             content.classList.toggle('tab-content--active', content.id === `tab-${tabId}`);
         });
-        
+
         // 특정 탭 진입 시 추가 동작
         if (tabId === 'favorites') {
             renderFavorites();
@@ -2111,42 +2273,42 @@
         $$('.tab-nav__btn').forEach(btn => {
             btn.addEventListener('click', () => switchTab(btn.dataset.tab));
         });
-        
+
         // 필터 이벤트
         const searchInput = $('#search-input');
         const categorySelect = $('#filter-category');
         const gradeSelect = $('#filter-grade');
         const classSelect = $('#filter-class');
         const resetBtn = $('#btn-reset-filter');
-        
+
         if (searchInput) {
             searchInput.addEventListener('input', debounce(e => {
                 updateFilter('search', e.target.value);
             }, 300));
         }
-        
+
         if (categorySelect) {
             categorySelect.addEventListener('change', e => {
                 updateFilter('category', e.target.value);
             });
         }
-        
+
         if (gradeSelect) {
             gradeSelect.addEventListener('change', e => {
                 updateFilter('grade', e.target.value);
             });
         }
-        
+
         if (classSelect) {
             classSelect.addEventListener('change', e => {
                 updateFilter('klass', e.target.value);
             });
         }
-        
+
         if (resetBtn) {
             resetBtn.addEventListener('click', resetFilters);
         }
-        
+
         // 페이지네이션 이벤트 위임
         const pagination = $('#pagination');
         if (pagination) {
@@ -2157,19 +2319,19 @@
                 }
             });
         }
-        
+
         // 룬 카드 이벤트 위임
         const runeGrid = $('#rune-grid');
         if (runeGrid) {
             runeGrid.addEventListener('click', handleRuneCardClick);
         }
-        
+
         // 즐겨찾기 그리드 이벤트 위임
         const favGrid = $('#favorites-grid');
         if (favGrid) {
             favGrid.addEventListener('click', handleRuneCardClick);
         }
-        
+
         // 슬롯 클릭 이벤트
         $$('.rune-slot').forEach(slot => {
             slot.addEventListener('click', e => {
@@ -2179,12 +2341,12 @@
                     unequipRune(removeBtn.dataset.slot);
                     return;
                 }
-                
+
                 // 슬롯 클릭 시 모달 열기
                 openRuneSelectModal(slot.dataset.slot);
             });
         });
-        
+
         // 강화 단계 변경
         $$('input[name="enhance-level"]').forEach(radio => {
             radio.addEventListener('change', e => {
@@ -2192,46 +2354,46 @@
                 calculateTotalEffects();
             });
         });
-        
+
         // 슬롯 관리 버튼
         const clearBtn = $('#btn-clear-all-slots');
         const savePresetBtn = $('#btn-save-preset');
         const loadPresetBtn = $('#btn-load-preset');
-        
+
         if (clearBtn) {
             clearBtn.addEventListener('click', clearAllSlots);
         }
-        
+
         if (savePresetBtn) {
             savePresetBtn.addEventListener('click', openSavePresetModal);
         }
-        
+
         if (loadPresetBtn) {
             loadPresetBtn.addEventListener('click', openLoadPresetModal);
         }
-        
+
         // 추천 시스템 버튼
         const recommendBtn = $('#btn-recommend');
         const resetStatsBtn = $('#btn-reset-stats');
         const applyRecommendBtn = $('#btn-apply-recommend');
-        
+
         if (recommendBtn) {
             recommendBtn.addEventListener('click', runRecommendation);
         }
-        
+
         if (resetStatsBtn) {
             resetStatsBtn.addEventListener('click', resetStats);
         }
-        
+
         if (applyRecommendBtn) {
             applyRecommendBtn.addEventListener('click', applyRecommendations);
         }
-        
+
         // 모달 닫기 버튼
-        $('#modal-close')?.addEventListener('click', () => closeModal('rune-select-modal'));
-        $('#detail-modal-close')?.addEventListener('click', () => closeModal('rune-detail-modal'));
-        $('#preset-modal-close')?.addEventListener('click', () => closeModal('preset-modal'));
-        
+        $('#modal-close') ? .addEventListener('click', () => closeModal('rune-select-modal'));
+        $('#detail-modal-close') ? .addEventListener('click', () => closeModal('rune-detail-modal'));
+        $('#preset-modal-close') ? .addEventListener('click', () => closeModal('preset-modal'));
+
         // 모달 오버레이 클릭 시 닫기
         $$('.modal__overlay').forEach(overlay => {
             overlay.addEventListener('click', () => {
@@ -2241,19 +2403,19 @@
                 }
             });
         });
-        
+
         // 모달 내 필터
         const modalSearch = $('#modal-search');
         const modalGrade = $('#modal-grade');
-        
+
         if (modalSearch) {
             modalSearch.addEventListener('input', debounce(filterModalRunes, 300));
         }
-        
+
         if (modalGrade) {
             modalGrade.addEventListener('change', filterModalRunes);
         }
-        
+
         // 모달 내 룬 선택
         const modalRuneList = $('#modal-rune-list');
         if (modalRuneList) {
@@ -2269,13 +2431,13 @@
                 }
             });
         }
-        
+
         // 프리셋 저장 확인
         const presetSaveConfirm = $('#btn-preset-save-confirm');
         if (presetSaveConfirm) {
             presetSaveConfirm.addEventListener('click', savePreset);
         }
-        
+
         // 프리셋 목록 클릭 이벤트 위임
         const presetList = $('#preset-list');
         if (presetList) {
@@ -2286,7 +2448,7 @@
                     deletePreset(parseInt(deleteBtn.dataset.presetId));
                     return;
                 }
-                
+
                 const presetItem = e.target.closest('.preset-item');
                 if (presetItem) {
                     loadPreset(parseInt(presetItem.dataset.presetId));
@@ -2306,14 +2468,14 @@
             toggleFavorite(runeId);
             return;
         }
-        
+
         const detailBtn = e.target.closest('[data-action="detail"]');
         if (detailBtn) {
             const runeId = parseInt(detailBtn.dataset.runeId);
             openRuneDetailModal(runeId);
             return;
         }
-        
+
         // 카드 자체 클릭 시 상세 모달
         const card = e.target.closest('.rune-card');
         if (card && !e.target.closest('.rune-card__actions')) {
@@ -2331,23 +2493,23 @@
      */
     async function init() {
         console.log('🚀 마비노기 모바일 룬 효율 계산기 초기화 시작...');
-        
+
         // 저장된 데이터 불러오기
         loadFavorites();
         loadPresets();
-        
+
         // 이벤트 리스너 설정
         setupEventListeners();
-        
+
         // 룬 데이터 로드
         await loadRuneData();
-        
+
         // 장착된 룬 불러오기
         loadEquippedRunes();
-        
+
         // 페이지네이션 렌더링
         renderPagination();
-        
+
         console.log('✅ 초기화 완료!');
     }
 
@@ -2359,4 +2521,3 @@
     }
 
 })();
-

@@ -1681,10 +1681,15 @@
         // 효과 수치 파싱 (효과 부분에서)
         // @updated 2025-12-10 - 연타/강타/스킬위력 추가
         // @updated 2025-12-10 - 기본 공격 관련 효과 제외 (DPS 비중 낮음)
-        
+        // @updated 2025-12-10 - 무방비 공격 적중 시 효과 제외 (브레이크 발동 시간 긺)
+
         // 기본 공격 관련 효과 체크 (효율에서 제외할 것들)
         var isBasicAttackEffect = /기본\s*공격/.test(effectText);
         
+        // 무방비 공격 적중 시 효과 체크 (효율에서 제외) @added 2025-12-10
+        // 브레이크 발동까지 시간이 오래 걸려 실제 DPS 기여도 낮음
+        var isDefenseBreakEffect = /무방비\s*공격\s*적중\s*시/.test(effectText);
+
         var effectPatterns = [{
                 name: '공격력 증가',
                 pattern: /공격력이?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/
@@ -1737,10 +1742,9 @@
                 pattern: /회복력이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
             }
         ];
-        
+
         // 기본 공격 관련 효과 패턴 (기타 효과로 분류) @added 2025-12-10
-        var basicAttackPatterns = [
-            {
+        var basicAttackPatterns = [{
                 name: '기본 공격 추가타 확률 증가',
                 pattern: /기본\s*공격(?:의)?\s*추가타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
             },
@@ -1751,6 +1755,22 @@
             {
                 name: '기본 공격 속도 증가',
                 pattern: /기본\s*공격\s*속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            }
+        ];
+        
+        // 무방비 공격 적중 시 효과 패턴 (기타 효과로 분류) @added 2025-12-10
+        // 브레이크 발동까지 시간이 오래 걸려 어비스/레이드에서 효율 낮음
+        var defenseBreakPatterns = [{
+                name: '무방비 피해량 증가',
+                pattern: /(?:무방비\s*공격\s*적중\s*시.*?)?주는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '무방비 공격 속도 증가',
+                pattern: /(?:무방비\s*공격\s*적중\s*시.*?)?공격\s*속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '무방비 스킬 속도 증가',
+                pattern: /(?:무방비\s*공격\s*적중\s*시.*?)?스킬\s*사용\s*속도.*?(\d+(?:\.\d+)?)\s*%?\s*증가/
             }
         ];
 
@@ -1815,15 +1835,37 @@
                 }
             });
         }
+        
+        // 무방비 공격 적중 시 효과 파싱 @added 2025-12-10
+        // 브레이크 발동까지 시간이 오래 걸려 DPS 효율에서 제외
+        if (isDefenseBreakEffect) {
+            defenseBreakPatterns.forEach(function(item) {
+                var match = effectText.match(item.pattern);
+                if (match) {
+                    if (!result.defenseBreakEffects) {
+                        result.defenseBreakEffects = {};
+                    }
+                    result.defenseBreakEffects[item.name] = parseFloat(match[1]);
+                }
+            });
+            // 무방비 효과는 일반 효과에서 제외하고 리턴
+            result.isDefenseBreakOnly = true;
+        }
 
         // 전체 텍스트에서 효과 파싱 (수치 추출)
         // @updated 2025-12-10 - 기본 공격 관련 효과 제외 처리
+        // @updated 2025-12-10 - 무방비 공격 적중 시 효과 제외 처리
         effectPatterns.forEach(function(item) {
             // 기본 공격 관련 효과면서 제외 플래그가 있으면 스킵
             if (item.excludeIfBasicAttack && isBasicAttackEffect) {
                 return; // 스킵
             }
             
+            // 무방비 공격 적중 시 효과면 핵심 DPS 효과에서 제외
+            if (isDefenseBreakEffect) {
+                return; // 스킵 - 무방비 효과는 별도 처리됨
+            }
+
             var match = effectText.match(item.pattern);
             if (match) {
                 result.effects[item.name] = parseFloat(match[1]);
@@ -1847,12 +1889,13 @@
             }
         });
 
-        // 효과 또는 결함 또는 기본 공격 효과가 있으면 반환 @updated 2025-12-10
+        // 효과 또는 결함 또는 기본 공격/무방비 효과가 있으면 반환 @updated 2025-12-10
         var hasEffects = Object.keys(result.effects).length > 0;
         var hasDemerits = result.demerits && Object.keys(result.demerits).length > 0;
         var hasBasicAttackEffects = result.basicAttackEffects && Object.keys(result.basicAttackEffects).length > 0;
+        var hasDefenseBreakEffects = result.defenseBreakEffects && Object.keys(result.defenseBreakEffects).length > 0;
         
-        if (hasEffects || hasDemerits || hasBasicAttackEffects) {
+        if (hasEffects || hasDemerits || hasBasicAttackEffects || hasDefenseBreakEffects) {
             return result;
         }
 
@@ -2437,6 +2480,32 @@
                         raw: value,
                         effective: value,
                         type: '기본 공격'
+                    });
+                });
+            }
+
+            // ====================================================
+            // 무방비 공격 적중 시 효과 처리 - 기타 효과로 분류 (점수 미반영)
+            // @added 2025-12-10
+            // 브레이크 발동까지 시간이 오래 걸려 어비스/레이드에서 효율 낮음
+            // ====================================================
+            if (effect.defenseBreakEffects && Object.keys(effect.defenseBreakEffects).length > 0) {
+                Object.entries(effect.defenseBreakEffects).forEach(function([effectName, value]) {
+                    // 무방비 효과는 기타 효과로 표시 (점수 미반영)
+                    var displayName = effectName + ' (무방비)';
+                    if (!effectiveSummary[displayName]) {
+                        effectiveSummary[displayName] = {
+                            total: 0,
+                            details: [],
+                            isCoreDPS: false,
+                            isDefenseBreak: true // 무방비 효과 표시
+                        };
+                    }
+                    effectiveSummary[displayName].total += value;
+                    effectiveSummary[displayName].details.push({
+                        raw: value,
+                        effective: value,
+                        type: '무방비'
                     });
                 });
             }

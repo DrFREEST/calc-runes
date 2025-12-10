@@ -1026,7 +1026,14 @@
             var awakeningEffectMatch = text.match(awakeningEffectPattern);
 
             if (awakeningEffectMatch) {
-                result.awakeningEffects = parseEffectValues(awakeningEffectMatch[1]);
+                var awakeningEffectText = awakeningEffectMatch[1];
+
+                // 기본 공격 관련 각성인지 체크 @added 2025-12-10
+                if (/기본\s*공격/.test(awakeningEffectText)) {
+                    result.isBasicAttackAwakening = true;
+                }
+
+                result.awakeningEffects = parseEffectValues(awakeningEffectText);
             }
         }
 
@@ -1039,6 +1046,12 @@
      * @returns {Object} 파싱된 효과
      * @added 2025-12-10
      */
+    /**
+     * 효과 문자열에서 수치 파싱
+     * @param {string} effectText - 효과 텍스트
+     * @returns {Object} 파싱된 효과
+     * @updated 2025-12-10 - 엠블럼 각성 효과 전체 검수 반영
+     */
     function parseEffectValues(effectText) {
         var effects = {};
 
@@ -1046,9 +1059,13 @@
         var atkMatch = effectText.match(/공격력이?\s*(\d+(?:\.\d+)?)\s*%/);
         if (atkMatch) effects['공격력 증가'] = parseFloat(atkMatch[1]);
 
-        // 피해량 증가
+        // 피해량 증가 (일반)
         var dmgMatch = effectText.match(/(?:적에게\s*)?주는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%/);
         if (dmgMatch) effects['피해량 증가'] = parseFloat(dmgMatch[1]);
+
+        // 스킬 피해 증가 @added 2025-12-10
+        var skillDmgMatch = effectText.match(/스킬\s*피해가?\s*(\d+(?:\.\d+)?)\s*%/);
+        if (skillDmgMatch) effects['스킬 피해 증가'] = parseFloat(skillDmgMatch[1]);
 
         // 치명타 확률
         var critChanceMatch = effectText.match(/치명타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%/);
@@ -1066,6 +1083,10 @@
         var heavyChanceMatch = effectText.match(/강타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%/);
         if (heavyChanceMatch) effects['강타 확률 증가'] = parseFloat(heavyChanceMatch[1]);
 
+        // 연타 피해 @added 2025-12-10
+        var multiHitDmgMatch = effectText.match(/연타\s*피해가?\s*(\d+(?:\.\d+)?)\s*%/);
+        if (multiHitDmgMatch) effects['연타 피해 증가'] = parseFloat(multiHitDmgMatch[1]);
+
         // 연타 확률 @added 2025-12-10
         var multiHitMatch = effectText.match(/연타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%/);
         if (multiHitMatch) effects['연타 확률 증가'] = parseFloat(multiHitMatch[1]);
@@ -1077,6 +1098,18 @@
         // 스킬 사용 속도 @added 2025-12-10
         var skillSpeedMatch = effectText.match(/스킬\s*사용\s*속도가?\s*(\d+(?:\.\d+)?)\s*%/);
         if (skillSpeedMatch) effects['스킬 사용 속도 증가'] = parseFloat(skillSpeedMatch[1]);
+
+        // 캐스팅/차지 속도 @added 2025-12-10
+        var castSpeedMatch = effectText.match(/캐스팅\s*(?:및\s*)?(?:차지\s*)?속도가?\s*(\d+(?:\.\d+)?)\s*%/);
+        if (castSpeedMatch) effects['캐스팅 속도 증가'] = parseFloat(castSpeedMatch[1]);
+
+        // 재사용 대기 시간 회복 속도 @added 2025-12-10
+        var cooldownRecoveryMatch = effectText.match(/재사용\s*대기\s*(?:시간\s*)?회복\s*속도가?\s*(\d+(?:\.\d+)?)\s*%/);
+        if (cooldownRecoveryMatch) effects['쿨타임 회복 속도 증가'] = parseFloat(cooldownRecoveryMatch[1]);
+
+        // 재사용 대기 시간 감소 @added 2025-12-10
+        var cooldownReduceMatch = effectText.match(/재사용\s*대기\s*시간이?\s*(\d+(?:\.\d+)?)\s*%\s*감소/);
+        if (cooldownReduceMatch) effects['쿨타임 감소'] = parseFloat(cooldownReduceMatch[1]);
 
         return effects;
     }
@@ -1142,12 +1175,12 @@
         var awakening = parseEmblemAwakening(emblemRune.description);
 
         if (!awakening || !awakening.hasAwakening) return 0;
-        
+
         // 무방비 각성은 제한적 효과로 업타임 0 처리
         if (awakening.isDefenseBreakAwakening) return 0;
 
         var effectiveCooldown = Math.max(awakening.cooldown - cooldownReduction, 10); // 최소 10초
-        
+
         // 업타임 = 지속시간 / (지속시간 + 쿨타임)
         // 발동 확률은 업타임에 미포함 (쿨타임 후 거의 즉시 발동)
         var uptime = awakening.duration / (awakening.duration + effectiveCooldown);
@@ -2343,12 +2376,18 @@
      * @description 효율 점수 계산에 포함되는 핵심 DPS 효과
      * @updated 2025-12-10 - 연타/강타/추가타 추가, 스탯 효율 반영
      */
+    /**
+     * DPS 핵심 효과 목록
+     * @updated 2025-12-10 - 엠블럼 각성 효과 전체 검수 반영
+     */
     const CORE_DPS_EFFECTS = [
         '공격력 증가',
         '피해량 증가',
+        '스킬 피해 증가', // @added 2025-12-10
         '치명타 확률 증가',
         '치명타 피해 증가',
         '연타 확률 증가',
+        '연타 피해 증가', // @added 2025-12-10
         '강타 확률 증가',
         '강타 피해 증가', // @added 2025-12-10
         '추가타 확률 증가'
@@ -2393,10 +2432,16 @@
      * @added 2025-12-10
      * @updated 2025-12-10 - 결함 효과 가중치 추가
      */
+    /**
+     * 효과별 점수 가중치
+     * @updated 2025-12-10 - 엠블럼 각성 효과 전체 검수 반영
+     */
     const EFFECT_SCORE_WEIGHT = {
         '공격력 증가': 10,
         '피해량 증가': 10,
+        '스킬 피해 증가': 10, // 피해량 증가와 동급 @added 2025-12-10
         '연타 확률 증가': 12, // 효율 1위
+        '연타 피해 증가': 9, // 연타 피해 (확률보다 낮은 가중치) @added 2025-12-10
         '강타 확률 증가': 11,
         '강타 피해 증가': 9, // 강타 피해 (확률보다 낮은 가중치) @added 2025-12-10
         '추가타 확률 증가': 11, // 효율 2위
@@ -3007,6 +3052,14 @@
                         isLimited: true,
                         limitReason: '무방비 발동 필요'
                     };
+                    // 기본 공격 각성도 제한적 효과로 처리 @added 2025-12-10
+                } else if (awakening.isBasicAttackAwakening) {
+                    awakeningInfo = {
+                        duration: awakening.duration,
+                        baseCooldown: awakening.cooldown,
+                        isLimited: true,
+                        limitReason: '기본 공격 효과 (DPS 비중 낮음)'
+                    };
                 } else {
                     var effectiveCooldown = Math.max(awakening.cooldown - awakeningCooldownReduction, 10);
                     // 업타임 = 지속시간 / (지속시간 + 쿨타임)
@@ -3020,59 +3073,59 @@
                         uptime: uptime
                     };
 
-                // 각성 효과를 업타임 적용하여 점수에 반영
-                Object.entries(awakening.awakeningEffects).forEach(function([effectName, value]) {
-                    if (CORE_DPS_EFFECTS.includes(effectName)) {
-                        var effectiveValue = value * uptime;
-                        // 효과별 가중치 사용 @updated 2025-12-10
-                        var scoreWeight = EFFECT_SCORE_WEIGHT[effectName] || 10;
+                    // 각성 효과를 업타임 적용하여 점수에 반영
+                    Object.entries(awakening.awakeningEffects).forEach(function([effectName, value]) {
+                        if (CORE_DPS_EFFECTS.includes(effectName)) {
+                            var effectiveValue = value * uptime;
+                            // 효과별 가중치 사용 @updated 2025-12-10
+                            var scoreWeight = EFFECT_SCORE_WEIGHT[effectName] || 10;
 
-                        var effectScore = effectiveValue * scoreWeight;
-                        totalScore += effectScore;
+                            var effectScore = effectiveValue * scoreWeight;
+                            totalScore += effectScore;
 
-                        // 요약에 추가 (각성 효과로 표시)
-                        var awakeningEffectName = effectName + ' (각성)';
-                        if (!effectiveSummary[awakeningEffectName]) {
-                            effectiveSummary[awakeningEffectName] = {
-                                total: 0,
-                                details: [],
-                                isCoreDPS: true,
-                                isAwakening: true
-                            };
+                            // 요약에 추가 (각성 효과로 표시)
+                            var awakeningEffectName = effectName + ' (각성)';
+                            if (!effectiveSummary[awakeningEffectName]) {
+                                effectiveSummary[awakeningEffectName] = {
+                                    total: 0,
+                                    details: [],
+                                    isCoreDPS: true,
+                                    isAwakening: true
+                                };
+                            }
+                            effectiveSummary[awakeningEffectName].total += effectiveValue;
+
+                            breakdown.push({
+                                effectName: awakeningEffectName,
+                                raw: value,
+                                uptime: uptime,
+                                effective: effectiveValue,
+                                type: 'awakening',
+                                scoreWeight: scoreWeight,
+                                contribution: effectScore
+                            });
                         }
-                        effectiveSummary[awakeningEffectName].total += effectiveValue;
+                    });
 
-                        breakdown.push({
-                            effectName: awakeningEffectName,
-                            raw: value,
-                            uptime: uptime,
-                            effective: effectiveValue,
-                            type: 'awakening',
-                            scoreWeight: scoreWeight,
-                            contribution: effectScore
-                        });
-                    }
-                });
+                    // 상시 효과 추가
+                    Object.entries(awakening.passiveEffects).forEach(function([effectName, value]) {
+                        if (CORE_DPS_EFFECTS.includes(effectName)) {
+                            // 효과별 가중치 사용 @updated 2025-12-10
+                            var scoreWeight = EFFECT_SCORE_WEIGHT[effectName] || 10;
 
-                // 상시 효과 추가
-                Object.entries(awakening.passiveEffects).forEach(function([effectName, value]) {
-                    if (CORE_DPS_EFFECTS.includes(effectName)) {
-                        // 효과별 가중치 사용 @updated 2025-12-10
-                        var scoreWeight = EFFECT_SCORE_WEIGHT[effectName] || 10;
+                            var effectScore = value * scoreWeight;
+                            totalScore += effectScore;
 
-                        var effectScore = value * scoreWeight;
-                        totalScore += effectScore;
-
-                        if (!effectiveSummary[effectName]) {
-                            effectiveSummary[effectName] = {
-                                total: 0,
-                                details: [],
-                                isCoreDPS: true
-                            };
+                            if (!effectiveSummary[effectName]) {
+                                effectiveSummary[effectName] = {
+                                    total: 0,
+                                    details: [],
+                                    isCoreDPS: true
+                                };
+                            }
+                            effectiveSummary[effectName].total += value;
                         }
-                        effectiveSummary[effectName].total += value;
-                    }
-                });
+                    });
                 } // else 블록 종료
             }
         }

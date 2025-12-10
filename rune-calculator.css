@@ -1,0 +1,1718 @@
+/**
+ * ============================================
+ * 마비노기 모바일 룬 효율 계산기 - 스타일시트
+ * ============================================
+ * @file        rune-calculator.css
+ * @description 다크 테마 기반 반응형 스타일링
+ * @author      Dalkong Project
+ * @created     2025-12-10
+ * @modified    2025-12-10
+ * @version     1.0.0
+ * 
+ * @structure
+ * 1. CSS 변수 (색상, 폰트, 간격 등)
+ * 2. 리셋 및 기본 스타일
+ * 3. 레이아웃 컴포넌트
+ * 4. 헤더 스타일
+ * 5. 탭 네비게이션
+ * 6. 필터 섹션
+ * 7. 룬 카드 그리드
+ * 8. 시뮬레이터 스타일
+ * 9. 추천 시스템 스타일
+ * 10. 모달 스타일
+ * 11. 유틸리티 클래스
+ * 12. 반응형 디자인
+ * 13. 애니메이션
+ */
+
+/* ============================================
+   1. CSS 변수 정의
+   ============================================ */
+:root {
+    /* 메인 색상 팔레트 - 다크 판타지 테마 */
+    --color-bg-primary: #0d1117;
+    --color-bg-secondary: #161b22;
+    --color-bg-tertiary: #21262d;
+    --color-bg-card: #1c2128;
+    --color-bg-hover: #2d333b;
+    
+    /* 텍스트 색상 */
+    --color-text-primary: #e6edf3;
+    --color-text-secondary: #8b949e;
+    --color-text-muted: #6e7681;
+    
+    /* 테두리 색상 */
+    --color-border: #30363d;
+    --color-border-light: #444c56;
+    
+    /* 액센트 색상 */
+    --color-accent-primary: #58a6ff;
+    --color-accent-secondary: #3fb950;
+    --color-accent-warning: #d29922;
+    --color-accent-danger: #f85149;
+    --color-accent-purple: #a371f7;
+    --color-accent-pink: #db61a2;
+    
+    /* 등급별 색상 */
+    --color-grade-8: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77);
+    --color-grade-7: #a855f7;
+    --color-grade-6: #3b82f6;
+    --color-grade-5: #22c55e;
+    --color-grade-4: #eab308;
+    --color-grade-3: #9ca3af;
+    --color-grade-2: #78716c;
+    --color-grade-1: #57534e;
+    
+    /* 5대 스텟 색상 */
+    --color-stat-str: #ef4444;
+    --color-stat-dex: #eab308;
+    --color-stat-int: #06b6d4;
+    --color-stat-wil: #a855f7;
+    --color-stat-luk: #22c55e;
+    
+    /* 그림자 */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 20px rgba(88, 166, 255, 0.3);
+    
+    /* 간격 */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+    
+    /* 폰트 */
+    --font-family: 'Pretendard', 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-md: 1rem;
+    --font-size-lg: 1.125rem;
+    --font-size-xl: 1.25rem;
+    --font-size-2xl: 1.5rem;
+    --font-size-3xl: 2rem;
+    
+    /* 둥근 모서리 */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-full: 9999px;
+    
+    /* 전환 효과 */
+    --transition-fast: 150ms ease;
+    --transition-normal: 250ms ease;
+    --transition-slow: 350ms ease;
+    
+    /* z-index 레이어 */
+    --z-dropdown: 100;
+    --z-modal: 1000;
+    --z-toast: 1100;
+}
+
+/* ============================================
+   2. 리셋 및 기본 스타일
+   ============================================ */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-family);
+    font-size: var(--font-size-md);
+    line-height: 1.6;
+    color: var(--color-text-primary);
+    background: var(--color-bg-primary);
+    min-height: 100vh;
+    
+    /* 배경 그라디언트 패턴 */
+    background-image: 
+        radial-gradient(ellipse at top, #1a2332 0%, transparent 50%),
+        radial-gradient(ellipse at bottom, #0d1117 0%, transparent 50%);
+}
+
+a {
+    color: var(--color-accent-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: var(--color-accent-secondary);
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+
+input,
+select,
+textarea {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* 스크롤바 스타일링 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-border-light);
+    border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+}
+
+/* ============================================
+   3. 레이아웃 컴포넌트
+   ============================================ */
+.main-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+}
+
+/* ============================================
+   4. 헤더 스타일
+   ============================================ */
+.header {
+    text-align: center;
+    padding: var(--spacing-xl) var(--spacing-md);
+    background: linear-gradient(180deg, var(--color-bg-secondary) 0%, transparent 100%);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.header__title {
+    font-size: var(--font-size-3xl);
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+    background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.header__icon {
+    display: inline-block;
+    margin-right: var(--spacing-sm);
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+.header__subtitle {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-md);
+}
+
+/* ============================================
+   5. 탭 네비게이션
+   ============================================ */
+.tab-nav {
+    display: flex;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: var(--spacing-lg);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.tab-nav__btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-md);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: all var(--transition-normal);
+    white-space: nowrap;
+}
+
+.tab-nav__btn:hover {
+    color: var(--color-text-primary);
+    background: var(--color-bg-hover);
+    border-color: var(--color-border-light);
+}
+
+.tab-nav__btn--active {
+    color: var(--color-accent-primary);
+    background: var(--color-bg-card);
+    border-color: var(--color-accent-primary);
+    box-shadow: var(--shadow-glow);
+}
+
+.tab-nav__icon {
+    font-size: var(--font-size-lg);
+}
+
+/* 탭 컨텐츠 */
+.tab-content {
+    display: none;
+    animation: fadeIn var(--transition-normal);
+}
+
+.tab-content--active {
+    display: block;
+}
+
+/* ============================================
+   6. 필터 섹션
+   ============================================ */
+.filter-section {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+.filter-section__row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.filter-group__label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.filter-group__input,
+.filter-group__select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-md);
+    color: var(--color-text-primary);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.filter-group__input:focus,
+.filter-group__select:focus {
+    outline: none;
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+}
+
+.filter-group__input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.filter-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+}
+
+#filter-result-count {
+    font-weight: 700;
+    color: var(--color-accent-primary);
+}
+
+/* ============================================
+   7. 버튼 스타일
+   ============================================ */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: var(--font-size-md);
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.btn--primary {
+    color: white;
+    background: var(--color-accent-primary);
+}
+
+.btn--primary:hover {
+    background: #4196e6;
+    box-shadow: var(--shadow-md);
+}
+
+.btn--secondary {
+    color: var(--color-text-primary);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+}
+
+.btn--secondary:hover {
+    background: var(--color-bg-hover);
+    border-color: var(--color-border-light);
+}
+
+.btn--ghost {
+    color: var(--color-text-secondary);
+    background: transparent;
+}
+
+.btn--ghost:hover {
+    color: var(--color-text-primary);
+    background: var(--color-bg-tertiary);
+}
+
+.btn--danger {
+    color: white;
+    background: var(--color-accent-danger);
+}
+
+.btn--danger:hover {
+    background: #dc3d35;
+}
+
+.btn--small {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--font-size-sm);
+}
+
+.btn--large {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-lg);
+}
+
+/* ============================================
+   8. 룬 카드 그리드
+   ============================================ */
+.rune-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+}
+
+/* 룬 카드 */
+.rune-card {
+    position: relative;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+}
+
+.rune-card:hover {
+    border-color: var(--color-border-light);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+/* 등급별 테두리 효과 */
+/* @updated 2025-12-10 - 새로운 등급 체계 (신화/전설/유니크) */
+
+/* 신화 등급 - 무지개 그라디언트 */
+.rune-card--grade-myth {
+    border: 2px solid transparent;
+    background: 
+        linear-gradient(var(--color-bg-card), var(--color-bg-card)) padding-box,
+        linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #a855f7) border-box;
+    animation: mythGlow 3s ease-in-out infinite;
+}
+
+/* 전설(시즌1) 등급 - 금색 */
+.rune-card--grade-legend-s1 {
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+/* 전설(시즌0) 등급 - 보라색 */
+.rune-card--grade-legend {
+    border-color: #a855f7;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.3);
+}
+
+/* 유니크 등급 - 파란색 */
+.rune-card--grade-unique {
+    border-color: #3b82f6;
+}
+
+/* 등급 뱃지 색상 */
+.rune-card__badge--rainbow {
+    background: linear-gradient(135deg, #ff6b6b, #ffd93d, #6bcb77);
+    color: #000;
+    font-weight: 700;
+}
+
+.rune-card__badge--gold {
+    background: linear-gradient(135deg, #ffd700, #ffaa00);
+    color: #000;
+    font-weight: 700;
+}
+
+.rune-card__badge--purple {
+    background: #a855f7;
+    color: white;
+}
+
+.rune-card__badge--blue {
+    background: #3b82f6;
+    color: white;
+}
+
+@keyframes mythGlow {
+    0%, 100% {
+        box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+    }
+    33% {
+        box-shadow: 0 0 15px rgba(255, 217, 61, 0.4);
+    }
+    66% {
+        box-shadow: 0 0 15px rgba(107, 203, 119, 0.4);
+    }
+}
+
+.rune-card__header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
+}
+
+.rune-card__image {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-tertiary);
+    object-fit: cover;
+}
+
+.rune-card__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.rune-card__name {
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rune-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+}
+
+.rune-card__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 8px;
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    border-radius: var(--radius-full);
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+}
+
+.rune-card__badge--grade {
+    background: var(--color-accent-purple);
+    color: white;
+}
+
+.rune-card__badge--category {
+    background: var(--color-accent-primary);
+    color: white;
+}
+
+.rune-card__description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.rune-card__actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border);
+}
+
+.rune-card__btn {
+    flex: 1;
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.rune-card__btn--favorite {
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+}
+
+.rune-card__btn--favorite:hover,
+.rune-card__btn--favorite.active {
+    background: var(--color-accent-warning);
+    color: white;
+}
+
+.rune-card__btn--equip {
+    background: var(--color-accent-primary);
+    color: white;
+}
+
+.rune-card__btn--equip:hover {
+    background: #4196e6;
+}
+
+/* 페이지네이션 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+}
+
+.pagination__btn {
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.pagination__btn:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-border-light);
+}
+
+.pagination__btn--active {
+    color: white;
+    background: var(--color-accent-primary);
+    border-color: var(--color-accent-primary);
+}
+
+/* 로딩 인디케이터 */
+.loading-indicator {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-2xl);
+    color: var(--color-text-secondary);
+}
+
+.loading-indicator__spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--color-border);
+    border-top-color: var(--color-accent-primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: var(--spacing-md);
+}
+
+/* ============================================
+   9. 시뮬레이터 스타일
+   ============================================ */
+.simulator-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+.simulator-slots,
+.simulator-result {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.section-title {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.section-desc {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* 슬롯 그룹 */
+.slot-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.slot-group__title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-md);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.slot-group__icon {
+    font-size: var(--font-size-lg);
+}
+
+.slot-group__slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+/* 룬 슬롯 */
+.rune-slot {
+    width: 100px;
+    height: 120px;
+    background: var(--color-bg-tertiary);
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+}
+
+.rune-slot:hover {
+    border-color: var(--color-accent-primary);
+    background: var(--color-bg-hover);
+}
+
+.rune-slot--filled {
+    border-style: solid;
+    border-color: var(--color-accent-primary);
+}
+
+.rune-slot__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: var(--color-text-muted);
+}
+
+.rune-slot__plus {
+    font-size: var(--font-size-2xl);
+    font-weight: 300;
+}
+
+.rune-slot__label {
+    font-size: var(--font-size-xs);
+}
+
+.rune-slot__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--spacing-xs);
+}
+
+.rune-slot__image {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-xs);
+}
+
+.rune-slot__name {
+    font-size: var(--font-size-xs);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 90px;
+}
+
+.rune-slot__remove {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-sm);
+    color: white;
+    background: var(--color-accent-danger);
+    border-radius: 50%;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.rune-slot:hover .rune-slot__remove {
+    opacity: 1;
+}
+
+/* 슬롯 관리 버튼 */
+.slot-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+/* 강화 단계 선택기 */
+.enhance-selector {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.enhance-selector__label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.enhance-selector__options {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+.enhance-option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.enhance-option:has(input:checked) {
+    color: var(--color-accent-primary);
+    border-color: var(--color-accent-primary);
+    background: rgba(88, 166, 255, 0.1);
+}
+
+.enhance-option input {
+    display: none;
+}
+
+/* 효과 요약 */
+.effect-summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.effect-category {
+    padding: var(--spacing-md);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.effect-category__title {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.effect-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.effect-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-xs) 0;
+    font-size: var(--font-size-sm);
+}
+
+.effect-item__name {
+    color: var(--color-text-secondary);
+}
+
+.effect-item__value {
+    font-weight: 600;
+    color: var(--color-accent-secondary);
+}
+
+.effect-item__value--negative {
+    color: var(--color-accent-danger);
+}
+
+.effect-empty {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    text-align: center;
+    padding: var(--spacing-sm);
+}
+
+/* 장착된 룬 목록 */
+.equipped-runes {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+.equipped-runes__title {
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+}
+
+.equipped-runes__list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.equipped-rune-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.equipped-rune-item__image {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+}
+
+.equipped-rune-item__info {
+    flex: 1;
+}
+
+.equipped-rune-item__name {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.equipped-rune-item__slot {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+/* ============================================
+   10. 추천 시스템 스타일
+   ============================================ */
+.recommend-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+.stat-input-section,
+.recommend-result {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+/* 스텟 그룹 */
+.stat-group {
+    margin-bottom: var(--spacing-lg);
+}
+
+.stat-group__title {
+    font-size: var(--font-size-md);
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.stat-group__grid {
+    display: grid;
+    gap: var(--spacing-sm);
+}
+
+.stat-group__grid--5col {
+    grid-template-columns: repeat(5, 1fr);
+}
+
+.stat-group__grid--4col {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.stat-group__grid--2col {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* 스텟 입력 */
+.stat-input {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.stat-input__label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-align: center;
+}
+
+/* 5대 스텟 색상 */
+.stat-input__label--str { color: var(--color-stat-str); }
+.stat-input__label--dex { color: var(--color-stat-dex); }
+.stat-input__label--int { color: var(--color-stat-int); }
+.stat-input__label--wil { color: var(--color-stat-wil); }
+.stat-input__label--luk { color: var(--color-stat-luk); }
+
+.stat-input__field {
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-md);
+    text-align: center;
+    color: var(--color-text-primary);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.stat-input__field:focus {
+    outline: none;
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+}
+
+/* 숫자 입력 스피너 숨기기 */
+.stat-input__field::-webkit-inner-spin-button,
+.stat-input__field::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.stat-input__field[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* 추천 옵션 */
+.recommend-options {
+    margin-bottom: var(--spacing-lg);
+}
+
+.recommend-options__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+}
+
+.option-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.option-group__label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+/* 추천 버튼 */
+.recommend-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+}
+
+/* 추천 결과 - 빈 상태 */
+.recommend-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-2xl);
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+.recommend-empty__icon {
+    font-size: 64px;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+/* 추천 슬롯 */
+.recommend-slots {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.recommend-slot-group {
+    padding: var(--spacing-md);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.recommend-slot-group__title {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-accent-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.recommend-rune-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm);
+    background: var(--color-bg-card);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--spacing-sm);
+}
+
+.recommend-rune-item:last-child {
+    margin-bottom: 0;
+}
+
+.recommend-rune-item__image {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+}
+
+.recommend-rune-item__info {
+    flex: 1;
+}
+
+.recommend-rune-item__name {
+    font-weight: 500;
+    margin-bottom: var(--spacing-xs);
+}
+
+.recommend-rune-item__effect {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.recommend-rune-item__score {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.recommend-rune-item__score-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.recommend-rune-item__score-value {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-accent-secondary);
+}
+
+/* 효과 태그 스타일 */
+/* @added 2025-12-10 */
+.effect-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 6px;
+    margin: 2px;
+    font-size: var(--font-size-xs);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-sm);
+    color: var(--color-text-secondary);
+}
+
+.recommend-rune-item__grade {
+    font-size: var(--font-size-xs);
+    color: var(--color-accent-purple);
+    margin-left: var(--spacing-xs);
+}
+
+.recommend-rune-item__synergy {
+    font-size: var(--font-size-xs);
+    color: var(--color-accent-warning);
+    margin-top: var(--spacing-xs);
+}
+
+/* 효과 유형 색상 */
+.effect-tag[title="passive"] { border-left: 2px solid #3b82f6; }
+.effect-tag[title="trigger"] { border-left: 2px solid #eab308; }
+.effect-tag[title="state"] { border-left: 2px solid #f97316; }
+.effect-tag[title="enemy"] { border-left: 2px solid #ef4444; }
+
+.recommend-apply {
+    margin-top: var(--spacing-lg);
+    text-align: center;
+}
+
+/* ============================================
+   11. 즐겨찾기 섹션
+   ============================================ */
+.favorites-section {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.favorites-empty {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-2xl);
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+.favorites-empty__icon {
+    font-size: 64px;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+/* ============================================
+   12. 모달 스타일
+   ============================================ */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: var(--z-modal);
+}
+
+.modal--open {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+}
+
+.modal__content {
+    position: relative;
+    width: 90%;
+    max-width: 600px;
+    max-height: 80vh;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: modalSlideIn var(--transition-normal);
+}
+
+.modal__content--detail {
+    max-width: 500px;
+}
+
+.modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--color-bg-tertiary);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.modal__title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+}
+
+.modal__close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-xl);
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.modal__close:hover {
+    color: var(--color-text-primary);
+    background: var(--color-bg-hover);
+}
+
+.modal__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+}
+
+/* 모달 내 필터 */
+.modal-filter {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-md);
+}
+
+.modal-filter__input,
+.modal-filter__select {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.modal-filter__input {
+    flex: 1;
+}
+
+/* 모달 룬 목록 */
+.modal-rune-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.modal-rune-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.modal-rune-item:hover {
+    border-color: var(--color-accent-primary);
+    background: var(--color-bg-hover);
+}
+
+.modal-rune-item__image {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+}
+
+.modal-rune-item__info {
+    flex: 1;
+}
+
+.modal-rune-item__name {
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.modal-rune-item__grade {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+/* 룬 상세 정보 */
+.rune-detail {
+    text-align: center;
+}
+
+.rune-detail__image {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.rune-detail__name {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.rune-detail__meta {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.rune-detail__description {
+    text-align: left;
+    font-size: var(--font-size-sm);
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+    padding: var(--spacing-md);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.rune-detail__effects {
+    margin-top: var(--spacing-lg);
+    text-align: left;
+}
+
+.rune-detail__effects-title {
+    font-size: var(--font-size-md);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.rune-detail__effect-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* 프리셋 목록 */
+.preset-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.preset-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.preset-item:hover {
+    border-color: var(--color-accent-primary);
+}
+
+.preset-item__name {
+    font-weight: 500;
+}
+
+.preset-item__date {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.preset-item__delete {
+    color: var(--color-accent-danger);
+    padding: var(--spacing-xs);
+}
+
+.preset-save {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+}
+
+.preset-save__input {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-md);
+    color: var(--color-text-primary);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+/* ============================================
+   13. 토스트 알림
+   ============================================ */
+.toast-container {
+    position: fixed;
+    bottom: var(--spacing-lg);
+    right: var(--spacing-lg);
+    z-index: var(--z-toast);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    animation: toastSlideIn var(--transition-normal);
+}
+
+.toast--success {
+    border-color: var(--color-accent-secondary);
+}
+
+.toast--error {
+    border-color: var(--color-accent-danger);
+}
+
+.toast--warning {
+    border-color: var(--color-accent-warning);
+}
+
+.toast__icon {
+    font-size: var(--font-size-lg);
+}
+
+.toast__message {
+    flex: 1;
+    font-size: var(--font-size-sm);
+}
+
+.toast__close {
+    color: var(--color-text-muted);
+    padding: var(--spacing-xs);
+}
+
+/* ============================================
+   14. 푸터
+   ============================================ */
+.footer {
+    text-align: center;
+    padding: var(--spacing-xl);
+    margin-top: var(--spacing-2xl);
+    border-top: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+}
+
+.footer__version {
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-size-xs);
+}
+
+/* ============================================
+   15. 애니메이션
+   ============================================ */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes sparkle {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ============================================
+   16. 반응형 디자인
+   ============================================ */
+@media (max-width: 1200px) {
+    .simulator-container,
+    .recommend-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .header__title {
+        font-size: var(--font-size-2xl);
+    }
+    
+    .tab-nav {
+        justify-content: flex-start;
+    }
+    
+    .tab-nav__btn {
+        padding: var(--spacing-sm) var(--spacing-md);
+        font-size: var(--font-size-sm);
+    }
+    
+    .filter-section__row {
+        grid-template-columns: 1fr;
+    }
+    
+    .rune-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-group__grid--5col {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .stat-group__grid--4col {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .recommend-options__grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .slot-group__slots {
+        justify-content: center;
+    }
+    
+    .slot-actions {
+        flex-direction: column;
+    }
+    
+    .slot-actions .btn {
+        width: 100%;
+    }
+    
+    .recommend-actions {
+        flex-direction: column;
+    }
+    
+    .modal__content {
+        width: 95%;
+        max-height: 90vh;
+    }
+    
+    .toast-container {
+        left: var(--spacing-md);
+        right: var(--spacing-md);
+        bottom: var(--spacing-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .main-container {
+        padding: var(--spacing-sm);
+    }
+    
+    .header {
+        padding: var(--spacing-md);
+    }
+    
+    .header__title {
+        font-size: var(--font-size-xl);
+    }
+    
+    .tab-nav__btn {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+        padding: var(--spacing-sm);
+    }
+    
+    .rune-slot {
+        width: 80px;
+        height: 100px;
+    }
+    
+    .stat-group__grid--5col {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+

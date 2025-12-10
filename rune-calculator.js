@@ -875,7 +875,7 @@
      */
     function parseEmblemAwakening(description) {
         if (!description) return null;
-        
+
         var text = stripHtml(description);
         var result = {
             hasAwakening: false,
@@ -885,53 +885,53 @@
             passiveEffects: {},
             awakeningEffects: {}
         };
-        
+
         // 각성 패턴: "공격 시 N% 확률로 각성하여 N초 동안"
         var awakeningPattern = /(\d+)%\s*확률로\s*각성하여\s*(\d+)초\s*동안/;
         var awakeningMatch = text.match(awakeningPattern);
-        
+
         if (awakeningMatch) {
             result.hasAwakening = true;
             result.triggerChance = parseInt(awakeningMatch[1]) / 100;
             result.duration = parseInt(awakeningMatch[2]);
         }
-        
+
         // 무방비 각성 패턴: "무방비 공격 시 각성하여 N초 동안"
         var defenseBreakPattern = /무방비\s*공격\s*시\s*각성하여\s*(\d+)초\s*동안/;
         var defenseBreakMatch = text.match(defenseBreakPattern);
-        
+
         if (defenseBreakMatch) {
             result.hasAwakening = true;
             result.triggerChance = 0.3; // 무방비 발동은 30%로 가정
             result.duration = parseInt(defenseBreakMatch[1]);
         }
-        
+
         // 쿨타임 패턴: "(재사용 대기 시간: N초)"
         var cooldownPattern = /재사용\s*대기\s*시간[:\s]*(\d+)초/;
         var cooldownMatch = text.match(cooldownPattern);
-        
+
         if (cooldownMatch) {
             result.cooldown = parseInt(cooldownMatch[1]);
         }
-        
+
         // 상시 효과 파싱: "상시 효과:" 이후 문장
         var passivePattern = /상시\s*효과[:\s]*(.*?)(?:\.|$)/;
         var passiveMatch = text.match(passivePattern);
-        
+
         if (passiveMatch) {
             result.passiveEffects = parseEffectValues(passiveMatch[1]);
         }
-        
+
         // 각성 중 효과 파싱 (각성하여 ~ 증가한다 사이)
         if (result.hasAwakening) {
             var awakeningEffectPattern = /각성하여\s*\d+초\s*동안\s*(.*?)(?:\.|재사용)/;
             var awakeningEffectMatch = text.match(awakeningEffectPattern);
-            
+
             if (awakeningEffectMatch) {
                 result.awakeningEffects = parseEffectValues(awakeningEffectMatch[1]);
             }
         }
-        
+
         return result.hasAwakening ? result : null;
     }
 
@@ -943,23 +943,23 @@
      */
     function parseEffectValues(effectText) {
         var effects = {};
-        
+
         // 공격력 증가
         var atkMatch = effectText.match(/공격력이?\s*(\d+(?:\.\d+)?)\s*%/);
         if (atkMatch) effects['공격력 증가'] = parseFloat(atkMatch[1]);
-        
+
         // 피해량 증가
         var dmgMatch = effectText.match(/(?:적에게\s*)?주는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%/);
         if (dmgMatch) effects['피해량 증가'] = parseFloat(dmgMatch[1]);
-        
+
         // 치명타 확률
         var critChanceMatch = effectText.match(/치명타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%/);
         if (critChanceMatch) effects['치명타 확률 증가'] = parseFloat(critChanceMatch[1]);
-        
+
         // 치명타 피해
         var critDmgMatch = effectText.match(/치명타\s*피해(?:량)?이?\s*(\d+(?:\.\d+)?)\s*%/);
         if (critDmgMatch) effects['치명타 피해 증가'] = parseFloat(critDmgMatch[1]);
-        
+
         return effects;
     }
 
@@ -972,17 +972,17 @@
     function parseAwakeningCooldownReduction(rune) {
         if (!rune || !rune.description) return 0;
         if (rune.category !== '02') return 0; // 방어구만
-        
+
         var text = stripHtml(rune.description);
-        
+
         // 패턴: "각성의 재사용 대기 시간이 N초 감소"
         var pattern = /각성의?\s*재사용\s*대기\s*시간이?\s*(\d+)초\s*감소/;
         var match = text.match(pattern);
-        
+
         if (match) {
             return parseInt(match[1]);
         }
-        
+
         return 0;
     }
 
@@ -993,13 +993,13 @@
      */
     function getTotalAwakeningCooldownReduction() {
         var totalReduction = 0;
-        
+
         Object.values(state.equippedRunes).forEach(function(rune) {
             if (rune) {
                 totalReduction += parseAwakeningCooldownReduction(rune);
             }
         });
-        
+
         return totalReduction;
     }
 
@@ -1012,12 +1012,12 @@
      */
     function calculateAwakeningUptime(emblemRune, cooldownReduction) {
         var awakening = parseEmblemAwakening(emblemRune.description);
-        
+
         if (!awakening || !awakening.hasAwakening) return 0;
-        
+
         var effectiveCooldown = Math.max(awakening.cooldown - cooldownReduction, 10); // 최소 10초
         var uptime = (awakening.duration / (awakening.duration + effectiveCooldown)) * awakening.triggerChance;
-        
+
         return uptime;
     }
 
@@ -1030,28 +1030,28 @@
     function getAccessorySkillName(rune) {
         if (!rune || !rune.description) return null;
         if (rune.category !== '03') return null; // 장신구만
-        
+
         var text = stripHtml(rune.description);
-        
+
         // 패턴 1: "스킬명 스킬의 피해량이"
         var pattern1 = /(\S+)\s*스킬의\s*피해량이/;
         var match1 = text.match(pattern1);
         if (match1) return match1[1];
-        
+
         // 패턴 2: "스킬명 스킬에 변화를 준다"
         var pattern2 = /(\S+)\s*스킬에\s*변화를/;
         var match2 = text.match(pattern2);
         if (match2) return match2[1];
-        
+
         // 패턴 3: 룬 이름에서 스킬명 추출 (괄호 제외)
         var namePattern = /^(.+?)(?:\(|$)/;
         var nameMatch = rune.name.match(namePattern);
-        
+
         // 일반적인 스킬 강화 룬 이름 패턴 확인
         if (nameMatch && rune.name.includes('강화') || text.includes('피해량이') && text.includes('증가')) {
             return nameMatch[1].trim();
         }
-        
+
         return null;
     }
 
@@ -1064,16 +1064,16 @@
      */
     function isDuplicateSkillRune(selectedRunes, candidateRune) {
         var candidateSkill = getAccessorySkillName(candidateRune);
-        
+
         if (!candidateSkill) return false; // 스킬 강화 룬이 아니면 중복 아님
-        
+
         for (var i = 0; i < selectedRunes.length; i++) {
             var existingSkill = getAccessorySkillName(selectedRunes[i]);
             if (existingSkill && existingSkill === candidateSkill) {
                 return true; // 동일 스킬 발견
             }
         }
-        
+
         return false;
     }
 
@@ -1393,8 +1393,11 @@
      * @param {Object} rune - 룬 데이터
      * @param {number} enhanceLevel - 강화 단계 (0, 10, 15)
      * @returns {Object} 상세 파싱 결과
+     * @updated 2025-12-10 - 문장/절 분리 로직 개선 (조건 범위 정확히 적용)
      */
-    function parseRuneEffectsAdvanced(rune, enhanceLevel = 0) {
+    function parseRuneEffectsAdvanced(rune, enhanceLevel) {
+        enhanceLevel = enhanceLevel || 0;
+        
         if (!rune || !rune.description) {
             return {
                 effects: [],
@@ -1403,18 +1406,27 @@
             };
         }
 
-        const text = stripHtml(rune.description);
-
-        // 문장 단위로 분리 (줄바꿈, 마침표 기준)
-        const sentences = text.split(/[\n\r]+|(?<=[다요음])\.\s*/).filter(s => s.trim());
-
-        const parsedEffects = [];
-
-        sentences.forEach(sentence => {
-            const parsed = parseSingleEffect(sentence.trim(), enhanceLevel);
-            if (parsed) {
-                parsedEffects.push(parsed);
-            }
+        var text = stripHtml(rune.description);
+        var parsedEffects = [];
+        
+        // 1단계: 줄바꿈으로 큰 단위 분리
+        var lines = text.split(/[\n\r]+/).filter(function(s) { return s.trim(); });
+        
+        lines.forEach(function(line) {
+            // 2단계: 마침표로 문장 분리 (한국어 문장 종결: 다, 요, 음 뒤의 마침표)
+            var sentences = splitIntoSentences(line);
+            
+            sentences.forEach(function(sentence) {
+                // 3단계: 독립 절로 분리 (하며, 또한, 그리고)
+                var clauses = splitIntoClauses(sentence);
+                
+                clauses.forEach(function(clause) {
+                    var parsed = parseSingleEffectImproved(clause.trim(), enhanceLevel);
+                    if (parsed) {
+                        parsedEffects.push(parsed);
+                    }
+                });
+            });
         });
 
         return {
@@ -1423,6 +1435,221 @@
             runeId: rune.id,
             dotTypes: getRuneDotTypes(rune)
         };
+    }
+    
+    /**
+     * 문장 분리 (마침표 기준, 한국어 문장 종결 고려)
+     * @param {string} text - 텍스트
+     * @returns {Array} 문장 배열
+     * @added 2025-12-10
+     */
+    function splitIntoSentences(text) {
+        // 마침표 뒤에 공백이 있거나, 문장 종결어미(다, 요, 음, 며) 뒤의 마침표로 분리
+        var result = [];
+        var current = '';
+        var chars = text.split('');
+        
+        for (var i = 0; i < chars.length; i++) {
+            current += chars[i];
+            
+            // 마침표를 만났을 때
+            if (chars[i] === '.') {
+                // 다음 문자가 공백이거나 끝이면 문장 종료
+                if (i === chars.length - 1 || chars[i + 1] === ' ' || chars[i + 1] === '\n') {
+                    if (current.trim()) {
+                        result.push(current.trim());
+                    }
+                    current = '';
+                }
+            }
+        }
+        
+        // 남은 텍스트 추가
+        if (current.trim()) {
+            result.push(current.trim());
+        }
+        
+        return result.length > 0 ? result : [text];
+    }
+    
+    /**
+     * 독립 절로 분리 (조건과 효과를 분리)
+     * @param {string} sentence - 문장
+     * @returns {Array} 절 배열
+     * @added 2025-12-10
+     */
+    function splitIntoClauses(sentence) {
+        var clauses = [];
+        
+        // "하며," 또는 "또한," 으로 분리되는 독립적인 효과 확인
+        // 패턴: "효과1하며, 효과2" 또는 "효과1. 또한, 효과2"
+        
+        // 방법: 트리거 키워드 뒤의 효과만 해당 트리거에 연결
+        // "기본 공격 사용 시, 효과1. 효과2하며, 조건 시 효과3"
+        
+        // 핵심: 각 효과가 어떤 조건에 종속되는지 정확히 파악
+        
+        // 전략 1: "하며," 로 분리 (이 경우 앞 절과 뒷 절이 독립)
+        var parts = sentence.split(/하며[,\s]*/);
+        
+        if (parts.length > 1) {
+            parts.forEach(function(part) {
+                if (part.trim()) {
+                    clauses.push(part.trim());
+                }
+            });
+            return clauses;
+        }
+        
+        // 전략 2: "또한," 으로 분리
+        parts = sentence.split(/또한[,\s]*/);
+        if (parts.length > 1) {
+            parts.forEach(function(part) {
+                if (part.trim()) {
+                    clauses.push(part.trim());
+                }
+            });
+            return clauses;
+        }
+        
+        // 분리가 안 되면 원본 반환
+        return [sentence];
+    }
+    
+    /**
+     * 개선된 단일 효과 파싱 (조건 범위 정확히 적용)
+     * @param {string} effectText - 효과 텍스트
+     * @param {number} enhanceLevel - 강화 단계
+     * @returns {Object|null} 파싱된 효과
+     * @added 2025-12-10
+     */
+    function parseSingleEffectImproved(effectText, enhanceLevel) {
+        if (!effectText || effectText.length < 3) return null;
+        
+        var result = {
+            type: EFFECT_TYPE.PASSIVE, // 기본은 상시
+            effects: {},
+            stackInfo: null,
+            timing: { uptime: 1.0 },
+            isEnhanceBonus: false,
+            enhanceLevel: 0,
+            rawText: effectText
+        };
+        
+        // 강화 효과 체크
+        if (/\+10.*강화/.test(effectText) || /장비를\s*\+10\s*강화/.test(effectText)) {
+            result.isEnhanceBonus = true;
+            result.enhanceLevel = 10;
+            if (enhanceLevel < 10) return null;
+        }
+        if (/\+15.*강화/.test(effectText) || /장비를\s*\+15\s*강화/.test(effectText)) {
+            result.isEnhanceBonus = true;
+            result.enhanceLevel = 15;
+            if (enhanceLevel < 15) return null;
+        }
+        
+        // 조건 키워드와 효과의 위치 관계 분석
+        // 핵심: 조건이 효과 바로 앞에 있을 때만 해당 효과에 적용
+        var conditionEndIndex = findConditionEndIndex(effectText);
+        
+        // 조건 부분과 효과 부분 분리
+        var conditionPart = conditionEndIndex > 0 ? effectText.substring(0, conditionEndIndex) : '';
+        var effectPart = conditionEndIndex > 0 ? effectText.substring(conditionEndIndex) : effectText;
+        
+        // 효과 부분에 직접 조건이 있는지 확인
+        var effectConditionIndex = findConditionEndIndex(effectPart);
+        if (effectConditionIndex > 0 && effectConditionIndex < effectPart.length - 5) {
+            // 효과 부분에도 조건이 있으면 그 조건을 사용
+            conditionPart = effectPart.substring(0, effectConditionIndex);
+            effectPart = effectPart.substring(effectConditionIndex);
+        }
+        
+        // 조건 부분에서 효과 유형 결정
+        if (conditionPart) {
+            result.type = detectEffectType(conditionPart);
+        }
+        
+        // 효과 부분에 조건 없이 시작하면 상시 효과
+        if (!conditionPart && !hasConditionKeyword(effectPart.substring(0, 20))) {
+            result.type = EFFECT_TYPE.PASSIVE;
+        }
+        
+        // 중첩 정보 파싱
+        result.stackInfo = parseStackInfo(effectText);
+        
+        // 지속 시간/쿨타임 파싱
+        result.timing = parseDurationAndCooldown(effectText);
+        
+        // 효과 수치 파싱 (효과 부분에서)
+        var effectPatterns = [
+            { name: '공격력 증가', pattern: /공격력이?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/ },
+            { name: '피해량 증가', pattern: /(?:적에게\s*)?주는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/ },
+            { name: '치명타 확률 증가', pattern: /치명타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
+            { name: '치명타 피해 증가', pattern: /치명타\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
+            { name: '추가타 확률 증가', pattern: /추가타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
+            { name: '공격 속도 증가', pattern: /공격\s*속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
+            { name: '받는 피해 감소', pattern: /받는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/ },
+            { name: '회복력 증가', pattern: /회복력이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ }
+        ];
+        
+        // 전체 텍스트에서 효과 파싱 (수치 추출)
+        effectPatterns.forEach(function(item) {
+            var match = effectText.match(item.pattern);
+            if (match) {
+                result.effects[item.name] = parseFloat(match[1]);
+            }
+        });
+        
+        // 효과가 있으면 반환
+        if (Object.keys(result.effects).length > 0) {
+            return result;
+        }
+        
+        return null;
+    }
+    
+    /**
+     * 조건 키워드의 끝 위치 찾기
+     * @param {string} text - 텍스트
+     * @returns {number} 조건 끝 인덱스 (없으면 0)
+     * @added 2025-12-10
+     */
+    function findConditionEndIndex(text) {
+        // 조건 패턴: "~시," 또는 "~경우,"
+        var conditionPatterns = [
+            /(?:적중|사용|공격)\s*시[,\s]/,
+            /경우[,\s]/,
+            /때[,\s]/,
+            /중[,\s]/
+        ];
+        
+        var endIndex = 0;
+        
+        conditionPatterns.forEach(function(pattern) {
+            var match = text.match(pattern);
+            if (match) {
+                var matchEnd = match.index + match[0].length;
+                if (matchEnd > endIndex) {
+                    endIndex = matchEnd;
+                }
+            }
+        });
+        
+        return endIndex;
+    }
+    
+    /**
+     * 조건 키워드 존재 여부 확인
+     * @param {string} text - 텍스트
+     * @returns {boolean}
+     * @added 2025-12-10
+     */
+    function hasConditionKeyword(text) {
+        var keywords = ['시,', '시 ', '경우', '때마다', '중 '];
+        for (var i = 0; i < keywords.length; i++) {
+            if (text.includes(keywords[i])) return true;
+        }
+        return false;
     }
 
     /**
@@ -1494,7 +1721,7 @@
         enhanceLevel = enhanceLevel || 0;
         equippedDotTypes = equippedDotTypes || [];
         awakeningCooldownReduction = awakeningCooldownReduction || 0;
-        
+
         const parsed = parseRuneEffectsAdvanced(rune, enhanceLevel);
 
         // 시너지 체크 (적 상태 조건용)
@@ -1563,11 +1790,11 @@
         var awakeningInfo = null;
         if (rune.category === '04') { // 엠블럼
             var awakening = parseEmblemAwakening(rune.description);
-            
+
             if (awakening && awakening.hasAwakening) {
                 var effectiveCooldown = Math.max(awakening.cooldown - awakeningCooldownReduction, 10);
                 var uptime = (awakening.duration / (awakening.duration + effectiveCooldown)) * awakening.triggerChance;
-                
+
                 awakeningInfo = {
                     duration: awakening.duration,
                     baseCooldown: awakening.cooldown,
@@ -1575,20 +1802,20 @@
                     triggerChance: awakening.triggerChance,
                     uptime: uptime
                 };
-                
+
                 // 각성 효과를 업타임 적용하여 점수에 반영
                 Object.entries(awakening.awakeningEffects).forEach(function([effectName, value]) {
                     if (CORE_DPS_EFFECTS.includes(effectName)) {
                         var effectiveValue = value * uptime;
                         var scoreWeight = 10;
-                        
+
                         if (['치명타 확률 증가', '치명타 피해 증가'].includes(effectName)) {
                             scoreWeight = 8;
                         }
-                        
+
                         var effectScore = effectiveValue * scoreWeight;
                         totalScore += effectScore;
-                        
+
                         // 요약에 추가 (각성 효과로 표시)
                         var awakeningEffectName = effectName + ' (각성)';
                         if (!effectiveSummary[awakeningEffectName]) {
@@ -1600,7 +1827,7 @@
                             };
                         }
                         effectiveSummary[awakeningEffectName].total += effectiveValue;
-                        
+
                         breakdown.push({
                             effectName: awakeningEffectName,
                             raw: value,
@@ -1612,19 +1839,19 @@
                         });
                     }
                 });
-                
+
                 // 상시 효과 추가
                 Object.entries(awakening.passiveEffects).forEach(function([effectName, value]) {
                     if (CORE_DPS_EFFECTS.includes(effectName)) {
                         var scoreWeight = 10;
-                        
+
                         if (['치명타 확률 증가', '치명타 피해 증가'].includes(effectName)) {
                             scoreWeight = 8;
                         }
-                        
+
                         var effectScore = value * scoreWeight;
                         totalScore += effectScore;
-                        
+
                         if (!effectiveSummary[effectName]) {
                             effectiveSummary[effectName] = {
                                 total: 0,
@@ -1816,7 +2043,7 @@
      */
     function calculateRuneScore(rune, stats, role, awakeningCooldownReduction) {
         awakeningCooldownReduction = awakeningCooldownReduction || 0;
-        
+
         // 새로운 고급 효율 계산 사용
         const equippedDots = getAllEquippedDotTypes();
         const efficiency = calculateRuneEfficiencyScore(rune, 15, equippedDots, awakeningCooldownReduction);
@@ -1931,21 +2158,37 @@
         // @updated 2025-12-10 - 카테고리 코드 수정 (02: 방어구, 04: 엠블럼)
         // @updated 2025-12-10 - 순서 변경: 방어구 먼저 (각성 쿨감 시너지), 장신구 중복 제한
         const categories = {
-            '01': { count: 1, name: '무기 룬', slots: ['weapon-1'] },
-            '02': { count: 5, name: '방어구 룬', slots: ['armor-1', 'armor-2', 'armor-3', 'armor-4', 'armor-5'] },
-            '04': { count: 1, name: '엠블럼 룬', slots: ['emblem-1'] },
-            '03': { count: 3, name: '장신구 룬', slots: ['accessory-1', 'accessory-2', 'accessory-3'] }
+            '01': {
+                count: 1,
+                name: '무기 룬',
+                slots: ['weapon-1']
+            },
+            '02': {
+                count: 5,
+                name: '방어구 룬',
+                slots: ['armor-1', 'armor-2', 'armor-3', 'armor-4', 'armor-5']
+            },
+            '04': {
+                count: 1,
+                name: '엠블럼 룬',
+                slots: ['emblem-1']
+            },
+            '03': {
+                count: 3,
+                name: '장신구 룬',
+                slots: ['accessory-1', 'accessory-2', 'accessory-3']
+            }
         };
 
         const recommendations = {};
         var totalAwakeningCooldownReduction = 0;
-        
+
         // 처리 순서: 무기 -> 방어구 -> 엠블럼 -> 장신구
         var categoryOrder = ['01', '02', '04', '03'];
 
         categoryOrder.forEach(function(categoryCode) {
             var config = categories[categoryCode];
-            
+
             // 해당 카테고리 룬 필터링
             // @updated 2025-12-10 - 새로운 등급 체계 기반 필터링
             var categoryRunes = state.allRunes.filter(function(rune) {
@@ -1969,7 +2212,7 @@
 
             // 점수 계산 (엠블럼은 각성 쿨감 시너지 적용)
             var cooldownReduction = (categoryCode === '04') ? totalAwakeningCooldownReduction : 0;
-            
+
             categoryRunes = categoryRunes.map(function(rune) {
                 var newRune = {};
                 for (var key in rune) {
@@ -1977,7 +2220,9 @@
                 }
                 newRune.score = calculateRuneScore(rune, stats, role, cooldownReduction);
                 return newRune;
-            }).sort(function(a, b) { return b.score - a.score; });
+            }).sort(function(a, b) {
+                return b.score - a.score;
+            });
 
             // 장신구: 동일 스킬 중복 제한 적용
             // @added 2025-12-10
@@ -1985,7 +2230,7 @@
             if (categoryCode === '03') {
                 for (var i = 0; i < categoryRunes.length && selectedRunes.length < config.count; i++) {
                     var candidateRune = categoryRunes[i];
-                    
+
                     // 동일 스킬 룬인지 체크
                     if (!isDuplicateSkillRune(selectedRunes, candidateRune)) {
                         selectedRunes.push(candidateRune);
@@ -2002,7 +2247,7 @@
                 slots: config.slots,
                 runes: selectedRunes
             };
-            
+
             // 방어구 선택 후 각성 쿨타임 감소량 계산
             if (categoryCode === '02') {
                 selectedRunes.forEach(function(rune) {

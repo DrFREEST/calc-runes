@@ -504,9 +504,12 @@ img {
 
 /* 신화 등급 노란색 글로우 애니메이션 */
 @keyframes mythGlow {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
     }
+
     50% {
         box-shadow: 0 0 25px rgba(255, 236, 139, 0.7);
     }
@@ -1823,4 +1826,71 @@ img {
     border: 1px solid var(--color-accent-primary);
     color: var(--color-accent-secondary);
     font-weight: 600;
+}
+
+/* ============================================
+   새로운 효과 표시 스타일 (2025-12-10 추가)
+   ============================================ */
+
+/* 효과 구분선 */
+.effect-divider {
+    height: 1px;
+    background: var(--color-border);
+    margin: var(--spacing-md) 0;
+}
+
+/* 효과 섹션 헤더 */
+.effect-section-header {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-xs);
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* DPS 효과 항목 */
+.effect-item--dps {
+    background: linear-gradient(90deg, rgba(34, 197, 94, 0.15) 0%, transparent 100%);
+    border-left: 3px solid var(--color-accent-success);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    margin-top: var(--spacing-xs);
+}
+
+.effect-item__value--dps {
+    color: var(--color-accent-success) !important;
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+}
+
+/* 균형/경고 값 */
+.effect-item__value--balanced {
+    color: var(--color-accent-success);
+}
+
+.effect-item__value--warning {
+    color: var(--color-accent-warning);
+}
+
+/* 시너지 효과 항목 */
+.effect-item--synergy {
+    background: rgba(168, 85, 247, 0.1);
+    border-left: 3px solid var(--color-accent-purple);
+    padding-left: var(--spacing-sm);
+    margin-bottom: var(--spacing-xs);
+    border-radius: var(--radius-sm);
+}
+
+/* 상세 정보 항목 */
+.effect-item--detail {
+    opacity: 0.8;
+    font-size: var(--font-size-xs);
+}
+
+/* 연타/강타/추가타 효과 강조 */
+.effect-item--multi-hit {
+    background: rgba(251, 191, 36, 0.1);
+    border-left: 3px solid var(--color-accent-warning);
+    padding-left: var(--spacing-sm);
 }

@@ -1633,6 +1633,39 @@
             }
         ];
 
+        /**
+         * 결함(디메리트) 효과 패턴
+         * @description DPS에 영향을 주는 감소 효과
+         * @added 2025-12-10
+         */
+        var demeritPatterns = [
+            {
+                name: '피해량 감소',
+                // "적에게 주는 피해가 X% 감소" 또는 "주는 모든 피해가 X% 감소"
+                pattern: /(?:적에게\s*)?주는\s*(?:모든\s*)?피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/
+            },
+            {
+                name: '멀티히트 피해 감소',
+                // "멀티히트 피해가 X% 감소" 또는 "멀티히트 피해는 X% 감소"
+                pattern: /멀티히트\s*피해(?:가|는)?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/
+            },
+            {
+                name: '치명타 확률 감소',
+                pattern: /치명타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/
+            },
+            {
+                name: '치명타 피해 감소',
+                pattern: /치명타\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/
+            },
+            {
+                name: '공격력 감소',
+                pattern: /공격력이?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/
+            }
+        ];
+
+        // 결함 영역 여부 확인 ("결함:" 이후의 텍스트인지)
+        var isDemeritSection = /결함\s*[:：]/.test(effectText);
+
         // 전체 텍스트에서 효과 파싱 (수치 추출)
         effectPatterns.forEach(function(item) {
             var match = effectText.match(item.pattern);
@@ -1641,8 +1674,25 @@
             }
         });
 
-        // 효과가 있으면 반환
-        if (Object.keys(result.effects).length > 0) {
+        // 결함(디메리트) 효과 파싱 - 음수로 저장하거나 별도 필드에 저장
+        // @added 2025-12-10
+        demeritPatterns.forEach(function(item) {
+            var match = effectText.match(item.pattern);
+            if (match) {
+                var value = parseFloat(match[1]);
+                // 결함 효과는 별도로 저장 (나중에 점수에서 차감)
+                if (!result.demerits) {
+                    result.demerits = {};
+                }
+                result.demerits[item.name] = value;
+                
+                // 결함 영역이거나 감소 효과가 명시된 경우 표시
+                result.hasDemerit = true;
+            }
+        });
+
+        // 효과 또는 결함이 있으면 반환
+        if (Object.keys(result.effects).length > 0 || (result.demerits && Object.keys(result.demerits).length > 0)) {
             return result;
         }
 
@@ -1751,10 +1801,39 @@
     ];
 
     /**
+     * DPS 관련 결함 효과 목록
+     * @constant {Array<string>}
+     * @description 효율 점수에서 차감되는 결함 효과
+     * @added 2025-12-10
+     */
+    const CORE_DPS_DEMERITS = [
+        '피해량 감소',           // 적에게 주는 피해 감소
+        '멀티히트 피해 감소',    // 멀티히트 피해 감소
+        '치명타 확률 감소',      // 치명타 확률 감소
+        '치명타 피해 감소',      // 치명타 피해 감소
+        '공격력 감소'            // 공격력 감소
+    ];
+
+    /**
+     * 결함 효과 → 대응 증가 효과 매핑
+     * @constant {Object}
+     * @description 결함 효과를 해당 증가 효과의 음수로 변환할 때 사용
+     * @added 2025-12-10
+     */
+    const DEMERIT_TO_BENEFIT_MAP = {
+        '피해량 감소': '피해량 증가',
+        '멀티히트 피해 감소': '멀티히트 피해 감소', // 별도 관리
+        '치명타 확률 감소': '치명타 확률 증가',
+        '치명타 피해 감소': '치명타 피해 증가',
+        '공격력 감소': '공격력 증가'
+    };
+
+    /**
      * 효과별 점수 가중치 (효율 순위 반영)
      * @constant {Object}
      * @description 연타 > 추가타 > 치명타 > 스킬 위력 순
      * @added 2025-12-10
+     * @updated 2025-12-10 - 결함 효과 가중치 추가
      */
     const EFFECT_SCORE_WEIGHT = {
         '공격력 증가': 10,
@@ -1764,7 +1843,13 @@
         '추가타 확률 증가': 11, // 효율 2위
         '치명타 확률 증가': 9, // 효율 3위
         '치명타 피해 증가': 9,
-        '스킬 위력 증가': 7 // 효율 4위 (기타 효과)
+        '스킬 위력 증가': 7, // 효율 4위 (기타 효과)
+        // 결함 효과 가중치 (감소분이므로 음수로 적용됨)
+        '피해량 감소': 10,
+        '멀티히트 피해 감소': 8, // 멀티히트 비중 고려
+        '치명타 확률 감소': 9,
+        '치명타 피해 감소': 9,
+        '공격력 감소': 10
     };
 
     /**
@@ -1837,12 +1922,15 @@
      * 예상 DPS 증가율 계산
      * @param {Object} effectSummary - 효과 요약 객체
      * @param {Object} characterStats - 캐릭터 스탯 (선택)
+     * @param {Object} demeritSummary - 결함 효과 요약 (선택) @added 2025-12-10
      * @returns {Object} { totalDPSIncrease, breakdown }
      * @description 최종 DPS = 기본공격력 × (1+공격력증가) × (1+피해량증가) × 크리배율 × 연타배율 × 추가타배율
      * @added 2025-12-10
+     * @updated 2025-12-10 - 결함 효과 반영 추가
      */
-    function calculateExpectedDPS(effectSummary, characterStats) {
+    function calculateExpectedDPS(effectSummary, characterStats, demeritSummary) {
         characterStats = characterStats || {};
+        demeritSummary = demeritSummary || {};
 
         // 효과 추출 (기본값 0)
         var atkIncrease = 0;
@@ -1853,16 +1941,39 @@
         var strongHit = 0;
         var additionalHit = 0;
 
+        // 결함 효과 (차감용) @added 2025-12-10
+        var dmgDecrease = 0;
+        var multiHitDecrease = 0;
+        var critChanceDecrease = 0;
+        var critDmgDecrease = 0;
+        var atkDecrease = 0;
+
         Object.entries(effectSummary).forEach(function([name, data]) {
             var value = data.total || 0;
             if (name.includes('공격력 증가')) atkIncrease += value;
             if (name.includes('피해량 증가')) dmgIncrease += value;
-            if (name.includes('치명타 확률')) critChance += value;
-            if (name.includes('치명타 피해')) critDmg += value;
+            if (name.includes('치명타 확률') && name.includes('증가')) critChance += value;
+            if (name.includes('치명타 피해') && name.includes('증가')) critDmg += value;
             if (name.includes('연타 확률')) multiHit += value;
             if (name.includes('강타')) strongHit += value;
             if (name.includes('추가타 확률')) additionalHit += value;
         });
+
+        // 결함 효과 추출 @added 2025-12-10
+        Object.entries(demeritSummary).forEach(function([name, data]) {
+            var value = data.total || 0;
+            if (name.includes('피해량 감소')) dmgDecrease += value;
+            if (name.includes('멀티히트 피해 감소')) multiHitDecrease += value;
+            if (name.includes('치명타 확률 감소')) critChanceDecrease += value;
+            if (name.includes('치명타 피해 감소')) critDmgDecrease += value;
+            if (name.includes('공격력 감소')) atkDecrease += value;
+        });
+
+        // 결함 효과 차감 적용 @added 2025-12-10
+        atkIncrease -= atkDecrease;
+        dmgIncrease -= dmgDecrease;
+        critChance -= critChanceDecrease;
+        critDmg -= critDmgDecrease;
 
         // 캐릭터 기본 스탯 반영 (있는 경우)
         var baseCritChance = characterStats.critChance || 30; // 기본 30%
@@ -1884,6 +1995,12 @@
         var totalAdditionalHit = (baseAdditionalHit + additionalHit) / 100;
         var hitMultiplier = 1 + totalMultiHit + totalAdditionalHit;
 
+        // 멀티히트 피해 감소 반영 @added 2025-12-10
+        // 멀티히트 피해 감소는 연타/추가타 피해에만 영향
+        var multiHitPenalty = 1 - (multiHitDecrease / 100);
+        var effectiveMultiHitBonus = (totalMultiHit + totalAdditionalHit) * multiHitPenalty;
+        hitMultiplier = 1 + effectiveMultiHitBonus;
+
         // 최종 DPS 배율
         var totalDPSMultiplier = atkMultiplier * dmgMultiplier * critMultiplier * hitMultiplier;
         var totalDPSIncrease = (totalDPSMultiplier - 1) * 100;
@@ -1902,7 +2019,12 @@
                     critDmg: Math.round(critDmg * 10) / 10,
                     multiHit: Math.round(multiHit * 10) / 10,
                     strongHit: Math.round(strongHit * 10) / 10,
-                    additionalHit: Math.round(additionalHit * 10) / 10
+                    additionalHit: Math.round(additionalHit * 10) / 10,
+                    // 결함 효과 표시 @added 2025-12-10
+                    multiHitDecrease: Math.round(multiHitDecrease * 10) / 10,
+                    atkDecrease: Math.round(atkDecrease * 10) / 10,
+                    dmgDecrease: Math.round(dmgDecrease * 10) / 10,
+                    critChanceDecrease: Math.round(critChanceDecrease * 10) / 10
                 }
             },
             balance: {
@@ -1911,7 +2033,9 @@
                 recommendation: atkIncrease > dmgIncrease + 20 ?
                     '피해량 증가 룬 추천' :
                     (dmgIncrease > atkIncrease + 20 ? '공격력 증가 룬 추천' : '균형 잡힌 세팅')
-            }
+            },
+            // 결함 영향 표시 @added 2025-12-10
+            hasDemeritImpact: (dmgDecrease + multiHitDecrease + critChanceDecrease + critDmgDecrease + atkDecrease) > 0
         };
     }
 
@@ -2061,6 +2185,50 @@
                     hasSynergyBoost: !!synergyBoost[effectName]
                 });
             });
+
+            // ====================================================
+            // 결함(디메리트) 효과 처리 - 점수에서 차감
+            // @added 2025-12-10
+            // ====================================================
+            if (effect.demerits && Object.keys(effect.demerits).length > 0) {
+                Object.entries(effect.demerits).forEach(function([demeritName, value]) {
+                    // DPS 관련 결함인 경우에만 점수에서 차감
+                    if (CORE_DPS_DEMERITS.includes(demeritName)) {
+                        var demeritWeight = EFFECT_SCORE_WEIGHT[demeritName] || 8;
+                        var demeritScore = value * demeritWeight;
+                        
+                        // 점수에서 차감
+                        totalScore -= demeritScore;
+                        
+                        // 결함 요약에 추가
+                        var demeritDisplayName = demeritName + ' (결함)';
+                        if (!effectiveSummary[demeritDisplayName]) {
+                            effectiveSummary[demeritDisplayName] = {
+                                total: 0,
+                                details: [],
+                                isCoreDPS: true,
+                                isDemerit: true // 결함 표시
+                            };
+                        }
+                        effectiveSummary[demeritDisplayName].total += value;
+                        effectiveSummary[demeritDisplayName].details.push({
+                            raw: value,
+                            effective: -value,
+                            type: '결함'
+                        });
+                        
+                        breakdown.push({
+                            effectName: demeritDisplayName,
+                            raw: value,
+                            effective: -value,
+                            type: '결함',
+                            scoreWeight: demeritWeight,
+                            contribution: -demeritScore,
+                            isDemerit: true
+                        });
+                    }
+                });
+            }
         });
 
         // 엠블럼 각성 효과 추가 계산 (엠블럼 룬인 경우)
@@ -2195,6 +2363,7 @@
     function calculateTotalEffects() {
         const totalEffects = {
             coreDPS: {}, // DPS 핵심 효과
+            demerits: {}, // 결함 효과 @added 2025-12-10
             other: {} // 기타 효과
         };
 
@@ -2222,14 +2391,22 @@
             });
 
             Object.entries(efficiency.effectiveSummary).forEach(([key, data]) => {
-                // DPS 핵심 효과와 기타 효과 분류
-                const category = data.isCoreDPS ? 'coreDPS' : 'other';
+                // 결함 효과 분류 @added 2025-12-10
+                let category;
+                if (data.isDemerit) {
+                    category = 'demerits';
+                } else if (data.isCoreDPS) {
+                    category = 'coreDPS';
+                } else {
+                    category = 'other';
+                }
 
                 // 실효값 사용
                 if (!totalEffects[category][key]) {
                     totalEffects[category][key] = {
                         total: 0,
                         isCoreDPS: data.isCoreDPS,
+                        isDemerit: data.isDemerit,
                         diminished: data.diminished
                     };
                 }
@@ -2243,8 +2420,8 @@
             });
         });
 
-        // DPS 분석 계산
-        const dpsAnalysis = calculateExpectedDPS(totalEffects.coreDPS, characterStats);
+        // DPS 분석 계산 (결함 효과 포함) @updated 2025-12-10
+        const dpsAnalysis = calculateExpectedDPS(totalEffects.coreDPS, characterStats, totalEffects.demerits);
 
         renderEffectSummary(totalEffects, hasSynergy, allDotTypes, synergyResult, dpsAnalysis);
     }
@@ -2378,6 +2555,27 @@
                         </span>
                     </div>
                 `;
+
+                // 결함 효과 표시 @added 2025-12-10
+                const demeritEntries = Object.entries(totalEffects.demerits || {});
+                if (demeritEntries.length > 0) {
+                    attackHtml += `
+                        <div class="effect-divider"></div>
+                        <div class="effect-section-header" style="color: #fca5a5;">⚠️ 결함 효과 (감점)</div>
+                    `;
+                    attackHtml += demeritEntries.map(function([key, data]) {
+                        // "(결함)" 텍스트 제거하고 표시
+                        const displayName = key.replace(' (결함)', '');
+                        return `
+                            <div class="effect-item effect-item--demerit">
+                                <span class="effect-item__name">${escapeHtml(displayName)}</span>
+                                <span class="effect-item__value">
+                                    -${data.total.toFixed(1)}%
+                                </span>
+                            </div>
+                        `;
+                    }).join('');
+                }
             } else {
                 attackHtml = '<p class="effect-empty">장착된 룬이 없습니다</p>';
             }

@@ -1809,10 +1809,33 @@ img {
     opacity: 0.7;
 }
 
+/* 결함 효과 아이템 @added 2025-12-10 */
+.effect-item--demerit {
+    background: rgba(239, 68, 68, 0.15);
+    border-left: 3px solid #ef4444;
+    padding-left: var(--spacing-sm);
+    margin-left: calc(-1 * var(--spacing-sm));
+}
+
+.effect-item--demerit .effect-item__name {
+    color: #fca5a5;
+}
+
+.effect-item--demerit .effect-item__value {
+    color: #ef4444 !important;
+    font-weight: 700;
+}
+
 /* 강조 값 */
 .effect-item__value--highlight {
     color: var(--color-accent-secondary) !important;
     font-weight: 700;
+}
+
+/* 음수/감소 값 @added 2025-12-10 */
+.effect-item__value--negative {
+    color: #ef4444 !important;
+    font-weight: 600;
 }
 
 /* 흐린 값 */

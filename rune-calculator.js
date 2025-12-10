@@ -1896,13 +1896,19 @@
             effectPart = effectPart.substring(effectConditionIndex);
         }
 
-        // 조건 부분에서 효과 유형 결정
-        if (conditionPart) {
+        // ========================================================
+        // 누적/축적 효과 먼저 체크 (전체 텍스트에서) @added 2025-12-10
+        // "누적:", "축적:", "최대 N회까지 중첩" 패턴은 STACKING 타입
+        // ========================================================
+        if (/^(누적|축적):/.test(effectText) || /최대\s*\d+\s*회까지\s*중첩/.test(effectText)) {
+            result.type = EFFECT_TYPE.STACKING;
+        }
+        // 조건 부분에서 효과 유형 결정 (STACKING이 아닌 경우만)
+        else if (conditionPart) {
             result.type = detectEffectType(conditionPart);
         }
-
         // 효과 부분에 조건 없이 시작하면 상시 효과
-        if (!conditionPart && !hasConditionKeyword(effectPart.substring(0, 20))) {
+        else if (!hasConditionKeyword(effectPart.substring(0, 20))) {
             result.type = EFFECT_TYPE.PASSIVE;
         }
 

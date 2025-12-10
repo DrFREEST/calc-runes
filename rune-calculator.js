@@ -964,8 +964,11 @@
     /**
      * 엠블럼 각성 효과 파싱
      * @param {string} description - 룬 설명
-     * @returns {Object|null} { duration, cooldown, triggerChance, passiveEffects, awakeningEffects }
-     * @added 2025-12-10
+     * @returns {Object|null} { duration, cooldown, passiveEffects, awakeningEffects }
+     * @description 엠블럼 각성 효과는 쿨타임 기반 업타임으로 계산
+     *              발동 확률(50%)은 쿨타임 후 첫 공격 시 발동 여부이므로
+     *              평균 1~2회 공격 내 발동 → 업타임에 큰 영향 없음
+     * @updated 2025-12-10 - 발동 확률을 업타임 계산에서 제외
      */
     function parseEmblemAwakening(description) {
         if (!description) return null;
@@ -975,7 +978,7 @@
             hasAwakening: false,
             duration: 0,
             cooldown: EMBLEM_AWAKENING_BASE_COOLDOWN,
-            triggerChance: 0.5, // 기본 50%
+            // 발동 확률은 업타임 계산에 미포함 (쿨타임 후 거의 즉시 발동)
             passiveEffects: {},
             awakeningEffects: {}
         };
@@ -986,17 +989,18 @@
 
         if (awakeningMatch) {
             result.hasAwakening = true;
+            // 발동 확률은 저장만 하고 업타임 계산에는 사용하지 않음
             result.triggerChance = parseInt(awakeningMatch[1]) / 100;
             result.duration = parseInt(awakeningMatch[2]);
         }
 
-        // 무방비 각성 패턴: "무방비 공격 시 각성하여 N초 동안"
+        // 무방비 각성 패턴: "무방비 공격 시 각성하여 N초 동안" - 제한적 효과로 분류
         var defenseBreakPattern = /무방비\s*공격\s*시\s*각성하여\s*(\d+)초\s*동안/;
         var defenseBreakMatch = text.match(defenseBreakPattern);
 
         if (defenseBreakMatch) {
             result.hasAwakening = true;
-            result.triggerChance = 0.3; // 무방비 발동은 30%로 가정
+            result.isDefenseBreakAwakening = true; // 무방비 각성은 제한적
             result.duration = parseInt(defenseBreakMatch[1]);
         }
 
@@ -1054,6 +1058,26 @@
         var critDmgMatch = effectText.match(/치명타\s*피해(?:량)?이?\s*(\d+(?:\.\d+)?)\s*%/);
         if (critDmgMatch) effects['치명타 피해 증가'] = parseFloat(critDmgMatch[1]);
 
+        // 강타 피해 @added 2025-12-10
+        var heavyHitMatch = effectText.match(/강타\s*피해가?\s*(\d+(?:\.\d+)?)\s*%/);
+        if (heavyHitMatch) effects['강타 피해 증가'] = parseFloat(heavyHitMatch[1]);
+
+        // 강타 확률 @added 2025-12-10
+        var heavyChanceMatch = effectText.match(/강타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%/);
+        if (heavyChanceMatch) effects['강타 확률 증가'] = parseFloat(heavyChanceMatch[1]);
+
+        // 연타 확률 @added 2025-12-10
+        var multiHitMatch = effectText.match(/연타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%/);
+        if (multiHitMatch) effects['연타 확률 증가'] = parseFloat(multiHitMatch[1]);
+
+        // 추가타 확률 @added 2025-12-10
+        var extraHitMatch = effectText.match(/추가타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%/);
+        if (extraHitMatch) effects['추가타 확률 증가'] = parseFloat(extraHitMatch[1]);
+
+        // 스킬 사용 속도 @added 2025-12-10
+        var skillSpeedMatch = effectText.match(/스킬\s*사용\s*속도가?\s*(\d+(?:\.\d+)?)\s*%/);
+        if (skillSpeedMatch) effects['스킬 사용 속도 증가'] = parseFloat(skillSpeedMatch[1]);
+
         return effects;
     }
 
@@ -1104,13 +1128,29 @@
      * @returns {number} 업타임 비율 (0~1)
      * @added 2025-12-10
      */
+    /**
+     * 엠블럼 각성 업타임 계산
+     * @param {Object} emblemRune - 엠블럼 룬
+     * @param {number} cooldownReduction - 쿨타임 감소량
+     * @returns {number} 업타임 비율 (0~1)
+     * @description 업타임 = 지속시간 / (지속시간 + 쿨타임)
+     *              발동 확률은 쿨타임 후 첫 공격 시 발동 여부이므로 업타임에 미포함
+     *              (평균 1~2회 공격 내 발동하므로 거의 즉시 발동)
+     * @updated 2025-12-10
+     */
     function calculateAwakeningUptime(emblemRune, cooldownReduction) {
         var awakening = parseEmblemAwakening(emblemRune.description);
 
         if (!awakening || !awakening.hasAwakening) return 0;
+        
+        // 무방비 각성은 제한적 효과로 업타임 0 처리
+        if (awakening.isDefenseBreakAwakening) return 0;
 
         var effectiveCooldown = Math.max(awakening.cooldown - cooldownReduction, 10); // 최소 10초
-        var uptime = (awakening.duration / (awakening.duration + effectiveCooldown)) * awakening.triggerChance;
+        
+        // 업타임 = 지속시간 / (지속시간 + 쿨타임)
+        // 발동 확률은 업타임에 미포함 (쿨타임 후 거의 즉시 발동)
+        var uptime = awakening.duration / (awakening.duration + effectiveCooldown);
 
         return uptime;
     }
@@ -2310,6 +2350,7 @@
         '치명타 피해 증가',
         '연타 확률 증가',
         '강타 확률 증가',
+        '강타 피해 증가', // @added 2025-12-10
         '추가타 확률 증가'
     ];
 
@@ -2357,6 +2398,7 @@
         '피해량 증가': 10,
         '연타 확률 증가': 12, // 효율 1위
         '강타 확률 증가': 11,
+        '강타 피해 증가': 9, // 강타 피해 (확률보다 낮은 가중치) @added 2025-12-10
         '추가타 확률 증가': 11, // 효율 2위
         '치명타 확률 증가': 9, // 효율 3위
         '치명타 피해 증가': 9,
@@ -2957,26 +2999,33 @@
             var awakening = parseEmblemAwakening(rune.description);
 
             if (awakening && awakening.hasAwakening) {
-                var effectiveCooldown = Math.max(awakening.cooldown - awakeningCooldownReduction, 10);
-                var uptime = (awakening.duration / (awakening.duration + effectiveCooldown)) * awakening.triggerChance;
+                // 무방비 각성은 제한적 효과로 처리
+                if (awakening.isDefenseBreakAwakening) {
+                    awakeningInfo = {
+                        duration: awakening.duration,
+                        baseCooldown: awakening.cooldown,
+                        isLimited: true,
+                        limitReason: '무방비 발동 필요'
+                    };
+                } else {
+                    var effectiveCooldown = Math.max(awakening.cooldown - awakeningCooldownReduction, 10);
+                    // 업타임 = 지속시간 / (지속시간 + 쿨타임)
+                    // 발동 확률은 업타임에 미포함 (쿨타임 후 거의 즉시 발동)
+                    var uptime = awakening.duration / (awakening.duration + effectiveCooldown);
 
-                awakeningInfo = {
-                    duration: awakening.duration,
-                    baseCooldown: awakening.cooldown,
-                    reducedCooldown: effectiveCooldown,
-                    triggerChance: awakening.triggerChance,
-                    uptime: uptime
-                };
+                    awakeningInfo = {
+                        duration: awakening.duration,
+                        baseCooldown: awakening.cooldown,
+                        reducedCooldown: effectiveCooldown,
+                        uptime: uptime
+                    };
 
                 // 각성 효과를 업타임 적용하여 점수에 반영
                 Object.entries(awakening.awakeningEffects).forEach(function([effectName, value]) {
                     if (CORE_DPS_EFFECTS.includes(effectName)) {
                         var effectiveValue = value * uptime;
-                        var scoreWeight = 10;
-
-                        if (['치명타 확률 증가', '치명타 피해 증가'].includes(effectName)) {
-                            scoreWeight = 8;
-                        }
+                        // 효과별 가중치 사용 @updated 2025-12-10
+                        var scoreWeight = EFFECT_SCORE_WEIGHT[effectName] || 10;
 
                         var effectScore = effectiveValue * scoreWeight;
                         totalScore += effectScore;
@@ -3008,11 +3057,8 @@
                 // 상시 효과 추가
                 Object.entries(awakening.passiveEffects).forEach(function([effectName, value]) {
                     if (CORE_DPS_EFFECTS.includes(effectName)) {
-                        var scoreWeight = 10;
-
-                        if (['치명타 확률 증가', '치명타 피해 증가'].includes(effectName)) {
-                            scoreWeight = 8;
-                        }
+                        // 효과별 가중치 사용 @updated 2025-12-10
+                        var scoreWeight = EFFECT_SCORE_WEIGHT[effectName] || 10;
 
                         var effectScore = value * scoreWeight;
                         totalScore += effectScore;
@@ -3027,6 +3073,7 @@
                         effectiveSummary[effectName].total += value;
                     }
                 });
+                } // else 블록 종료
             }
         }
 

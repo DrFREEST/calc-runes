@@ -861,6 +861,223 @@
     };
 
     /**
+     * 엠블럼 각성 기본 쿨타임 (초)
+     * @constant {number}
+     * @added 2025-12-10
+     */
+    const EMBLEM_AWAKENING_BASE_COOLDOWN = 90;
+
+    /**
+     * 엠블럼 각성 효과 파싱
+     * @param {string} description - 룬 설명
+     * @returns {Object|null} { duration, cooldown, triggerChance, passiveEffects, awakeningEffects }
+     * @added 2025-12-10
+     */
+    function parseEmblemAwakening(description) {
+        if (!description) return null;
+        
+        var text = stripHtml(description);
+        var result = {
+            hasAwakening: false,
+            duration: 0,
+            cooldown: EMBLEM_AWAKENING_BASE_COOLDOWN,
+            triggerChance: 0.5, // 기본 50%
+            passiveEffects: {},
+            awakeningEffects: {}
+        };
+        
+        // 각성 패턴: "공격 시 N% 확률로 각성하여 N초 동안"
+        var awakeningPattern = /(\d+)%\s*확률로\s*각성하여\s*(\d+)초\s*동안/;
+        var awakeningMatch = text.match(awakeningPattern);
+        
+        if (awakeningMatch) {
+            result.hasAwakening = true;
+            result.triggerChance = parseInt(awakeningMatch[1]) / 100;
+            result.duration = parseInt(awakeningMatch[2]);
+        }
+        
+        // 무방비 각성 패턴: "무방비 공격 시 각성하여 N초 동안"
+        var defenseBreakPattern = /무방비\s*공격\s*시\s*각성하여\s*(\d+)초\s*동안/;
+        var defenseBreakMatch = text.match(defenseBreakPattern);
+        
+        if (defenseBreakMatch) {
+            result.hasAwakening = true;
+            result.triggerChance = 0.3; // 무방비 발동은 30%로 가정
+            result.duration = parseInt(defenseBreakMatch[1]);
+        }
+        
+        // 쿨타임 패턴: "(재사용 대기 시간: N초)"
+        var cooldownPattern = /재사용\s*대기\s*시간[:\s]*(\d+)초/;
+        var cooldownMatch = text.match(cooldownPattern);
+        
+        if (cooldownMatch) {
+            result.cooldown = parseInt(cooldownMatch[1]);
+        }
+        
+        // 상시 효과 파싱: "상시 효과:" 이후 문장
+        var passivePattern = /상시\s*효과[:\s]*(.*?)(?:\.|$)/;
+        var passiveMatch = text.match(passivePattern);
+        
+        if (passiveMatch) {
+            result.passiveEffects = parseEffectValues(passiveMatch[1]);
+        }
+        
+        // 각성 중 효과 파싱 (각성하여 ~ 증가한다 사이)
+        if (result.hasAwakening) {
+            var awakeningEffectPattern = /각성하여\s*\d+초\s*동안\s*(.*?)(?:\.|재사용)/;
+            var awakeningEffectMatch = text.match(awakeningEffectPattern);
+            
+            if (awakeningEffectMatch) {
+                result.awakeningEffects = parseEffectValues(awakeningEffectMatch[1]);
+            }
+        }
+        
+        return result.hasAwakening ? result : null;
+    }
+
+    /**
+     * 효과 문자열에서 수치 파싱
+     * @param {string} effectText - 효과 텍스트
+     * @returns {Object} 파싱된 효과
+     * @added 2025-12-10
+     */
+    function parseEffectValues(effectText) {
+        var effects = {};
+        
+        // 공격력 증가
+        var atkMatch = effectText.match(/공격력이?\s*(\d+(?:\.\d+)?)\s*%/);
+        if (atkMatch) effects['공격력 증가'] = parseFloat(atkMatch[1]);
+        
+        // 피해량 증가
+        var dmgMatch = effectText.match(/(?:적에게\s*)?주는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%/);
+        if (dmgMatch) effects['피해량 증가'] = parseFloat(dmgMatch[1]);
+        
+        // 치명타 확률
+        var critChanceMatch = effectText.match(/치명타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%/);
+        if (critChanceMatch) effects['치명타 확률 증가'] = parseFloat(critChanceMatch[1]);
+        
+        // 치명타 피해
+        var critDmgMatch = effectText.match(/치명타\s*피해(?:량)?이?\s*(\d+(?:\.\d+)?)\s*%/);
+        if (critDmgMatch) effects['치명타 피해 증가'] = parseFloat(critDmgMatch[1]);
+        
+        return effects;
+    }
+
+    /**
+     * 방어구 룬에서 각성 쿨타임 감소량 파싱
+     * @param {Object} rune - 룬 데이터
+     * @returns {number} 쿨타임 감소량 (초)
+     * @added 2025-12-10
+     */
+    function parseAwakeningCooldownReduction(rune) {
+        if (!rune || !rune.description) return 0;
+        if (rune.category !== '02') return 0; // 방어구만
+        
+        var text = stripHtml(rune.description);
+        
+        // 패턴: "각성의 재사용 대기 시간이 N초 감소"
+        var pattern = /각성의?\s*재사용\s*대기\s*시간이?\s*(\d+)초\s*감소/;
+        var match = text.match(pattern);
+        
+        if (match) {
+            return parseInt(match[1]);
+        }
+        
+        return 0;
+    }
+
+    /**
+     * 장착된 방어구에서 총 각성 쿨타임 감소량 계산
+     * @returns {number} 총 쿨타임 감소량 (초)
+     * @added 2025-12-10
+     */
+    function getTotalAwakeningCooldownReduction() {
+        var totalReduction = 0;
+        
+        Object.values(state.equippedRunes).forEach(function(rune) {
+            if (rune) {
+                totalReduction += parseAwakeningCooldownReduction(rune);
+            }
+        });
+        
+        return totalReduction;
+    }
+
+    /**
+     * 엠블럼 각성 업타임 계산
+     * @param {Object} emblemRune - 엠블럼 룬
+     * @param {number} cooldownReduction - 쿨타임 감소량
+     * @returns {number} 업타임 비율 (0~1)
+     * @added 2025-12-10
+     */
+    function calculateAwakeningUptime(emblemRune, cooldownReduction) {
+        var awakening = parseEmblemAwakening(emblemRune.description);
+        
+        if (!awakening || !awakening.hasAwakening) return 0;
+        
+        var effectiveCooldown = Math.max(awakening.cooldown - cooldownReduction, 10); // 최소 10초
+        var uptime = (awakening.duration / (awakening.duration + effectiveCooldown)) * awakening.triggerChance;
+        
+        return uptime;
+    }
+
+    /**
+     * 장신구 룬에서 강화 스킬명 추출
+     * @param {Object} rune - 룬 데이터
+     * @returns {string|null} 스킬명 또는 null
+     * @added 2025-12-10
+     */
+    function getAccessorySkillName(rune) {
+        if (!rune || !rune.description) return null;
+        if (rune.category !== '03') return null; // 장신구만
+        
+        var text = stripHtml(rune.description);
+        
+        // 패턴 1: "스킬명 스킬의 피해량이"
+        var pattern1 = /(\S+)\s*스킬의\s*피해량이/;
+        var match1 = text.match(pattern1);
+        if (match1) return match1[1];
+        
+        // 패턴 2: "스킬명 스킬에 변화를 준다"
+        var pattern2 = /(\S+)\s*스킬에\s*변화를/;
+        var match2 = text.match(pattern2);
+        if (match2) return match2[1];
+        
+        // 패턴 3: 룬 이름에서 스킬명 추출 (괄호 제외)
+        var namePattern = /^(.+?)(?:\(|$)/;
+        var nameMatch = rune.name.match(namePattern);
+        
+        // 일반적인 스킬 강화 룬 이름 패턴 확인
+        if (nameMatch && rune.name.includes('강화') || text.includes('피해량이') && text.includes('증가')) {
+            return nameMatch[1].trim();
+        }
+        
+        return null;
+    }
+
+    /**
+     * 추천 시 동일 스킬 룬 중복 체크
+     * @param {Array} selectedRunes - 이미 선택된 룬 배열
+     * @param {Object} candidateRune - 후보 룬
+     * @returns {boolean} 중복 여부
+     * @added 2025-12-10
+     */
+    function isDuplicateSkillRune(selectedRunes, candidateRune) {
+        var candidateSkill = getAccessorySkillName(candidateRune);
+        
+        if (!candidateSkill) return false; // 스킬 강화 룬이 아니면 중복 아님
+        
+        for (var i = 0; i < selectedRunes.length; i++) {
+            var existingSkill = getAccessorySkillName(selectedRunes[i]);
+            if (existingSkill && existingSkill === candidateSkill) {
+                return true; // 동일 스킬 발견
+            }
+        }
+        
+        return false;
+    }
+
+    /**
      * 트리거 키워드 패턴
      * @constant {Array}
      */
@@ -1267,10 +1484,17 @@
      * @param {Object} rune - 룬 데이터
      * @param {number} enhanceLevel - 강화 단계
      * @param {Array} equippedDotTypes - 장착된 룬들의 지속 피해 유형
+     * @param {number} awakeningCooldownReduction - 각성 쿨타임 감소량 (초)
      * @returns {Object} { score, breakdown, effectiveSummary }
      * @updated 2025-12-10 - DPS 핵심 효과만 점수 계산에 포함
+     * @updated 2025-12-10 - 엠블럼 각성 효과 및 시너지 추가
      */
-    function calculateRuneEfficiencyScore(rune, enhanceLevel = 0, equippedDotTypes = []) {
+    function calculateRuneEfficiencyScore(rune, enhanceLevel, equippedDotTypes, awakeningCooldownReduction) {
+        // 기본값 설정
+        enhanceLevel = enhanceLevel || 0;
+        equippedDotTypes = equippedDotTypes || [];
+        awakeningCooldownReduction = awakeningCooldownReduction || 0;
+        
         const parsed = parseRuneEffectsAdvanced(rune, enhanceLevel);
 
         // 시너지 체크 (적 상태 조건용)
@@ -1280,10 +1504,10 @@
         const breakdown = [];
         const effectiveSummary = {};
 
-        parsed.effects.forEach(effect => {
+        parsed.effects.forEach(function(effect) {
             const effective = calculateEffectiveValue(effect, hasSynergy);
 
-            Object.entries(effective).forEach(([effectName, data]) => {
+            Object.entries(effective).forEach(function([effectName, data]) {
                 // DPS 핵심 효과만 점수 계산에 포함
                 if (!CORE_DPS_EFFECTS.includes(effectName)) {
                     // 효과 요약에는 포함하지만 점수에는 반영하지 않음
@@ -1300,13 +1524,13 @@
                 }
 
                 // DPS 핵심 효과별 점수 가중치
-                let scoreWeight = 10; // 기본 가중치
+                var scoreWeight = 10; // 기본 가중치
 
                 if (['치명타 확률 증가', '치명타 피해 증가'].includes(effectName)) {
                     scoreWeight = 8; // 치명타는 약간 낮은 가중치
                 }
 
-                const effectScore = data.effective * scoreWeight;
+                var effectScore = data.effective * scoreWeight;
                 totalScore += effectScore;
 
                 // 요약에 추가 (DPS 핵심 효과로 표시)
@@ -1321,20 +1545,106 @@
                 effectiveSummary[effectName].details.push(data);
 
                 breakdown.push({
-                    effectName,
-                    ...data,
-                    scoreWeight,
+                    effectName: effectName,
+                    raw: data.raw,
+                    stacks: data.stacks,
+                    typeWeight: data.typeWeight,
+                    uptime: data.uptime,
+                    effective: data.effective,
+                    type: data.type,
+                    scoreWeight: scoreWeight,
                     contribution: effectScore
                 });
             });
         });
 
+        // 엠블럼 각성 효과 추가 계산 (엠블럼 룬인 경우)
+        // @added 2025-12-10
+        var awakeningInfo = null;
+        if (rune.category === '04') { // 엠블럼
+            var awakening = parseEmblemAwakening(rune.description);
+            
+            if (awakening && awakening.hasAwakening) {
+                var effectiveCooldown = Math.max(awakening.cooldown - awakeningCooldownReduction, 10);
+                var uptime = (awakening.duration / (awakening.duration + effectiveCooldown)) * awakening.triggerChance;
+                
+                awakeningInfo = {
+                    duration: awakening.duration,
+                    baseCooldown: awakening.cooldown,
+                    reducedCooldown: effectiveCooldown,
+                    triggerChance: awakening.triggerChance,
+                    uptime: uptime
+                };
+                
+                // 각성 효과를 업타임 적용하여 점수에 반영
+                Object.entries(awakening.awakeningEffects).forEach(function([effectName, value]) {
+                    if (CORE_DPS_EFFECTS.includes(effectName)) {
+                        var effectiveValue = value * uptime;
+                        var scoreWeight = 10;
+                        
+                        if (['치명타 확률 증가', '치명타 피해 증가'].includes(effectName)) {
+                            scoreWeight = 8;
+                        }
+                        
+                        var effectScore = effectiveValue * scoreWeight;
+                        totalScore += effectScore;
+                        
+                        // 요약에 추가 (각성 효과로 표시)
+                        var awakeningEffectName = effectName + ' (각성)';
+                        if (!effectiveSummary[awakeningEffectName]) {
+                            effectiveSummary[awakeningEffectName] = {
+                                total: 0,
+                                details: [],
+                                isCoreDPS: true,
+                                isAwakening: true
+                            };
+                        }
+                        effectiveSummary[awakeningEffectName].total += effectiveValue;
+                        
+                        breakdown.push({
+                            effectName: awakeningEffectName,
+                            raw: value,
+                            uptime: uptime,
+                            effective: effectiveValue,
+                            type: 'awakening',
+                            scoreWeight: scoreWeight,
+                            contribution: effectScore
+                        });
+                    }
+                });
+                
+                // 상시 효과 추가
+                Object.entries(awakening.passiveEffects).forEach(function([effectName, value]) {
+                    if (CORE_DPS_EFFECTS.includes(effectName)) {
+                        var scoreWeight = 10;
+                        
+                        if (['치명타 확률 증가', '치명타 피해 증가'].includes(effectName)) {
+                            scoreWeight = 8;
+                        }
+                        
+                        var effectScore = value * scoreWeight;
+                        totalScore += effectScore;
+                        
+                        if (!effectiveSummary[effectName]) {
+                            effectiveSummary[effectName] = {
+                                total: 0,
+                                details: [],
+                                isCoreDPS: true
+                            };
+                        }
+                        effectiveSummary[effectName].total += value;
+                    }
+                });
+            }
+        }
+
         return {
             score: Math.round(totalScore * 10) / 10,
-            breakdown,
-            effectiveSummary,
+            breakdown: breakdown,
+            effectiveSummary: effectiveSummary,
             dotTypes: parsed.dotTypes,
-            coreDPSEffects: CORE_DPS_EFFECTS // 핵심 효과 목록 반환
+            coreDPSEffects: CORE_DPS_EFFECTS,
+            awakeningInfo: awakeningInfo // 각성 정보 추가
         };
     }
 
@@ -1499,13 +1809,17 @@
      * @param {Object} rune - 룬 데이터
      * @param {Object} stats - 캐릭터 스텟
      * @param {string} role - 역할군 (dealer/tank/healer/balanced)
+     * @param {number} awakeningCooldownReduction - 각성 쿨타임 감소량 (엠블럼 시너지용)
      * @returns {number} 효율 점수
      * @updated 2025-12-10 - 고급 효과 파싱 엔진 통합
+     * @updated 2025-12-10 - 엠블럼 각성 쿨타임 시너지 추가
      */
-    function calculateRuneScore(rune, stats, role) {
+    function calculateRuneScore(rune, stats, role, awakeningCooldownReduction) {
+        awakeningCooldownReduction = awakeningCooldownReduction || 0;
+        
         // 새로운 고급 효율 계산 사용
         const equippedDots = getAllEquippedDotTypes();
-        const efficiency = calculateRuneEfficiencyScore(rune, 15, equippedDots);
+        const efficiency = calculateRuneEfficiencyScore(rune, 15, equippedDots, awakeningCooldownReduction);
 
         // 기본 점수 (새 엔진의 점수)
         let score = efficiency.score;
@@ -1594,7 +1908,7 @@
         var statLuk = $('#stat-luk');
         var statAtk = $('#stat-atk');
         var statDef = $('#stat-def');
-        
+
         const stats = {
             str: parseInt(statStr ? statStr.value : 0) || 0,
             dex: parseInt(statDex ? statDex.value : 0) || 0,
@@ -1608,49 +1922,40 @@
         var roleEl = $('#recommend-role');
         var classEl = $('#recommend-class');
         var gradeEl = $('#recommend-min-grade');
-        
+
         const role = (roleEl ? roleEl.value : null) || 'dealer';
         const selectedClass = (classEl ? classEl.value : null) || '00';
         const minGrade = (gradeEl ? gradeEl.value : null) || '4'; // priority 기반 (4 = 전설(시즌0) 이상)
 
         // 카테고리별 룬 필터링
         // @updated 2025-12-10 - 카테고리 코드 수정 (02: 방어구, 04: 엠블럼)
+        // @updated 2025-12-10 - 순서 변경: 방어구 먼저 (각성 쿨감 시너지), 장신구 중복 제한
         const categories = {
-            '01': {
-                count: 1,
-                name: '무기 룬',
-                slots: ['weapon-1']
-            },
-            '04': {
-                count: 1,
-                name: '엠블럼 룬',
-                slots: ['emblem-1']
-            },
-            '03': {
-                count: 3,
-                name: '장신구 룬',
-                slots: ['accessory-1', 'accessory-2', 'accessory-3']
-            },
-            '02': {
-                count: 5,
-                name: '방어구 룬',
-                slots: ['armor-1', 'armor-2', 'armor-3', 'armor-4', 'armor-5']
-            }
+            '01': { count: 1, name: '무기 룬', slots: ['weapon-1'] },
+            '02': { count: 5, name: '방어구 룬', slots: ['armor-1', 'armor-2', 'armor-3', 'armor-4', 'armor-5'] },
+            '04': { count: 1, name: '엠블럼 룬', slots: ['emblem-1'] },
+            '03': { count: 3, name: '장신구 룬', slots: ['accessory-1', 'accessory-2', 'accessory-3'] }
         };
 
         const recommendations = {};
+        var totalAwakeningCooldownReduction = 0;
+        
+        // 처리 순서: 무기 -> 방어구 -> 엠블럼 -> 장신구
+        var categoryOrder = ['01', '02', '04', '03'];
 
-        Object.entries(categories).forEach(([categoryCode, config]) => {
+        categoryOrder.forEach(function(categoryCode) {
+            var config = categories[categoryCode];
+            
             // 해당 카테고리 룬 필터링
             // @updated 2025-12-10 - 새로운 등급 체계 기반 필터링
-            let categoryRunes = state.allRunes.filter(rune => {
+            var categoryRunes = state.allRunes.filter(function(rune) {
                 // 카테고리 필터
                 if (rune.category !== categoryCode) return false;
 
                 // 등급 필터 (priority 기반)
                 if (minGrade !== 'all') {
-                    const gradeInfo = getGradeInfo(rune);
-                    const minPriority = parseInt(minGrade) || 5;
+                    var gradeInfo = getGradeInfo(rune);
+                    var minPriority = parseInt(minGrade) || 5;
                     if (!gradeInfo || gradeInfo.priority > minPriority) return false;
                 }
 
@@ -1662,17 +1967,48 @@
                 return true;
             });
 
-            // 점수 계산 및 정렬
-            categoryRunes = categoryRunes.map(rune => ({
-                ...rune,
-                score: calculateRuneScore(rune, stats, role)
-            })).sort((a, b) => b.score - a.score);
+            // 점수 계산 (엠블럼은 각성 쿨감 시너지 적용)
+            var cooldownReduction = (categoryCode === '04') ? totalAwakeningCooldownReduction : 0;
+            
+            categoryRunes = categoryRunes.map(function(rune) {
+                var newRune = {};
+                for (var key in rune) {
+                    newRune[key] = rune[key];
+                }
+                newRune.score = calculateRuneScore(rune, stats, role, cooldownReduction);
+                return newRune;
+            }).sort(function(a, b) { return b.score - a.score; });
 
-            // 상위 N개 선택
+            // 장신구: 동일 스킬 중복 제한 적용
+            // @added 2025-12-10
+            var selectedRunes = [];
+            if (categoryCode === '03') {
+                for (var i = 0; i < categoryRunes.length && selectedRunes.length < config.count; i++) {
+                    var candidateRune = categoryRunes[i];
+                    
+                    // 동일 스킬 룬인지 체크
+                    if (!isDuplicateSkillRune(selectedRunes, candidateRune)) {
+                        selectedRunes.push(candidateRune);
+                    }
+                }
+            } else {
+                // 다른 카테고리는 상위 N개 선택
+                selectedRunes = categoryRunes.slice(0, config.count);
+            }
+
             recommendations[categoryCode] = {
-                ...config,
-                runes: categoryRunes.slice(0, config.count)
+                count: config.count,
+                name: config.name,
+                slots: config.slots,
+                runes: selectedRunes
             };
+            
+            // 방어구 선택 후 각성 쿨타임 감소량 계산
+            if (categoryCode === '02') {
+                selectedRunes.forEach(function(rune) {
+                    totalAwakeningCooldownReduction += parseAwakeningCooldownReduction(rune);
+                });
+            }
         });
 
         renderRecommendations(recommendations);
@@ -2409,15 +2745,21 @@
         var modalClose = $('#modal-close');
         var detailModalClose = $('#detail-modal-close');
         var presetModalClose = $('#preset-modal-close');
-        
+
         if (modalClose) {
-            modalClose.addEventListener('click', function() { closeModal('rune-select-modal'); });
+            modalClose.addEventListener('click', function() {
+                closeModal('rune-select-modal');
+            });
         }
         if (detailModalClose) {
-            detailModalClose.addEventListener('click', function() { closeModal('rune-detail-modal'); });
+            detailModalClose.addEventListener('click', function() {
+                closeModal('rune-detail-modal');
+            });
         }
         if (presetModalClose) {
-            presetModalClose.addEventListener('click', function() { closeModal('preset-modal'); });
+            presetModalClose.addEventListener('click', function() {
+                closeModal('preset-modal');
+            });
         }
 
         // 모달 오버레이 클릭 시 닫기

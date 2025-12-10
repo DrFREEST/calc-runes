@@ -1596,6 +1596,32 @@
         }
 
         var parsedEffects = [];
+        
+        // ========================================================
+        // 시간 감소 효과 사전 체크 (전체 텍스트에서) @added 2025-12-10
+        // 문장 분리 전에 감지해야 "전투 시작 시...증가"와 "매 N초마다...감소"가 연결됨
+        // ========================================================
+        var decayEffect = parseDecayEffect(text);
+        if (decayEffect && decayEffect.hasDecay) {
+            // 시간 감소 효과를 별도 효과로 추가
+            parsedEffects.push({
+                type: EFFECT_TYPE.TRIGGER, // 트리거 효과지만 실효값으로 계산됨
+                effects: {},
+                decayEffects: {
+                    '공격력 증가 (전투 시작)': {
+                        initialValue: decayEffect.initialValue,
+                        effectiveValue: decayEffect.effectiveValue,
+                        decayInfo: decayEffect
+                    }
+                },
+                stackInfo: null,
+                timing: { uptime: 1.0 },
+                rawText: '전투 시작 시 공격력 ' + decayEffect.initialValue + '% (시간 감소 적용)'
+            });
+            
+            // 일반 파싱에서 "전투 시작 시" 효과 제거 (중복 방지)
+            text = text.replace(/전투\s*시작\s*시[,\s]*공격력이?\s*\d+(?:\.\d+)?\s*%\s*증가.*?감소한다\./g, '');
+        }
 
         // 1단계: 줄바꿈으로 큰 단위 분리
         var lines = text.split(/[\n\r]+/).filter(function(s) {

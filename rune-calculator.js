@@ -772,10 +772,10 @@
             } else if (enhanceLevel >= 10) {
                 slotEl.classList.add('rune-slot--enhance10');
             }
-            
-            const enhanceBadge = enhanceLevel > 0 ? 
+
+            const enhanceBadge = enhanceLevel > 0 ?
                 `<span class="rune-slot__enhance-badge">+${enhanceLevel}</span>` : '';
-            
+
             slotEl.innerHTML = `
                 <div class="rune-slot__content">
                     <img class="rune-slot__image" 
@@ -812,10 +812,10 @@
     function loadEquippedRunes() {
         const saved = loadFromStorage(STORAGE_KEYS.EQUIPPED_RUNES, {});
         state.equippedRunes = saved;
-        
+
         // 강화 수치 불러오기 @added 2025-12-10
         loadEnhanceLevels();
-        
+
         Object.keys(SLOT_CONFIG).forEach(slotId => renderSlot(slotId));
         calculateTotalEffects();
         renderEquippedRuneList();
@@ -881,7 +881,7 @@
         state.enhanceLevels[slotId] = enhanceLevel;
         saveEnhanceLevels();
         calculateTotalEffects();
-        
+
         // 슬롯 UI 업데이트 (강화 수치 표시)
         renderSlot(slotId);
     }
@@ -912,16 +912,16 @@
         Object.keys(state.equippedRunes).forEach(slotId => {
             state.enhanceLevels[slotId] = enhanceLevel;
         });
-        
+
         saveEnhanceLevels();
-        
+
         // UI 업데이트
         Object.keys(state.equippedRunes).forEach(slotId => {
             renderSlot(slotId);
         });
         renderEquippedRuneList();
         calculateTotalEffects();
-        
+
         showToast(`모든 장착 룬에 +${enhanceLevel} 강화 적용`, 'success');
     }
 
@@ -1752,6 +1752,22 @@
             {
                 name: '공격력 감소',
                 pattern: /공격력이?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/
+            },
+            // @added 2025-12-10 - 추가 결함 효과
+            {
+                name: '쿨타임 회복 속도 감소',
+                // "재사용 대기 시간 회복 속도가 X% 감소" - 스킬 DPS에 영향
+                pattern: /재사용\s*대기\s*시간\s*회복\s*속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/
+            },
+            {
+                name: '스킬 사용 속도 감소',
+                // "스킬 사용 속도가 X% 감소" 또는 "스킬 사용 속도와 캐스팅 및 차지 속도가 X% 감소"
+                pattern: /스킬\s*사용\s*속도(?:가|와)?\s*(?:.*?)?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/
+            },
+            {
+                name: '캐스팅 속도 감소',
+                // "캐스팅 및 차지 속도가 X% 감소"
+                pattern: /캐스팅\s*(?:및\s*)?(?:차지\s*)?속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/
             }
         ];
 
@@ -1899,11 +1915,15 @@
      * @added 2025-12-10
      */
     const CORE_DPS_DEMERITS = [
-        '피해량 감소', // 적에게 주는 피해 감소
-        '멀티히트 피해 감소', // 멀티히트 피해 감소
-        '치명타 확률 감소', // 치명타 확률 감소
-        '치명타 피해 감소', // 치명타 피해 감소
-        '공격력 감소' // 공격력 감소
+        '피해량 감소',           // 적에게 주는 피해 감소
+        '멀티히트 피해 감소',    // 멀티히트 피해 감소
+        '치명타 확률 감소',      // 치명타 확률 감소
+        '치명타 피해 감소',      // 치명타 피해 감소
+        '공격력 감소',           // 공격력 감소
+        // @added 2025-12-10 - 추가 결함 효과
+        '쿨타임 회복 속도 감소', // 재사용 대기 시간 회복 속도 감소 (스킬 DPS 감소)
+        '스킬 사용 속도 감소',   // 스킬 시전 속도 감소 (DPS 감소)
+        '캐스팅 속도 감소'       // 캐스팅/차지 속도 감소 (DPS 감소)
     ];
 
     /**
@@ -1938,10 +1958,14 @@
         '스킬 위력 증가': 7, // 효율 4위 (기타 효과)
         // 결함 효과 가중치 (감소분이므로 음수로 적용됨)
         '피해량 감소': 10,
-        '멀티히트 피해 감소': 8, // 멀티히트 비중 고려
+        '멀티히트 피해 감소': 8,   // 멀티히트 비중 고려
         '치명타 확률 감소': 9,
         '치명타 피해 감소': 9,
-        '공격력 감소': 10
+        '공격력 감소': 10,
+        // @added 2025-12-10 - 추가 결함 효과 가중치
+        '쿨타임 회복 속도 감소': 8, // 스킬 DPS 약 8~9% 영향 (쿨감 = 스킬 사용 빈도)
+        '스킬 사용 속도 감소': 6,   // 시전 속도 감소 (DPS 약 6% 영향)
+        '캐스팅 속도 감소': 5       // 캐스팅/차지 속도 (마법사 계열 DPS 영향)
     };
 
     /**
@@ -2039,6 +2063,10 @@
         var critChanceDecrease = 0;
         var critDmgDecrease = 0;
         var atkDecrease = 0;
+        // @added 2025-12-10 - 추가 결함 효과
+        var cooldownRecoveryDecrease = 0;  // 쿨타임 회복 속도 감소
+        var skillSpeedDecrease = 0;        // 스킬 사용 속도 감소
+        var castingSpeedDecrease = 0;      // 캐스팅/차지 속도 감소
 
         Object.entries(effectSummary).forEach(function([name, data]) {
             var value = data.total || 0;
@@ -2059,6 +2087,10 @@
             if (name.includes('치명타 확률 감소')) critChanceDecrease += value;
             if (name.includes('치명타 피해 감소')) critDmgDecrease += value;
             if (name.includes('공격력 감소')) atkDecrease += value;
+            // @added 2025-12-10 - 추가 결함 효과 추출
+            if (name.includes('쿨타임 회복 속도 감소')) cooldownRecoveryDecrease += value;
+            if (name.includes('스킬 사용 속도 감소')) skillSpeedDecrease += value;
+            if (name.includes('캐스팅 속도 감소')) castingSpeedDecrease += value;
         });
 
         // 결함 효과 차감 적용 @added 2025-12-10
@@ -2093,8 +2125,14 @@
         var effectiveMultiHitBonus = (totalMultiHit + totalAdditionalHit) * multiHitPenalty;
         hitMultiplier = 1 + effectiveMultiHitBonus;
 
+        // 쿨타임/스킬 속도 감소 배율 계산 @added 2025-12-10
+        // 쿨타임 회복 속도 감소 = 스킬 사용 빈도 감소 = DPS 감소
+        // 예: 9% 감소 → 스킬 사용 주기가 약 9% 늘어남 → DPS 약 9% 감소
+        var totalSpeedDecrease = cooldownRecoveryDecrease + (skillSpeedDecrease * 0.7) + (castingSpeedDecrease * 0.5);
+        var speedPenaltyMultiplier = 1 - (totalSpeedDecrease / 100);
+
         // 최종 DPS 배율
-        var totalDPSMultiplier = atkMultiplier * dmgMultiplier * critMultiplier * hitMultiplier;
+        var totalDPSMultiplier = atkMultiplier * dmgMultiplier * critMultiplier * hitMultiplier * speedPenaltyMultiplier;
         var totalDPSIncrease = (totalDPSMultiplier - 1) * 100;
 
         return {
@@ -2104,6 +2142,7 @@
                 damageMultiplier: Math.round(dmgMultiplier * 1000) / 1000,
                 critMultiplier: Math.round(critMultiplier * 1000) / 1000,
                 hitMultiplier: Math.round(hitMultiplier * 1000) / 1000,
+                speedMultiplier: Math.round(speedPenaltyMultiplier * 1000) / 1000, // @added 2025-12-10
                 rawValues: {
                     atkIncrease: Math.round(atkIncrease * 10) / 10,
                     dmgIncrease: Math.round(dmgIncrease * 10) / 10,
@@ -2116,7 +2155,11 @@
                     multiHitDecrease: Math.round(multiHitDecrease * 10) / 10,
                     atkDecrease: Math.round(atkDecrease * 10) / 10,
                     dmgDecrease: Math.round(dmgDecrease * 10) / 10,
-                    critChanceDecrease: Math.round(critChanceDecrease * 10) / 10
+                    critChanceDecrease: Math.round(critChanceDecrease * 10) / 10,
+                    // @added 2025-12-10 - 추가 결함 효과
+                    cooldownDecrease: Math.round(cooldownRecoveryDecrease * 10) / 10,
+                    skillSpeedDecrease: Math.round(skillSpeedDecrease * 10) / 10,
+                    castingSpeedDecrease: Math.round(castingSpeedDecrease * 10) / 10
                 }
             },
             balance: {
@@ -2126,7 +2169,7 @@
                     '피해량 증가 룬 추천' : (dmgIncrease > atkIncrease + 20 ? '공격력 증가 룬 추천' : '균형 잡힌 세팅')
             },
             // 결함 영향 표시 @added 2025-12-10
-            hasDemeritImpact: (dmgDecrease + multiHitDecrease + critChanceDecrease + critDmgDecrease + atkDecrease) > 0
+            hasDemeritImpact: (dmgDecrease + multiHitDecrease + critChanceDecrease + critDmgDecrease + atkDecrease + cooldownRecoveryDecrease + skillSpeedDecrease + castingSpeedDecrease) > 0
         };
     }
 
@@ -2642,10 +2685,14 @@
 
                 // DPS 계산 상세 (접기)
                 var bd = dpsAnalysis.breakdown || {};
+                // 속도 페널티가 있으면 표시 @updated 2025-12-10
+                var speedMultiplierText = bd.speedMultiplier && bd.speedMultiplier < 1 
+                    ? ` × 속도 ×${bd.speedMultiplier}` 
+                    : '';
                 attackHtml += `
                     <div class="effect-item effect-item--detail">
                         <span class="effect-item__name" style="font-size: var(--font-size-xs); color: var(--color-text-muted);">
-                            공격력 ×${bd.attackMultiplier || 1} × 피해량 ×${bd.damageMultiplier || 1} × 크리 ×${bd.critMultiplier || 1} × 연타 ×${bd.hitMultiplier || 1}
+                            공격력 ×${bd.attackMultiplier || 1} × 피해량 ×${bd.damageMultiplier || 1} × 크리 ×${bd.critMultiplier || 1} × 연타 ×${bd.hitMultiplier || 1}${speedMultiplierText}
                         </span>
                     </div>
                 `;

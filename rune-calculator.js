@@ -1574,6 +1574,19 @@
         }
 
         var text = stripHtml(rune.description);
+
+        // ========================================================
+        // 엠블럼 룬의 경우 각성 효과 부분 제외 @added 2025-12-10
+        // 각성 효과는 별도로 parseEmblemAwakening에서 처리됨
+        // 중복 계산 방지를 위해 일반 파싱에서 제외
+        // ========================================================
+        if (rune.category === '04') { // 엠블럼
+            // 각성 효과 부분 제거: "각성하여 N초 동안 ... (재사용 대기 시간: N초)"
+            text = text.replace(/\d+%\s*확률로\s*각성하여\s*\d+초\s*동안.*?(?:재사용\s*대기\s*시간[:\s]*\d+초\)?|(?=\s*상시\s*효과))/g, '');
+            // 무방비 각성 제거: "무방비 공격 시 각성하여 N초 동안 ..."
+            text = text.replace(/무방비\s*공격\s*시\s*각성하여\s*\d+초\s*동안.*?(?:재사용\s*대기\s*시간[:\s]*\d+초\)?|(?=\s*상시\s*효과))/g, '');
+        }
+
         var parsedEffects = [];
 
         // 1단계: 줄바꿈으로 큰 단위 분리
@@ -3413,12 +3426,12 @@
                             `(업타임 ${data.conditionInfo.uptimePercent}%)` : '';
                         return `
                             <div class="effect-item effect-item--condition">
-                                <span class="effect-item__name">${escapeHtml(key)}</span>
+                            <span class="effect-item__name">${escapeHtml(key)}</span>
                                 <span class="effect-item__value" style="color: #93c5fd;">
                                     +${data.total.toFixed(1)}% ${uptimeText}
-                                </span>
-                            </div>
-                        `;
+                            </span>
+                        </div>
+                    `;
                     }).join('');
                 }
 

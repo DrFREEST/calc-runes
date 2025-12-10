@@ -1613,6 +1613,63 @@
     }
 
     /**
+     * 시간 감소 효과 파싱
+     * @param {string} text - 효과 텍스트
+     * @returns {Object|null} 감소 효과 정보 { hasDecay, initialValue, decayRate, decayInterval, decayDuration, effectiveValue }
+     * @description "전투 시작 시 X% 증가, 매 N초마다 Y%씩 감소" 패턴 파싱
+     * @added 2025-12-10
+     */
+    function parseDecayEffect(text) {
+        if (!text) return null;
+        
+        // 패턴: "전투 시작 시, 공격력이 30% 증가한다. 증가한 공격력은 매 3초마다 2%씩 감소한다."
+        var combatStartPattern = /전투\s*시작\s*시.*?(\d+(?:\.\d+)?)\s*%\s*증가/;
+        var decayPattern = /매\s*(\d+(?:\.\d+)?)\s*초마다\s*(\d+(?:\.\d+)?)\s*%씩?\s*감소/;
+        
+        var startMatch = text.match(combatStartPattern);
+        var decayMatch = text.match(decayPattern);
+        
+        if (!startMatch || !decayMatch) {
+            return null;
+        }
+        
+        var initialValue = parseFloat(startMatch[1]);  // 초기값 (예: 30%)
+        var decayInterval = parseFloat(decayMatch[1]); // 감소 주기 (예: 3초)
+        var decayRate = parseFloat(decayMatch[2]);     // 감소량 (예: 2%)
+        
+        // 효과 소멸 시간 계산 (초)
+        // 30% / 2% = 15회, 15회 × 3초 = 45초
+        var decayCount = Math.ceil(initialValue / decayRate);
+        var decayDuration = decayCount * decayInterval;
+        
+        // 어비스/레이드 기준 전투 시간 (초) - 평균 120초 (2분) 가정
+        var combatDuration = 120;
+        
+        // 평균 효과값 계산 (선형 감소)
+        // 처음: initialValue, 끝: 0, 평균 = initialValue / 2
+        var averageValue = initialValue / 2;
+        
+        // 업타임 계산
+        // 감소 완료 시간이 전투 시간보다 짧으면 일부만 효과
+        var effectiveUptime = Math.min(decayDuration, combatDuration) / combatDuration;
+        
+        // 실효값 = 평균값 × 업타임
+        var effectiveValue = averageValue * effectiveUptime;
+        
+        return {
+            hasDecay: true,
+            initialValue: initialValue,
+            decayRate: decayRate,
+            decayInterval: decayInterval,
+            decayDuration: decayDuration,
+            combatDuration: combatDuration,
+            effectiveUptime: effectiveUptime,
+            averageValue: averageValue,
+            effectiveValue: Math.round(effectiveValue * 10) / 10
+        };
+    }
+
+    /**
      * 개선된 단일 효과 파싱 (조건 범위 정확히 적용)
      * @param {string} effectText - 효과 텍스트
      * @param {number} enhanceLevel - 강화 단계
@@ -1689,29 +1746,37 @@
         // 무방비 공격 적중 시 효과 체크 (효율에서 제외) @added 2025-12-10
         // 브레이크 발동까지 시간이 오래 걸려 실제 DPS 기여도 낮음
         var isDefenseBreakEffect = /무방비\s*공격\s*적중\s*시/.test(effectText);
-        
+
         // ========================================================
         // 제한적 효과 체크 (효율에서 제외) @added 2025-12-10
         // 특정 조건/스킬에서만 발동되어 범용성이 낮은 효과들
         // ========================================================
-        
+
         // 브레이크/무방비 피해 관련 (브레이크 발동 어려움)
         var isBreakDamageEffect = /브레이크\s*(?:스킬.*)?피해|무방비\s*피해/.test(effectText);
-        
+
         // 특정 스킬 피해량 (범용성 낮음)
         // 예: "드래곤 헌터 스킬의 피해량이", "보조, 생존 스킬의 피해량이"
         var isSpecificSkillDamage = /\S+\s*스킬의\s*피해량/.test(effectText) && !/스킬\s*피해량/.test(effectText);
-        
+
         // 특정 지속 피해 보유 조건 (시너지 필요)
         // 예: "지속 피해: 중독을 보유한 적에게"
         var isDotConditionEffect = /지속\s*피해:\s*\S+을?\s*보유한\s*적/.test(effectText);
-        
+
         // 특정 상태/범위 조건 (상황 의존)
         // 예: "주변 3m 범위 내에 적이 없을 경우"
         var isRangeConditionEffect = /범위\s*내에?\s*적이?\s*없을/.test(effectText);
-        
+
         // 통합 제한적 효과 체크
         var isLimitedEffect = isBreakDamageEffect || isSpecificSkillDamage || isDotConditionEffect || isRangeConditionEffect;
+        
+        // ========================================================
+        // 시간 감소 효과 체크 @added 2025-12-10
+        // "전투 시작 시 X% 증가, 매 N초마다 Y%씩 감소" 패턴
+        // 어비스/레이드 기준 전투 시간이 길어서 효과가 빠르게 소멸
+        // ========================================================
+        var decayEffectInfo = parseDecayEffect(effectText);
+        var hasDecayEffect = decayEffectInfo && decayEffectInfo.hasDecay;
 
         var effectPatterns = [{
                 name: '공격력 증가',
@@ -1796,11 +1861,10 @@
                 pattern: /(?:무방비\s*공격\s*적중\s*시.*?)?스킬\s*사용\s*속도.*?(\d+(?:\.\d+)?)\s*%?\s*증가/
             }
         ];
-        
+
         // 제한적 효과 패턴 (기타 효과로 분류) @added 2025-12-10
         // 브레이크/무방비/특정스킬 등 범용성 낮은 효과들
-        var limitedEffectPatterns = [
-            {
+        var limitedEffectPatterns = [{
                 name: '브레이크 스킬 피해 증가',
                 pattern: /브레이크\s*스킬.*?피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
             },
@@ -1903,7 +1967,7 @@
             // 무방비 효과는 일반 효과에서 제외하고 리턴
             result.isDefenseBreakOnly = true;
         }
-        
+
         // 제한적 효과 파싱 @added 2025-12-10
         // 브레이크/무방비/특정스킬 등 범용성 낮은 효과들
         if (isLimitedEffect) {
@@ -1939,7 +2003,7 @@
             if (isDefenseBreakEffect) {
                 return; // 스킵 - 무방비 효과는 별도 처리됨
             }
-            
+
             // 제한적 효과면 핵심 DPS 효과에서 제외 @added 2025-12-10
             // 브레이크/무방비/특정스킬 등 범용성 낮은 효과
             if (isLimitedEffect && (item.name === '피해량 증가' || item.name === '공격력 증가')) {
@@ -1948,7 +2012,32 @@
 
             var match = effectText.match(item.pattern);
             if (match) {
-                result.effects[item.name] = parseFloat(match[1]);
+                var effectValue = parseFloat(match[1]);
+                
+                // 시간 감소 효과 적용 @added 2025-12-10
+                // "전투 시작 시 X% 증가, 매 N초마다 Y%씩 감소" 패턴인 경우
+                if (hasDecayEffect && item.name === '공격력 증가') {
+                    // 전투 시작 시 효과는 별도 처리
+                    if (!result.decayEffects) {
+                        result.decayEffects = {};
+                    }
+                    result.decayEffects[item.name + ' (전투 시작)'] = {
+                        initialValue: decayEffectInfo.initialValue,
+                        effectiveValue: decayEffectInfo.effectiveValue,
+                        decayInfo: decayEffectInfo
+                    };
+                    // 상시 효과만 일반 효과에 저장 (전투 시작 효과 제외)
+                    // 예: "공격력이 8% 증가한다" 부분
+                    var permanentMatch = effectText.match(/공격력이?\s*(\d+(?:\.\d+)?)\s*%\s*증가.*?전투\s*시작/);
+                    if (permanentMatch) {
+                        effectValue = parseFloat(permanentMatch[1]);
+                    } else {
+                        // 상시 효과 없이 전투 시작 효과만 있으면 스킵
+                        return;
+                    }
+                }
+                
+                result.effects[item.name] = effectValue;
             }
         });
 
@@ -1969,14 +2058,15 @@
             }
         });
 
-        // 효과 또는 결함 또는 기본 공격/무방비/제한적 효과가 있으면 반환 @updated 2025-12-10
+        // 효과 또는 결함 또는 특수 효과가 있으면 반환 @updated 2025-12-10
         var hasEffects = Object.keys(result.effects).length > 0;
         var hasDemerits = result.demerits && Object.keys(result.demerits).length > 0;
         var hasBasicAttackEffects = result.basicAttackEffects && Object.keys(result.basicAttackEffects).length > 0;
         var hasDefenseBreakEffects = result.defenseBreakEffects && Object.keys(result.defenseBreakEffects).length > 0;
         var hasLimitedEffects = result.limitedEffects && Object.keys(result.limitedEffects).length > 0;
+        var hasDecayEffects = result.decayEffects && Object.keys(result.decayEffects).length > 0;
         
-        if (hasEffects || hasDemerits || hasBasicAttackEffects || hasDefenseBreakEffects || hasLimitedEffects) {
+        if (hasEffects || hasDemerits || hasBasicAttackEffects || hasDefenseBreakEffects || hasLimitedEffects || hasDecayEffects) {
             return result;
         }
 
@@ -2613,6 +2703,55 @@
                         raw: value,
                         effective: value,
                         type: '제한적'
+                    });
+                });
+            }
+
+            // ====================================================
+            // 시간 감소 효과 처리 - 실효값 적용하여 점수 계산
+            // @added 2025-12-10
+            // "전투 시작 시 X% 증가, 매 N초마다 Y%씩 감소" 패턴
+            // 어비스/레이드 기준 전투 시간이 길어서 실효값으로 계산
+            // ====================================================
+            if (effect.decayEffects && Object.keys(effect.decayEffects).length > 0) {
+                Object.entries(effect.decayEffects).forEach(function([effectName, data]) {
+                    var initialValue = data.initialValue;
+                    var effectiveValue = data.effectiveValue;
+                    var decayInfo = data.decayInfo;
+                    
+                    // 실효값으로 점수 계산
+                    var scoreWeight = EFFECT_SCORE_WEIGHT['공격력 증가'] || 10;
+                    var effectScore = effectiveValue * scoreWeight;
+                    totalScore += effectScore;
+                    
+                    // 시간 감소 효과로 표시
+                    var displayName = effectName;
+                    if (!effectiveSummary[displayName]) {
+                        effectiveSummary[displayName] = {
+                            total: 0,
+                            details: [],
+                            isCoreDPS: true, // DPS 효과지만 감소 적용
+                            isDecayEffect: true,
+                            decayInfo: decayInfo
+                        };
+                    }
+                    effectiveSummary[displayName].total += effectiveValue;
+                    effectiveSummary[displayName].details.push({
+                        raw: initialValue,
+                        effective: effectiveValue,
+                        type: '시간 감소',
+                        decayDuration: decayInfo.decayDuration,
+                        effectiveUptime: Math.round(decayInfo.effectiveUptime * 100)
+                    });
+                    
+                    breakdown.push({
+                        effectName: displayName,
+                        raw: initialValue,
+                        effective: effectiveValue,
+                        type: '시간 감소',
+                        scoreWeight: scoreWeight,
+                        contribution: effectScore,
+                        decayInfo: '초기 ' + initialValue + '% → ' + decayInfo.decayDuration + '초 후 소멸'
                     });
                 });
             }

@@ -802,6 +802,7 @@
 
     /**
      * 장착된 룬 목록 렌더링
+     * @updated 2025-12-10 - data-rune-id 추가 (클릭 시 상세정보 모달)
      */
     function renderEquippedRuneList() {
         const listEl = $('#equipped-runes-list');
@@ -817,7 +818,7 @@
         listEl.innerHTML = equippedList.map(([slotId, rune]) => {
             const slotConfig = SLOT_CONFIG[slotId];
             return `
-                <div class="equipped-rune-item">
+                <div class="equipped-rune-item" data-rune-id="${rune.id}">
                     <img class="equipped-rune-item__image" 
                          src="${rune.image || 'https://via.placeholder.com/32'}" 
                          alt="${escapeHtml(rune.name)}"
@@ -1397,7 +1398,7 @@
      */
     function parseRuneEffectsAdvanced(rune, enhanceLevel) {
         enhanceLevel = enhanceLevel || 0;
-        
+
         if (!rune || !rune.description) {
             return {
                 effects: [],
@@ -1408,18 +1409,20 @@
 
         var text = stripHtml(rune.description);
         var parsedEffects = [];
-        
+
         // 1단계: 줄바꿈으로 큰 단위 분리
-        var lines = text.split(/[\n\r]+/).filter(function(s) { return s.trim(); });
-        
+        var lines = text.split(/[\n\r]+/).filter(function(s) {
+            return s.trim();
+        });
+
         lines.forEach(function(line) {
             // 2단계: 마침표로 문장 분리 (한국어 문장 종결: 다, 요, 음 뒤의 마침표)
             var sentences = splitIntoSentences(line);
-            
+
             sentences.forEach(function(sentence) {
                 // 3단계: 독립 절로 분리 (하며, 또한, 그리고)
                 var clauses = splitIntoClauses(sentence);
-                
+
                 clauses.forEach(function(clause) {
                     var parsed = parseSingleEffectImproved(clause.trim(), enhanceLevel);
                     if (parsed) {
@@ -1436,7 +1439,7 @@
             dotTypes: getRuneDotTypes(rune)
         };
     }
-    
+
     /**
      * 문장 분리 (마침표 기준, 한국어 문장 종결 고려)
      * @param {string} text - 텍스트
@@ -1448,10 +1451,10 @@
         var result = [];
         var current = '';
         var chars = text.split('');
-        
+
         for (var i = 0; i < chars.length; i++) {
             current += chars[i];
-            
+
             // 마침표를 만났을 때
             if (chars[i] === '.') {
                 // 다음 문자가 공백이거나 끝이면 문장 종료
@@ -1463,15 +1466,15 @@
                 }
             }
         }
-        
+
         // 남은 텍스트 추가
         if (current.trim()) {
             result.push(current.trim());
         }
-        
+
         return result.length > 0 ? result : [text];
     }
-    
+
     /**
      * 독립 절로 분리 (조건과 효과를 분리)
      * @param {string} sentence - 문장
@@ -1480,18 +1483,18 @@
      */
     function splitIntoClauses(sentence) {
         var clauses = [];
-        
+
         // "하며," 또는 "또한," 으로 분리되는 독립적인 효과 확인
         // 패턴: "효과1하며, 효과2" 또는 "효과1. 또한, 효과2"
-        
+
         // 방법: 트리거 키워드 뒤의 효과만 해당 트리거에 연결
         // "기본 공격 사용 시, 효과1. 효과2하며, 조건 시 효과3"
-        
+
         // 핵심: 각 효과가 어떤 조건에 종속되는지 정확히 파악
-        
+
         // 전략 1: "하며," 로 분리 (이 경우 앞 절과 뒷 절이 독립)
         var parts = sentence.split(/하며[,\s]*/);
-        
+
         if (parts.length > 1) {
             parts.forEach(function(part) {
                 if (part.trim()) {
@@ -1500,7 +1503,7 @@
             });
             return clauses;
         }
-        
+
         // 전략 2: "또한," 으로 분리
         parts = sentence.split(/또한[,\s]*/);
         if (parts.length > 1) {
@@ -1511,11 +1514,11 @@
             });
             return clauses;
         }
-        
+
         // 분리가 안 되면 원본 반환
         return [sentence];
     }
-    
+
     /**
      * 개선된 단일 효과 파싱 (조건 범위 정확히 적용)
      * @param {string} effectText - 효과 텍스트
@@ -1525,17 +1528,19 @@
      */
     function parseSingleEffectImproved(effectText, enhanceLevel) {
         if (!effectText || effectText.length < 3) return null;
-        
+
         var result = {
             type: EFFECT_TYPE.PASSIVE, // 기본은 상시
             effects: {},
             stackInfo: null,
-            timing: { uptime: 1.0 },
+            timing: {
+                uptime: 1.0
+            },
             isEnhanceBonus: false,
             enhanceLevel: 0,
             rawText: effectText
         };
-        
+
         // 강화 효과 체크
         if (/\+10.*강화/.test(effectText) || /장비를\s*\+10\s*강화/.test(effectText)) {
             result.isEnhanceBonus = true;
@@ -1547,15 +1552,15 @@
             result.enhanceLevel = 15;
             if (enhanceLevel < 15) return null;
         }
-        
+
         // 조건 키워드와 효과의 위치 관계 분석
         // 핵심: 조건이 효과 바로 앞에 있을 때만 해당 효과에 적용
         var conditionEndIndex = findConditionEndIndex(effectText);
-        
+
         // 조건 부분과 효과 부분 분리
         var conditionPart = conditionEndIndex > 0 ? effectText.substring(0, conditionEndIndex) : '';
         var effectPart = conditionEndIndex > 0 ? effectText.substring(conditionEndIndex) : effectText;
-        
+
         // 효과 부분에 직접 조건이 있는지 확인
         var effectConditionIndex = findConditionEndIndex(effectPart);
         if (effectConditionIndex > 0 && effectConditionIndex < effectPart.length - 5) {
@@ -1563,35 +1568,58 @@
             conditionPart = effectPart.substring(0, effectConditionIndex);
             effectPart = effectPart.substring(effectConditionIndex);
         }
-        
+
         // 조건 부분에서 효과 유형 결정
         if (conditionPart) {
             result.type = detectEffectType(conditionPart);
         }
-        
+
         // 효과 부분에 조건 없이 시작하면 상시 효과
         if (!conditionPart && !hasConditionKeyword(effectPart.substring(0, 20))) {
             result.type = EFFECT_TYPE.PASSIVE;
         }
-        
+
         // 중첩 정보 파싱
         result.stackInfo = parseStackInfo(effectText);
-        
+
         // 지속 시간/쿨타임 파싱
         result.timing = parseDurationAndCooldown(effectText);
-        
+
         // 효과 수치 파싱 (효과 부분에서)
-        var effectPatterns = [
-            { name: '공격력 증가', pattern: /공격력이?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/ },
-            { name: '피해량 증가', pattern: /(?:적에게\s*)?주는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/ },
-            { name: '치명타 확률 증가', pattern: /치명타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '치명타 피해 증가', pattern: /치명타\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '추가타 확률 증가', pattern: /추가타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '공격 속도 증가', pattern: /공격\s*속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ },
-            { name: '받는 피해 감소', pattern: /받는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/ },
-            { name: '회복력 증가', pattern: /회복력이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/ }
+        var effectPatterns = [{
+                name: '공격력 증가',
+                pattern: /공격력이?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/
+            },
+            {
+                name: '피해량 증가',
+                pattern: /(?:적에게\s*)?주는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*(?:추가로\s*)?증가/
+            },
+            {
+                name: '치명타 확률 증가',
+                pattern: /치명타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '치명타 피해 증가',
+                pattern: /치명타\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '추가타 확률 증가',
+                pattern: /추가타\s*확률이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '공격 속도 증가',
+                pattern: /공격\s*속도가?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            },
+            {
+                name: '받는 피해 감소',
+                pattern: /받는\s*피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/
+            },
+            {
+                name: '회복력 증가',
+                pattern: /회복력이?\s*(\d+(?:\.\d+)?)\s*%?\s*증가/
+            }
         ];
-        
+
         // 전체 텍스트에서 효과 파싱 (수치 추출)
         effectPatterns.forEach(function(item) {
             var match = effectText.match(item.pattern);
@@ -1599,15 +1627,15 @@
                 result.effects[item.name] = parseFloat(match[1]);
             }
         });
-        
+
         // 효과가 있으면 반환
         if (Object.keys(result.effects).length > 0) {
             return result;
         }
-        
+
         return null;
     }
-    
+
     /**
      * 조건 키워드의 끝 위치 찾기
      * @param {string} text - 텍스트
@@ -1622,9 +1650,9 @@
             /때[,\s]/,
             /중[,\s]/
         ];
-        
+
         var endIndex = 0;
-        
+
         conditionPatterns.forEach(function(pattern) {
             var match = text.match(pattern);
             if (match) {
@@ -1634,10 +1662,10 @@
                 }
             }
         });
-        
+
         return endIndex;
     }
-    
+
     /**
      * 조건 키워드 존재 여부 확인
      * @param {string} text - 텍스트
@@ -2927,6 +2955,30 @@
         const favGrid = $('#favorites-grid');
         if (favGrid) {
             favGrid.addEventListener('click', handleRuneCardClick);
+        }
+
+        // 장착된 룬 목록 클릭 이벤트 위임 (상세정보 모달)
+        // @added 2025-12-10
+        const equippedList = $('#equipped-runes-list');
+        if (equippedList) {
+            equippedList.addEventListener('click', function(e) {
+                var item = e.target.closest('.equipped-rune-item');
+                if (item && item.dataset.runeId) {
+                    openRuneDetailModal(parseInt(item.dataset.runeId));
+                }
+            });
+        }
+
+        // 추천 결과 클릭 이벤트 위임 (상세정보 모달)
+        // @added 2025-12-10
+        const recommendSlots = $('#recommend-slots');
+        if (recommendSlots) {
+            recommendSlots.addEventListener('click', function(e) {
+                var item = e.target.closest('.recommend-rune-item');
+                if (item && item.dataset.runeId) {
+                    openRuneDetailModal(parseInt(item.dataset.runeId));
+                }
+            });
         }
 
         // 슬롯 클릭 이벤트

@@ -847,6 +847,13 @@ img {
     gap: var(--spacing-sm);
 }
 
+/* 힌트 텍스트 @added 2025-12-10 */
+.enhance-selector__hint {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-left: auto;
+}
+
 .enhance-option {
     display: flex;
     align-items: center;
@@ -869,6 +876,81 @@ img {
 
 .enhance-option input {
     display: none;
+}
+
+/* 슬롯 강화 배지 @added 2025-12-10 */
+.rune-slot__enhance-badge {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* +15 강화 슬롯 스타일 */
+.rune-slot--enhance15 {
+    border-color: #fbbf24 !important;
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.4) !important;
+}
+
+.rune-slot--enhance15 .rune-slot__enhance-badge {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+}
+
+/* +10 강화 슬롯 스타일 */
+.rune-slot--enhance10 {
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 10px rgba(96, 165, 250, 0.3) !important;
+}
+
+.rune-slot--enhance10 .rune-slot__enhance-badge {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+}
+
+/* 장착 룬 목록 - 강화 선택기 @added 2025-12-10 */
+.equipped-rune-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.equipped-rune-item__enhance {
+    margin-left: auto;
+}
+
+.enhance-select {
+    padding: 4px 8px;
+    font-size: var(--font-size-xs);
+    color: var(--color-text-primary);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.enhance-select:hover {
+    border-color: var(--color-accent-primary);
+}
+
+.enhance-select:focus {
+    outline: none;
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+}
+
+/* 강화 단계별 셀렉트 색상 */
+.enhance-select option[value="10"] {
+    color: #60a5fa;
+}
+
+.enhance-select option[value="15"] {
+    color: #fbbf24;
 }
 
 /* 효과 요약 */

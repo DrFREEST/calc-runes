@@ -250,8 +250,10 @@
         presets: [],
         /** @type {string|null} 현재 선택된 슬롯 (모달용) */
         selectedSlot: null,
-        /** @type {number} 현재 강화 단계 (0, 10, 15) */
-        enhanceLevel: 0
+        /** @type {number} 현재 강화 단계 (0, 10, 15) - 일괄 적용용 */
+        enhanceLevel: 0,
+        /** @type {Object} 슬롯별 개별 강화 단계 @added 2025-12-10 */
+        enhanceLevels: {}
     };
 
     // ============================================
@@ -751,6 +753,7 @@
     /**
      * 단일 슬롯 렌더링
      * @param {string} slotId - 슬롯 ID
+     * @updated 2025-12-10 - 개별 강화 수치 표시 추가
      */
     function renderSlot(slotId) {
         const slotEl = $(`.rune-slot[data-slot="${slotId}"]`);
@@ -758,9 +761,21 @@
 
         const rune = state.equippedRunes[slotId];
         const slotConfig = SLOT_CONFIG[slotId];
+        const enhanceLevel = state.enhanceLevels[slotId] || 0;
 
         if (rune) {
             slotEl.classList.add('rune-slot--filled');
+            // 강화 수치에 따른 클래스 추가
+            slotEl.classList.remove('rune-slot--enhance10', 'rune-slot--enhance15');
+            if (enhanceLevel >= 15) {
+                slotEl.classList.add('rune-slot--enhance15');
+            } else if (enhanceLevel >= 10) {
+                slotEl.classList.add('rune-slot--enhance10');
+            }
+            
+            const enhanceBadge = enhanceLevel > 0 ? 
+                `<span class="rune-slot__enhance-badge">+${enhanceLevel}</span>` : '';
+            
             slotEl.innerHTML = `
                 <div class="rune-slot__content">
                     <img class="rune-slot__image" 
@@ -768,11 +783,12 @@
                          alt="${escapeHtml(rune.name)}"
                          onerror="this.src='https://via.placeholder.com/48?text=No'">
                     <div class="rune-slot__name">${escapeHtml(rune.name)}</div>
+                    ${enhanceBadge}
                 </div>
                 <button class="rune-slot__remove" data-action="unequip" data-slot="${slotId}">×</button>
             `;
         } else {
-            slotEl.classList.remove('rune-slot--filled');
+            slotEl.classList.remove('rune-slot--filled', 'rune-slot--enhance10', 'rune-slot--enhance15');
             slotEl.innerHTML = `
                 <div class="rune-slot__empty">
                     <span class="rune-slot__plus">+</span>
@@ -791,10 +807,15 @@
 
     /**
      * 장착된 룬 불러오기
+     * @updated 2025-12-10 - 강화 수치도 함께 로드
      */
     function loadEquippedRunes() {
         const saved = loadFromStorage(STORAGE_KEYS.EQUIPPED_RUNES, {});
         state.equippedRunes = saved;
+        
+        // 강화 수치 불러오기 @added 2025-12-10
+        loadEnhanceLevels();
+        
         Object.keys(SLOT_CONFIG).forEach(slotId => renderSlot(slotId));
         calculateTotalEffects();
         renderEquippedRuneList();
@@ -803,6 +824,7 @@
     /**
      * 장착된 룬 목록 렌더링
      * @updated 2025-12-10 - data-rune-id 추가 (클릭 시 상세정보 모달)
+     * @updated 2025-12-10 - 개별 강화 수치 입력 추가
      */
     function renderEquippedRuneList() {
         const listEl = $('#equipped-runes-list');
@@ -817,8 +839,9 @@
 
         listEl.innerHTML = equippedList.map(([slotId, rune]) => {
             const slotConfig = SLOT_CONFIG[slotId];
+            const currentEnhance = state.enhanceLevels[slotId] || 0;
             return `
-                <div class="equipped-rune-item" data-rune-id="${rune.id}">
+                <div class="equipped-rune-item" data-rune-id="${rune.id}" data-slot-id="${slotId}">
                     <img class="equipped-rune-item__image" 
                          src="${rune.image || 'https://via.placeholder.com/32'}" 
                          alt="${escapeHtml(rune.name)}"
@@ -827,9 +850,79 @@
                         <div class="equipped-rune-item__name">${escapeHtml(rune.name)}</div>
                         <div class="equipped-rune-item__slot">${slotConfig.name}</div>
                     </div>
+                    <div class="equipped-rune-item__enhance" onclick="event.stopPropagation()">
+                        <select class="enhance-select" data-slot="${slotId}" title="강화 단계">
+                            <option value="0" ${currentEnhance === 0 ? 'selected' : ''}>+0</option>
+                            <option value="10" ${currentEnhance === 10 ? 'selected' : ''}>+10</option>
+                            <option value="15" ${currentEnhance === 15 ? 'selected' : ''}>+15</option>
+                        </select>
+                    </div>
                 </div>
             `;
         }).join('');
+
+        // 강화 수치 변경 이벤트 바인딩
+        listEl.querySelectorAll('.enhance-select').forEach(select => {
+            select.addEventListener('change', function(e) {
+                const slotId = this.dataset.slot;
+                const enhanceLevel = parseInt(this.value);
+                updateSlotEnhanceLevel(slotId, enhanceLevel);
+            });
+        });
+    }
+
+    /**
+     * 슬롯 개별 강화 수치 업데이트
+     * @param {string} slotId - 슬롯 ID
+     * @param {number} enhanceLevel - 강화 단계 (0, 10, 15)
+     * @added 2025-12-10
+     */
+    function updateSlotEnhanceLevel(slotId, enhanceLevel) {
+        state.enhanceLevels[slotId] = enhanceLevel;
+        saveEnhanceLevels();
+        calculateTotalEffects();
+        
+        // 슬롯 UI 업데이트 (강화 수치 표시)
+        renderSlot(slotId);
+    }
+
+    /**
+     * 강화 수치 저장
+     * @added 2025-12-10
+     */
+    function saveEnhanceLevels() {
+        saveToStorage('rune_enhance_levels', state.enhanceLevels);
+    }
+
+    /**
+     * 강화 수치 불러오기
+     * @added 2025-12-10
+     */
+    function loadEnhanceLevels() {
+        state.enhanceLevels = loadFromStorage('rune_enhance_levels', {});
+    }
+
+    /**
+     * 모든 장착 슬롯에 강화 수치 일괄 적용
+     * @param {number} enhanceLevel - 강화 단계 (0, 10, 15)
+     * @added 2025-12-10
+     */
+    function applyEnhanceLevelToAll(enhanceLevel) {
+        // 장착된 룬이 있는 슬롯에만 적용
+        Object.keys(state.equippedRunes).forEach(slotId => {
+            state.enhanceLevels[slotId] = enhanceLevel;
+        });
+        
+        saveEnhanceLevels();
+        
+        // UI 업데이트
+        Object.keys(state.equippedRunes).forEach(slotId => {
+            renderSlot(slotId);
+        });
+        renderEquippedRuneList();
+        calculateTotalEffects();
+        
+        showToast(`모든 장착 룬에 +${enhanceLevel} 강화 적용`, 'success');
     }
 
     // ============================================
@@ -1638,8 +1731,7 @@
          * @description DPS에 영향을 주는 감소 효과
          * @added 2025-12-10
          */
-        var demeritPatterns = [
-            {
+        var demeritPatterns = [{
                 name: '피해량 감소',
                 // "적에게 주는 피해가 X% 감소" 또는 "주는 모든 피해가 X% 감소"
                 pattern: /(?:적에게\s*)?주는\s*(?:모든\s*)?피해가?\s*(\d+(?:\.\d+)?)\s*%?\s*감소/
@@ -1685,7 +1777,7 @@
                     result.demerits = {};
                 }
                 result.demerits[item.name] = value;
-                
+
                 // 결함 영역이거나 감소 효과가 명시된 경우 표시
                 result.hasDemerit = true;
             }
@@ -1807,11 +1899,11 @@
      * @added 2025-12-10
      */
     const CORE_DPS_DEMERITS = [
-        '피해량 감소',           // 적에게 주는 피해 감소
-        '멀티히트 피해 감소',    // 멀티히트 피해 감소
-        '치명타 확률 감소',      // 치명타 확률 감소
-        '치명타 피해 감소',      // 치명타 피해 감소
-        '공격력 감소'            // 공격력 감소
+        '피해량 감소', // 적에게 주는 피해 감소
+        '멀티히트 피해 감소', // 멀티히트 피해 감소
+        '치명타 확률 감소', // 치명타 확률 감소
+        '치명타 피해 감소', // 치명타 피해 감소
+        '공격력 감소' // 공격력 감소
     ];
 
     /**
@@ -2031,8 +2123,7 @@
                 atkToDmgRatio: dmgIncrease > 0 ? Math.round((atkIncrease / dmgIncrease) * 100) / 100 : 'N/A',
                 isBalanced: Math.abs(atkIncrease - dmgIncrease) < 20, // 20% 이내면 균형
                 recommendation: atkIncrease > dmgIncrease + 20 ?
-                    '피해량 증가 룬 추천' :
-                    (dmgIncrease > atkIncrease + 20 ? '공격력 증가 룬 추천' : '균형 잡힌 세팅')
+                    '피해량 증가 룬 추천' : (dmgIncrease > atkIncrease + 20 ? '공격력 증가 룬 추천' : '균형 잡힌 세팅')
             },
             // 결함 영향 표시 @added 2025-12-10
             hasDemeritImpact: (dmgDecrease + multiHitDecrease + critChanceDecrease + critDmgDecrease + atkDecrease) > 0
@@ -2196,10 +2287,10 @@
                     if (CORE_DPS_DEMERITS.includes(demeritName)) {
                         var demeritWeight = EFFECT_SCORE_WEIGHT[demeritName] || 8;
                         var demeritScore = value * demeritWeight;
-                        
+
                         // 점수에서 차감
                         totalScore -= demeritScore;
-                        
+
                         // 결함 요약에 추가
                         var demeritDisplayName = demeritName + ' (결함)';
                         if (!effectiveSummary[demeritDisplayName]) {
@@ -2216,7 +2307,7 @@
                             effective: -value,
                             type: '결함'
                         });
-                        
+
                         breakdown.push({
                             effectName: demeritDisplayName,
                             raw: value,
@@ -2380,11 +2471,14 @@
         // 캐릭터 스탯 (추천 탭에서 입력한 값 사용)
         const characterStats = getCharacterStatsFromInput();
 
-        Object.values(state.equippedRunes).forEach(rune => {
+        Object.entries(state.equippedRunes).forEach(([slotId, rune]) => {
             if (!rune) return;
 
+            // 개별 슬롯 강화 수치 사용 @updated 2025-12-10
+            const slotEnhanceLevel = state.enhanceLevels[slotId] || 0;
+
             // 고급 효과 계산 사용 (옵션 포함)
-            const efficiency = calculateRuneEfficiencyScore(rune, state.enhanceLevel, allDotTypes, 0, {
+            const efficiency = calculateRuneEfficiencyScore(rune, slotEnhanceLevel, allDotTypes, 0, {
                 currentEffects: currentEffects,
                 characterStats: characterStats,
                 synergyBoost: synergyResult.totalBoost
@@ -3593,11 +3687,11 @@
             });
         });
 
-        // 강화 단계 변경
+        // 강화 단계 일괄 적용 @updated 2025-12-10
         $$('input[name="enhance-level"]').forEach(radio => {
             radio.addEventListener('change', e => {
-                state.enhanceLevel = parseInt(e.target.value);
-                calculateTotalEffects();
+                const enhanceLevel = parseInt(e.target.value);
+                applyEnhanceLevelToAll(enhanceLevel);
             });
         });
 

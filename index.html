@@ -323,13 +323,13 @@
                     <h2 class="section-title">📊 총 효과 합산</h2>
                     <p class="section-desc">장착된 룬의 효과를 자동으로 계산합니다</p>
 
-                    <!-- 강화 단계 선택 -->
+                    <!-- 강화 단계 일괄 적용 @updated 2025-12-10 -->
                     <div class="enhance-selector">
-                        <label class="enhance-selector__label">장비 강화 단계:</label>
+                        <label class="enhance-selector__label">강화 일괄 적용:</label>
                         <div class="enhance-selector__options">
                             <label class="enhance-option">
-                                <input type="radio" name="enhance-level" value="0" checked>
-                                <span>기본</span>
+                                <input type="radio" name="enhance-level" value="0">
+                                <span>+0</span>
                             </label>
                             <label class="enhance-option">
                                 <input type="radio" name="enhance-level" value="10">
@@ -340,6 +340,7 @@
                                 <span>+15</span>
                             </label>
                         </div>
+                        <span class="enhance-selector__hint">(각 룬 개별 설정 가능)</span>
                     </div>
 
                     <!-- 효과 합산 결과 -->

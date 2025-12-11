@@ -53,25 +53,36 @@
  * 18. 초기화 (Initialization)
  * 19. 전역 인터페이스 (Global Interface)
  * 
- * @note 향후 분리 예정 모듈:
- * - effect-parser.js: 효과 파싱 엔진 (약 2,300줄)
- * - effect-calculator.js: 효과 합산 (약 350줄)
- * - recommendation.js: 추천 시스템 (약 375줄)
+ * @note 모듈화 완료 (2025-12-11):
+ * - 상수/유틸리티/UI 함수들은 모듈 참조 방식으로 변경됨
+ * - 모듈이 없어도 폴백 코드로 동작하도록 구현
+ * - 분리된 모듈: effect-parser.js, effect-calculator.js, recommendation.js
  */
 
 (function() {
     'use strict';
 
     // ============================================
-    // 1. 상수 정의 (Constants)
+    // 1. 외부 모듈 참조 및 상수 정의
     // ============================================
+    // @updated 2025-12-11 - 모듈에서 상수 가져오기
 
     /**
-     * 카테고리 코드 매핑
-     * @constant {Object}
-     * @updated 2025-12-10 - 카테고리 매핑 수정 (02: 방어구, 04: 엠블럼)
+     * 외부 모듈 참조
+     * @description EffectTypes, Utils, StorageManager, UIManager 등
      */
-    const CATEGORY_MAP = {
+    const ET = window.EffectTypes || {};
+    const Utils = window.Utils || {};
+    const SM = window.StorageManager || {};
+    const UI = window.UIManager || {};
+    const DP = window.DataLoader || {};
+    const EP = window.EffectParser || {};
+
+    /**
+     * 카테고리 코드 매핑 (모듈에서 가져오거나 기본값 사용)
+     * @constant {Object}
+     */
+    const CATEGORY_MAP = ET.CATEGORY_MAP || {
         '01': '무기',
         '02': '방어구',
         '03': '장신구',
@@ -79,32 +90,12 @@
     };
 
     /**
-     * 등급 코드 매핑 (grade + stars 조합)
+     * 등급 매핑 (모듈에서 가져오거나 기본값 사용)
      * @constant {Object}
-     * @updated 2025-12-10 - 신화/전설/유니크 등급 체계로 변경
-     * @updated 2025-12-10 - 전설(시즌0) 7등급/5등급 통합
-     * 
-     * 유효한 등급 조합:
-     * - grade 08 + stars 8 → 신화
-     * - grade 05 + stars 8 → 전설(시즌1)
-     * - grade 07 + stars 6 → 전설(시즌0)
-     * - grade 05 + stars 6 → 전설(시즌0)
-     * - grade 06 + stars 5 → 유니크(시즌0)
      */
-    /**
-     * 등급 매핑 @updated 2025-12-11 - 시즌1 전설 + 신화만 포함
-     */
-    const GRADE_MAP = {
-        '신화': {
-            name: '신화',
-            color: '#FFD700',
-            priority: 1
-        },
-        '전설(시즌1)': {
-            name: '전설(시즌1)',
-            color: '#FF8C00',
-            priority: 2
-        }
+    const GRADE_MAP = ET.GRADE_MAP || {
+        '신화': { name: '신화', color: '#FFD700', priority: 1 },
+        '전설(시즌1)': { name: '전설(시즌1)', color: '#FF8C00', priority: 2 }
     };
 
     /**
@@ -398,54 +389,44 @@
     // ============================================
     // 3. 유틸리티 함수 (Utilities)
     // ============================================
+    // @updated 2025-12-11 - 모듈 참조 방식으로 변경
 
     /**
-     * DOM 요소 선택 헬퍼
-     * @param {string} selector - CSS 선택자
-     * @returns {Element|null} DOM 요소
+     * DOM 요소 선택 헬퍼 (Utils 모듈 사용)
      */
-    function $(selector) {
+    const $ = Utils.$ || function(selector) {
         return document.querySelector(selector);
-    }
+    };
 
     /**
-     * 다중 DOM 요소 선택 헬퍼
-     * @param {string} selector - CSS 선택자
-     * @returns {NodeList} DOM 요소 목록
+     * 다중 DOM 요소 선택 헬퍼 (Utils 모듈 사용)
      */
-    function $$(selector) {
+    const $$ = Utils.$$ || function(selector) {
         return document.querySelectorAll(selector);
-    }
+    };
 
     /**
-     * HTML 특수문자 이스케이프
-     * @param {string} text - 원본 텍스트
-     * @returns {string} 이스케이프된 텍스트
+     * HTML 특수문자 이스케이프 (Utils 모듈 사용)
      */
-    function escapeHtml(text) {
+    const escapeHtml = Utils.escapeHtml || function(text) {
         if (!text) return '';
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
-    }
+    };
 
     /**
-     * HTML 태그 제거
-     * @param {string} html - HTML 문자열
-     * @returns {string} 태그가 제거된 텍스트
+     * HTML 태그 제거 (Utils 모듈 사용)
      */
-    function stripHtml(html) {
+    const stripHtml = Utils.stripHtml || function(html) {
         if (!html) return '';
         return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
-    }
+    };
 
     /**
-     * 디바운스 함수
-     * @param {Function} func - 실행할 함수
-     * @param {number} wait - 대기 시간 (ms)
-     * @returns {Function} 디바운스된 함수
+     * 디바운스 함수 (Utils 모듈 사용)
      */
-    function debounce(func, wait) {
+    const debounce = Utils.debounce || function(func, wait) {
         let timeout;
         return function executedFunction(...args) {
             const later = () => {
@@ -455,15 +436,12 @@
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
         };
-    }
+    };
 
     /**
-     * LocalStorage에서 데이터 로드
-     * @param {string} key - 저장소 키
-     * @param {*} defaultValue - 기본값
-     * @returns {*} 저장된 데이터 또는 기본값
+     * LocalStorage에서 데이터 로드 (StorageManager 모듈 사용)
      */
-    function loadFromStorage(key, defaultValue) {
+    const loadFromStorage = SM.load || function(key, defaultValue) {
         try {
             const data = localStorage.getItem(key);
             return data ? JSON.parse(data) : defaultValue;
@@ -471,20 +449,18 @@
             console.error('LocalStorage 로드 오류:', e);
             return defaultValue;
         }
-    }
+    };
 
     /**
-     * LocalStorage에 데이터 저장
-     * @param {string} key - 저장소 키
-     * @param {*} value - 저장할 데이터
+     * LocalStorage에 데이터 저장 (StorageManager 모듈 사용)
      */
-    function saveToStorage(key, value) {
+    const saveToStorage = SM.save || function(key, value) {
         try {
             localStorage.setItem(key, JSON.stringify(value));
         } catch (e) {
             console.error('LocalStorage 저장 오류:', e);
         }
-    }
+    };
 
     // ============================================
     // 4. 데이터 로딩 (Data Loading)
@@ -1241,39 +1217,39 @@
     // 9. 고급 효과 파싱 엔진 (Advanced Effect Parser)
     // ============================================
     // @updated 2025-12-10 - 효과 유형 분류, 중첩, 업타임 비율 계산 추가
+    // @updated 2025-12-11 - EffectParser 모듈 참조 방식으로 변경
 
     /**
-     * 효과 유형 상수
+     * 효과 유형 상수 (EffectParser 모듈 또는 EffectTypes 모듈에서 가져오기)
      * @constant {Object}
      */
-    const EFFECT_TYPE = {
-        PASSIVE: 'passive', // 상시 효과 (100%)
-        TRIGGER: 'trigger', // 트리거 효과 (80%)
-        STACKING: 'stacking', // 누적/축적 효과 (95%) @added 2025-12-10
-        STATE_CONDITION: 'state', // 상태 조건 효과 (70%)
-        ENEMY_CONDITION: 'enemy', // 적 상태 조건 (시너지 의존)
-        ENHANCEMENT: 'enhance' // 강화 단계별 효과
+    const EFFECT_TYPE = (EP.EFFECT_TYPE) || (ET.EFFECT_TYPE) || {
+        PASSIVE: 'passive',
+        TRIGGER: 'trigger',
+        STACKING: 'stacking',
+        STATE_CONDITION: 'state',
+        ENEMY_CONDITION: 'enemy',
+        ENHANCEMENT: 'enhance'
     };
 
     /**
-     * 효과 유형별 가중치
+     * 효과 유형별 가중치 (EffectParser 모듈 또는 EffectTypes 모듈에서 가져오기)
      * @constant {Object}
      */
-    const EFFECT_TYPE_WEIGHT = {
-        [EFFECT_TYPE.PASSIVE]: 1.0, // 100%
-        [EFFECT_TYPE.TRIGGER]: 0.8, // 80%
-        [EFFECT_TYPE.STACKING]: 0.95, // 95% - 누적/축적 효과는 쉽게 최대 중첩 유지 @added 2025-12-10
-        [EFFECT_TYPE.STATE_CONDITION]: 0.7, // 70%
-        [EFFECT_TYPE.ENEMY_CONDITION]: 0.5, // 50% (시너지 없을 때)
-        [EFFECT_TYPE.ENHANCEMENT]: 1.0 // 100% (강화 조건 충족 시)
+    const EFFECT_TYPE_WEIGHT = (EP.EFFECT_TYPE_WEIGHT) || (ET.EFFECT_TYPE_WEIGHT) || {
+        passive: 1.0,
+        trigger: 0.8,
+        stacking: 0.95,
+        state: 0.7,
+        enemy: 0.5,
+        enhance: 1.0
     };
 
     /**
-     * 엠블럼 각성 기본 쿨타임 (초)
+     * 엠블럼 각성 기본 쿨타임 (초) - 모듈에서 가져오기
      * @constant {number}
-     * @added 2025-12-10
      */
-    const EMBLEM_AWAKENING_BASE_COOLDOWN = 90;
+    const EMBLEM_AWAKENING_BASE_COOLDOWN = (EP.EMBLEM_AWAKENING_BASE_COOLDOWN) || (ET.EMBLEM_AWAKENING_BASE_COOLDOWN) || 90;
 
     /**
      * 엠블럼 각성 효과 파싱
@@ -4658,68 +4634,70 @@
     // ============================================
     // 15. 토스트 알림 (Toast)
     // ============================================
+    // @updated 2025-12-11 - UIManager 모듈 참조 방식으로 변경
 
     /**
-     * 토스트 알림 표시
+     * 토스트 알림 표시 (UIManager 모듈 우선 사용)
      * @param {string} message - 메시지
      * @param {string} type - 타입 ('success', 'error', 'warning')
      * @param {number} duration - 표시 시간 (ms)
      */
-    function showToast(message, type = 'success', duration = 3000) {
+    function showToast(message, type, duration) {
+        type = type || 'success';
+        duration = duration || 3000;
+
+        // UIManager 모듈이 있으면 사용
+        if (UI.showToast) {
+            UI.showToast(message, type, duration);
+            return;
+        }
+
+        // 폴백: 직접 구현
         const container = $('#toast-container');
         if (!container) return;
 
-        const icons = {
-            success: '✅',
-            error: '❌',
-            warning: '⚠️'
-        };
-
+        const icons = { success: '✅', error: '❌', warning: '⚠️' };
         const toast = document.createElement('div');
-        toast.className = `toast toast--${type}`;
-        toast.innerHTML = `
-            <span class="toast__icon">${icons[type] || '📢'}</span>
-            <span class="toast__message">${escapeHtml(message)}</span>
-            <button class="toast__close">×</button>
-        `;
+        toast.className = 'toast toast--' + type;
+        toast.innerHTML = 
+            '<span class="toast__icon">' + (icons[type] || '📢') + '</span>' +
+            '<span class="toast__message">' + escapeHtml(message) + '</span>' +
+            '<button class="toast__close">×</button>';
 
         container.appendChild(toast);
-
-        // 닫기 버튼 이벤트
-        toast.querySelector('.toast__close').addEventListener('click', () => {
-            toast.remove();
-        });
-
-        // 자동 제거
-        setTimeout(() => {
+        toast.querySelector('.toast__close').addEventListener('click', function() { toast.remove(); });
+        setTimeout(function() {
             toast.style.animation = 'fadeOut var(--transition-normal)';
-            setTimeout(() => toast.remove(), 250);
+            setTimeout(function() { toast.remove(); }, 250);
         }, duration);
     }
 
     // ============================================
     // 16. 탭 관리 (Tab Management)
     // ============================================
+    // @updated 2025-12-11 - UIManager 모듈 참조 방식으로 변경
 
     /**
-     * 탭 전환
+     * 탭 전환 (UIManager 모듈 우선 사용)
      * @param {string} tabId - 탭 ID
      */
     function switchTab(tabId) {
-        // 탭 버튼 활성화
-        $$('.tab-nav__btn').forEach(btn => {
+        // UIManager 모듈이 있으면 사용
+        if (UI.switchTab) {
+            UI.switchTab(tabId, function(tid) {
+                if (tid === 'favorites') renderFavorites();
+            });
+            return;
+        }
+
+        // 폴백: 직접 구현
+        $$('.tab-nav__btn').forEach(function(btn) {
             btn.classList.toggle('tab-nav__btn--active', btn.dataset.tab === tabId);
         });
-
-        // 탭 컨텐츠 활성화
-        $$('.tab-content').forEach(content => {
-            content.classList.toggle('tab-content--active', content.id === `tab-${tabId}`);
+        $$('.tab-content').forEach(function(content) {
+            content.classList.toggle('tab-content--active', content.id === 'tab-' + tabId);
         });
-
-        // 특정 탭 진입 시 추가 동작
-        if (tabId === 'favorites') {
-            renderFavorites();
-        }
+        if (tabId === 'favorites') renderFavorites();
     }
 
     // ============================================

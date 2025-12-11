@@ -5,30 +5,33 @@
  * ============================================
  * 마비노기 모바일 룬 효율 계산기
  * ============================================
- * @file        rune-calculator.html
+ * @file        index.html
  * @description 마비노기 모바일 게임의 룬 효율을 계산하고 최적의 룬 조합을 추천하는 도구
  * @author      Dalkong Project
  * @created     2025-12-10
- * @modified    2025-12-10
- * @version     1.0.0
+ * @modified    2025-12-11
+ * @version     1.2.0
+ * 
+ * @changelog
+ * - v1.2.0 (2025-12-11): 캐릭터 프로필 관리 시스템 추가
+ *   - 여러 캐릭터의 스탯/룬/옵션 저장 및 관리
+ *   - 모듈 분할 구조 적용
+ * - v1.1.0 (2025-12-11): 데이터 영속화 기능 추가
  * 
  * @architecture
- * - 단일 HTML 파일 구조 (HTML + CSS + JavaScript)
+ * - 모듈화된 JavaScript 구조
  * - 외부 의존성: 없음 (순수 Vanilla JS)
- * - 데이터 소스: runes.json (외부 JSON 파일)
- * - 저장소: LocalStorage (즐겨찾기, 설정)
+ * - 데이터 소스: runes-*.json (외부 JSON 파일)
+ * - 저장소: LocalStorage (즐겨찾기, 설정, 캐릭터 프로필)
  * 
  * @structure
  * 1. HTML 섹션: 페이지 레이아웃 및 UI 컴포넌트
- * 2. CSS 섹션: 다크 테마 스타일링 및 반응형 디자인
- * 3. JavaScript 섹션:
- *    - 상수 정의
- *    - 데이터 로딩 및 파싱
- *    - 필터링/검색 기능
- *    - 룬 슬롯 관리
- *    - 효율 계산 엔진
- *    - 추천 시스템
- *    - 즐겨찾기 기능
+ * 2. CSS 섹션: 다크 테마 스타일링 및 반응형 디자인 (외부 파일)
+ * 3. JavaScript 모듈:
+ *    - constants/: 상수 정의
+ *    - formulas/: 계산 공식
+ *    - modules/: 유틸리티 모듈 (StorageManager, CharacterManager)
+ *    - rune-calculator.js: 메인 애플리케이션
  * 
  * @features
  * - 룬 검색/필터링 (이름, 등급, 카테고리, 클래스)
@@ -36,6 +39,7 @@
  * - 10개 슬롯 룬 장착 시뮬레이터
  * - 효과 수치 자동 파싱 및 합산
  * - 캐릭터 스텟 기반 최적 룬 추천
+ * - 캐릭터 프로필 관리 (2025-12-11 추가)
  * - 즐겨찾기 기능 (LocalStorage)
  * - 반응형 디자인 (모바일 지원)
  */
@@ -381,6 +385,49 @@
              ============================================ -->
         <section class="tab-content" id="tab-recommend">
             <div class="recommend-container">
+                <!-- ============================================
+                     캐릭터 프로필 관리 영역 @added 2025-12-11
+                     ============================================ -->
+                <div class="character-manager">
+                    <div class="character-manager__header">
+                        <h2 class="section-title">👤 캐릭터 프로필 관리</h2>
+                        <p class="section-desc">여러 캐릭터의 스탯과 룬 세팅을 저장하고 관리하세요</p>
+                    </div>
+                    
+                    <div class="character-manager__controls">
+                        <!-- 캐릭터 선택 드롭다운 -->
+                        <div class="character-manager__select-group">
+                            <label class="character-manager__label">캐릭터 선택</label>
+                            <select id="character-selector" class="character-manager__select">
+                                <option value="">-- 캐릭터 선택 --</option>
+                            </select>
+                        </div>
+                        
+                        <!-- 버튼 그룹 -->
+                        <div class="character-manager__buttons">
+                            <button id="btn-add-character" class="btn btn--primary btn--small" title="새 캐릭터 추가">
+                                ➕ 새 캐릭터
+                            </button>
+                            <button id="btn-save-character" class="btn btn--success btn--small" title="현재 데이터를 선택된 캐릭터에 저장">
+                                💾 저장
+                            </button>
+                            <button id="btn-delete-character" class="btn btn--danger btn--small" title="선택된 캐릭터 삭제">
+                                🗑️ 삭제
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 현재 캐릭터 정보 -->
+                    <div class="character-manager__info">
+                        <span class="character-manager__current">
+                            현재 캐릭터: <strong id="current-character-name">선택된 캐릭터 없음</strong>
+                        </span>
+                        <span class="character-manager__count">
+                            저장된 캐릭터: <strong id="character-count">0</strong>개
+                        </span>
+                    </div>
+                </div>
+
                 <!-- 캐릭터 스텟 입력 -->
                 <div class="stat-input-section">
                     <h2 class="section-title">📊 캐릭터 스텟 입력</h2>
@@ -697,10 +744,14 @@
          ============================================ -->
     <footer class="footer">
         <p>© 2025 마비노기 모바일 룬 계산기 | 게임 데이터는 마비노기 모바일의 소유입니다</p>
-        <p class="footer__version">v1.0.0 | 마지막 업데이트: 2025-12-10</p>
+        <p class="footer__version">v1.1.0 | 마지막 업데이트: 2025-12-11</p>
     </footer>
 
-    <!-- JavaScript 모듈 로드 (의존성 순서대로) -->
+    <!-- ============================================
+         JavaScript 모듈 로드 (의존성 순서대로)
+         @updated 2025-12-11 - 모듈 분할 및 캐릭터 관리 추가
+         ============================================ -->
+    
     <!-- 1. 상수 모듈 -->
     <script src="constants/class-stats.js"></script>
     <script src="constants/effect-weights.js"></script>
@@ -709,8 +760,14 @@
     <script src="formulas/stat-formulas.js"></script>
     <script src="formulas/efficiency-calculator.js"></script>
     
-    <!-- 3. 메인 계산기 -->
+    <!-- 3. 유틸리티 모듈 @added 2025-12-11 -->
+    <script src="modules/storage-manager.js"></script>
+    
+    <!-- 4. 메인 계산기 -->
     <script src="rune-calculator.js"></script>
+    
+    <!-- 5. 캐릭터 관리 모듈 @added 2025-12-11 -->
+    <script src="modules/character-manager.js"></script>
 </body>
 
 </html>

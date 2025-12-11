@@ -7,9 +7,12 @@
  * @author      Dalkong Project
  * @created     2025-12-10
  * @modified    2025-12-11
- * @version     1.1.0
+ * @version     1.2.0
  * 
  * @changelog
+ * - v1.2.0 (2025-12-11): 캐릭터 프로필 관리 시스템 추가
+ *   - 여러 캐릭터의 스탯/룬/옵션을 저장하고 관리
+ *   - 모듈 분할: StorageManager, CharacterManager
  * - v1.1.0 (2025-12-11): 캐릭터 스탯 및 추천 옵션 LocalStorage 저장/불러오기 기능 추가
  *   - 페이지 새로고침 시에도 입력한 스탯과 옵션이 유지됨
  *   - 입력 변경 시 자동 저장 (debounce 적용)
@@ -19,7 +22,11 @@
  * - 이벤트 위임 패턴 활용
  * - LocalStorage를 통한 데이터 영속화
  *   - 즐겨찾기, 프리셋, 장착된 룬
- *   - 캐릭터 스탯, 추천 옵션, 강화 수치 (2025-12-11 추가)
+ *   - 캐릭터 스탯, 추천 옵션, 강화 수치
+ *   - 캐릭터 프로필 (2025-12-11 추가)
+ * 
+ * @requires StorageManager (modules/storage-manager.js)
+ * @requires CharacterManager (modules/character-manager.js)
  * 
  * @structure
  * 1. 상수 정의 (Constants)
@@ -31,7 +38,7 @@
  * 7. 페이지네이션 (Pagination)
  * 8. 슬롯 관리 (Slot Management)
  *    8.1 강화 수치 저장/불러오기
- *    8.2 캐릭터 스탯 저장/불러오기 (2025-12-11 추가)
+ *    8.2 캐릭터 스탯 저장/불러오기
  * 9. 효과 파싱 엔진 (Effect Parser)
  * 10. 효과 합산 (Effect Calculator)
  * 11. 추천 시스템 (Recommendation)
@@ -40,6 +47,7 @@
  * 14. 토스트 알림 (Toast)
  * 15. 이벤트 핸들러 (Event Handlers)
  * 16. 초기화 (Initialization)
+ * 17. 전역 인터페이스 (Global Interface)
  */
 
 (function() {
@@ -5001,6 +5009,7 @@
      * 애플리케이션 초기화
      * @async
      * @updated 2025-12-11 - 캐릭터 스탯 및 추천 옵션 불러오기 추가
+     * @updated 2025-12-11 - CharacterManager 모듈 초기화 추가
      */
     async function init() {
         console.log('🚀 마비노기 모바일 룬 효율 계산기 초기화 시작...');
@@ -5027,8 +5036,74 @@
         // 페이지네이션 렌더링
         renderPagination();
 
+        // CharacterManager 모듈 초기화 @added 2025-12-11
+        // (모듈 로드 후 자동 실행되므로 여기서 확인만)
+        if (window.CharacterManager) {
+            console.log('📋 CharacterManager 모듈 연동 완료');
+        }
+
         console.log('✅ 초기화 완료!');
     }
+
+    // ============================================
+    // 19. 전역 인터페이스 (Global Interface)
+    // ============================================
+    // @added 2025-12-11 - 외부 모듈과의 연동을 위한 인터페이스
+
+    /**
+     * 현재 상태 반환 (CharacterManager 연동용)
+     * @returns {Object} 현재 앱 상태
+     */
+    function getState() {
+        return {
+            equippedRunes: state.equippedRunes,
+            enhanceLevels: state.enhanceLevels,
+            favorites: state.favorites,
+            presets: state.presets
+        };
+    }
+
+    /**
+     * 프로필 데이터 로드 (CharacterManager 연동용)
+     * @param {Object} data - 프로필 데이터 { equippedRunes, enhanceLevels }
+     */
+    function loadProfileData(data) {
+        if (!data) return;
+
+        // 장착된 룬 적용
+        if (data.equippedRunes) {
+            state.equippedRunes = data.equippedRunes;
+        }
+
+        // 강화 수치 적용
+        if (data.enhanceLevels) {
+            state.enhanceLevels = data.enhanceLevels;
+        }
+
+        // UI 업데이트
+        Object.keys(SLOT_CONFIG).forEach(slotId => renderSlot(slotId));
+        calculateTotalEffects();
+        renderEquippedRuneList();
+
+        // 저장
+        saveEquippedRunes();
+        saveEnhanceLevels();
+    }
+
+    /**
+     * 전역 인터페이스 등록
+     * @global
+     */
+    window.RuneCalculator = {
+        // 상태 조회
+        getState: getState,
+        
+        // 프로필 데이터 로드
+        loadProfileData: loadProfileData,
+        
+        // 토스트 알림
+        showToast: showToast
+    };
 
     // DOMContentLoaded 시 초기화
     if (document.readyState === 'loading') {

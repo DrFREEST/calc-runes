@@ -1,0 +1,346 @@
+[
+  {
+    "id": 255,
+    "name": "산맥 군주",
+    "category": "04",
+    "categoryName": "엠블럼",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "effects": [
+      {
+        "type": "PERMANENT",
+        "name": "강타 피해 증가",
+        "value": 8,
+        "unit": "%",
+        "dpsRelevant": true,
+        "note": "상시 효과"
+      },
+      {
+        "type": "PERMANENT",
+        "name": "스킬 사용 속도 증가",
+        "value": 8,
+        "unit": "%",
+        "dpsRelevant": false,
+        "note": "상시 효과"
+      }
+    ],
+    "awakening": {
+      "trigger": "공격 시 50% 확률",
+      "cooldown": 90,
+      "duration": 20,
+      "effects": [
+        { "name": "강타 피해 증가", "value": 60, "unit": "%" },
+        { "name": "추가 피해", "trigger": "공격 적중 시", "cooldown": 3, "note": "공격력 비례" }
+      ]
+    },
+    "demerits": [],
+    "enhanceEffects": { "10": {}, "15": {} },
+    "synergy": { "appliesDot": [], "requiresDot": [], "removesDemerits": false, "providesAwakening": true },
+    "rawDescription": "공격 시 50% 확률로 각성하여 20초 동안 강타 피해가 60% 증가한다. 또한 지속 시간 동안 공격 적중 시 (공격력×n%)의 추가 피해를 입히며 이 효과는 3초마다 한 번만 적용된다.(재사용 대기 시간: 90초) 상시 효과: 강타 피해가 8%, 스킬 사용 속도가 8% 증가한다."
+  },
+  {
+    "id": 256,
+    "name": "부서진 하늘",
+    "category": "04",
+    "categoryName": "엠블럼",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "effects": [
+      {
+        "type": "PERMANENT",
+        "name": "연타 피해 증가",
+        "value": 8,
+        "unit": "%",
+        "dpsRelevant": true,
+        "note": "상시 효과"
+      },
+      {
+        "type": "PERMANENT",
+        "name": "쿨타임 회복 속도 증가",
+        "value": 8,
+        "unit": "%",
+        "dpsRelevant": false,
+        "note": "상시 효과"
+      }
+    ],
+    "awakening": {
+      "trigger": "공격 시 50% 확률",
+      "cooldown": 90,
+      "duration": 20,
+      "effects": [
+        { "name": "연타 피해 증가", "value": 60, "unit": "%" },
+        { "name": "추가 피해", "trigger": "공격 적중 시", "cooldown": 0.5, "note": "공격력 비례" }
+      ]
+    },
+    "demerits": [],
+    "enhanceEffects": { "10": {}, "15": {} },
+    "synergy": { "appliesDot": [], "requiresDot": [], "removesDemerits": false, "providesAwakening": true },
+    "rawDescription": "공격 시 50% 확률로 각성하여 20초 동안 연타 피해가 60% 증가한다. 또한, 지속 시간 동안 공격 적중 시 (공격력×n%)의 추가 피해를 입히며 이 효과는 0.5초마다 한 번만 적용된다.(재사용 대기 시간: 90초) 상시 효과: 연타 피해가 8%, 재사용 대기 시간 회복 속도가 8% 증가한다."
+  },
+  {
+    "id": 257,
+    "name": "아득한 빛",
+    "category": "04",
+    "categoryName": "엠블럼",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "effects": [
+      {
+        "type": "PERMANENT",
+        "name": "치명타 확률 증가",
+        "value": 5,
+        "unit": "%",
+        "dpsRelevant": true,
+        "note": "상시 효과"
+      },
+      {
+        "type": "PERMANENT",
+        "name": "치명타 피해 증가",
+        "value": 10,
+        "unit": "%",
+        "dpsRelevant": true,
+        "note": "상시 효과"
+      },
+      {
+        "type": "PERMANENT",
+        "name": "피해량 증가",
+        "value": 5,
+        "unit": "%",
+        "dpsRelevant": true,
+        "note": "상시 효과"
+      }
+    ],
+    "awakening": {
+      "trigger": "공격 시 50% 확률",
+      "cooldown": 90,
+      "duration": 20,
+      "effects": [
+        { "name": "치명타 확률 증가", "value": 20, "unit": "%" },
+        { "name": "치명타 피해 증가", "value": 50, "unit": "%" }
+      ]
+    },
+    "demerits": [],
+    "enhanceEffects": { "10": {}, "15": {} },
+    "synergy": { "appliesDot": [], "requiresDot": [], "removesDemerits": false, "providesAwakening": true },
+    "rawDescription": "공격 시 50% 확률로 각성하여 20초 동안 치명타 확률이 20%, 치명타 피해량이 50% 증가한다.(재사용 대기 시간: 90초) 상시 효과: 치명타 확률이 5%, 치명타 피해량이 10%, 적에게 주는 피해가 5% 증가한다."
+  },
+  {
+    "id": 258,
+    "name": "순수한 힘",
+    "category": "04",
+    "categoryName": "엠블럼",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "effects": [
+      {
+        "type": "PERMANENT",
+        "name": "궁극기 게이지 획득량 증가",
+        "value": 20,
+        "unit": "%",
+        "dpsRelevant": false
+      },
+      {
+        "type": "TRIGGER",
+        "name": "피해량 증가",
+        "value": 27,
+        "unit": "%",
+        "trigger": "궁극기 사용 시",
+        "duration": 30,
+        "dpsRelevant": false,
+        "note": "궁극기 조건 - 효율 제외"
+      }
+    ],
+    "awakening": null,
+    "demerits": [],
+    "enhanceEffects": { "10": {}, "15": {} },
+    "synergy": { "appliesDot": [], "requiresDot": [], "removesDemerits": false, "providesAwakening": false },
+    "rawDescription": "궁극기 사용 시, 30초 동안 적에게 주는 피해가 27% 증가한다. 궁극기 게이지 획득량이 20% 증가한다."
+  },
+  {
+    "id": 259,
+    "name": "갈라진 땅",
+    "category": "04",
+    "categoryName": "엠블럼",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "effects": [
+      {
+        "type": "PERMANENT",
+        "name": "추가타 확률 증가",
+        "value": 12,
+        "unit": "%",
+        "dpsRelevant": true,
+        "note": "상시 효과"
+      }
+    ],
+    "awakening": {
+      "trigger": "공격 시 50% 확률",
+      "cooldown": 90,
+      "duration": 35,
+      "effects": [
+        { "name": "추가타 확률 증가", "value": 30, "unit": "%" },
+        { "name": "추가 공격", "trigger": "추가타 적중 시", "note": "선행 타격의 18% 피해" }
+      ]
+    },
+    "demerits": [],
+    "enhanceEffects": { "10": {}, "15": {} },
+    "synergy": { "appliesDot": [], "requiresDot": [], "removesDemerits": false, "providesAwakening": true },
+    "rawDescription": "공격 시 50% 확률로 각성하여 35초 동안 추가타 확률이 30% 증가하며, 추가타 적중 시 다음 공격은 선행 타격의 18% 만큼의 피해를 주는 추가 공격이 발생한다.(재사용 대기 시간: 90초) 상시 효과: 추가타 확률이 12% 증가한다."
+  },
+  {
+    "id": 260,
+    "name": "무자비한 포식자",
+    "category": "04",
+    "categoryName": "엠블럼",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "effects": [
+      {
+        "type": "PERMANENT",
+        "name": "피해량 증가",
+        "value": 21,
+        "unit": "%",
+        "dpsRelevant": true,
+        "note": "상시 효과"
+      }
+    ],
+    "awakening": {
+      "trigger": "무방비 공격 시",
+      "cooldown": 90,
+      "duration": 20,
+      "effects": [
+        { "name": "스킬 피해 증가", "value": 55, "unit": "%" },
+        { "name": "스킬 쿨타임 초기화", "note": "모든 스킬" }
+      ],
+      "note": "무방비 조건 - 발동 어려움"
+    },
+    "demerits": [],
+    "enhanceEffects": { "10": {}, "15": {} },
+    "synergy": { "appliesDot": [], "requiresDot": [], "removesDemerits": false, "providesAwakening": true },
+    "rawDescription": "무방비 공격 시 각성하여 20초 동안 적에게 주는 스킬 피해가 55% 증가하며, 모든 스킬의 재사용 대기 시간이 초기화 된다.(재사용 대기 시간: 90초) 상시 효과: 적에게 주는 피해가 21% 증가한다."
+  },
+  {
+    "id": 261,
+    "name": "흩날리는 검",
+    "category": "04",
+    "categoryName": "엠블럼",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "effects": [
+      {
+        "type": "PERMANENT",
+        "name": "기본 공격 속도 증가",
+        "value": 24,
+        "unit": "%",
+        "dpsRelevant": false,
+        "note": "상시 효과, 기본 공격 한정"
+      },
+      {
+        "type": "PERMANENT",
+        "name": "기본 공격 추가타 확률 증가",
+        "value": 24,
+        "unit": "%",
+        "dpsRelevant": false,
+        "note": "상시 효과, 기본 공격 한정"
+      }
+    ],
+    "awakening": {
+      "trigger": "공격 시 50% 확률",
+      "cooldown": 90,
+      "duration": 35,
+      "effects": [
+        { "name": "공격력 증가", "value": 35, "unit": "%" },
+        { "name": "기본 공격 속도 증가", "value": 20, "unit": "%" },
+        { "name": "기본 공격 추가타 확률 증가", "value": 20, "unit": "%" }
+      ]
+    },
+    "demerits": [],
+    "enhanceEffects": { "10": {}, "15": {} },
+    "synergy": { "appliesDot": [], "requiresDot": [], "removesDemerits": false, "providesAwakening": true },
+    "rawDescription": "공격 시 50% 확률로 각성하여 35초 동안 공격력이 35%, 기본 공격 속도가 20%, 기본 공격의 추가타 확률이 20% 증가한다.(재사용 대기 시간: 90초) 상시 효과: 기본 공격 속도가 24%, 기본 공격 추가타 확률이 24% 증가한다."
+  },
+  {
+    "id": 262,
+    "name": "인도하는 빛",
+    "category": "04",
+    "categoryName": "엠블럼",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "effects": [
+      {
+        "type": "TRIGGER",
+        "name": "아군 공격력 버프",
+        "value": 8,
+        "unit": "%",
+        "trigger": "궁극기 사용 시",
+        "duration": 15,
+        "dpsRelevant": false,
+        "note": "15m 범위 아군, 궁극기 조건"
+      },
+      {
+        "type": "TRIGGER",
+        "name": "공격력 증가",
+        "value": 20,
+        "unit": "%",
+        "trigger": "아군 회복 시",
+        "duration": 15,
+        "dpsRelevant": true
+      }
+    ],
+    "awakening": null,
+    "demerits": [],
+    "enhanceEffects": { "10": {}, "15": {} },
+    "synergy": { "appliesDot": [], "requiresDot": [], "removesDemerits": false, "providesAwakening": false },
+    "classRestriction": "힐러계열",
+    "rawDescription": "궁극기 사용 시, 자신과 주위 15m 내의 아군에게 15초 동안 8%의 공격력 증가 효과를 부여한다. 아군 회복 시, 15초 동안 자신의 공격력이 20% 증가한다."
+  },
+  {
+    "id": 263,
+    "name": "대마법사",
+    "category": "04",
+    "categoryName": "엠블럼",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "effects": [
+      {
+        "type": "PERMANENT",
+        "name": "스킬 사용 속도 증가",
+        "value": 14,
+        "unit": "%",
+        "dpsRelevant": false,
+        "note": "상시 효과"
+      },
+      {
+        "type": "PERMANENT",
+        "name": "캐스팅/차지 속도 증가",
+        "value": 14,
+        "unit": "%",
+        "dpsRelevant": false,
+        "note": "상시 효과"
+      },
+      {
+        "type": "PERMANENT",
+        "name": "차지 스킬 피해 증가",
+        "value": 14,
+        "unit": "%",
+        "dpsRelevant": true,
+        "note": "상시 효과"
+      }
+    ],
+    "awakening": {
+      "trigger": "공격 시 50% 확률",
+      "cooldown": 90,
+      "duration": 20,
+      "effects": [
+        { "name": "공격력 증가", "value": 45, "unit": "%" },
+        { "name": "스킬 캐스팅/사용 속도 증가", "value": 25, "unit": "%" }
+      ]
+    },
+    "demerits": [],
+    "enhanceEffects": { "10": {}, "15": {} },
+    "synergy": { "appliesDot": [], "requiresDot": [], "removesDemerits": false, "providesAwakening": true },
+    "classRestriction": "마법사계열",
+    "rawDescription": "공격 시 50% 확률로 각성하여 20초 동안 공격력이 45%, 스킬 캐스팅 및 사용 속도가 25% 증가한다.(재사용 대기 시간: 90초) 상시 효과: 스킬 사용 속도, 캐스팅 및 차지 속도가 14%, 차지 스킬의 피해량이 14% 증가한다."
+  }
+]
+

@@ -1,0 +1,2264 @@
+[{
+        "id": 26,
+        "name": "이름 없는 혼돈",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "신화",
+        "gradeColor": "#FFD700",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "공격력 증가",
+            "value": 20,
+            "unit": "%",
+            "trigger": "전투 중 5초마다",
+            "duration": 5,
+            "dpsRelevant": true,
+            "note": "10%~30% 범위 (평균 20%)"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {
+                "공격력 증가 최대치": 40
+            }
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "전투 중, 5초마다 5초 동안 공격력이 10%~30% 증가한다."
+    },
+    {
+        "id": 27,
+        "name": "검게 물든 후광",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "신화",
+        "gradeColor": "#FFD700",
+        "effects": [{
+            "type": "PERMANENT",
+            "name": "피해량 증가",
+            "value": 15,
+            "unit": "%",
+            "dpsRelevant": true
+        }],
+        "demerits": [{
+            "name": "받는 피해 증가",
+            "value": 15,
+            "unit": "%",
+            "note": "회복/물약 사용 시 15초간 무효화"
+        }],
+        "enhanceEffects": {
+            "10": {
+                "피해량 증가": 6
+            },
+            "15": {
+                "피해량 증가": 6
+            }
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "받는 피해가 15%, 적에게 주는 피해가 15% 증가한다. 아군을 회복시키거나 물약을 사용하면 15초 동안 받는 피해 증가 효과가 무효화된다."
+    },
+    {
+        "id": 28,
+        "name": "닫힌 운명",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "신화",
+        "gradeColor": "#FFD700",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "추가 피해 + 타겟 받는 피해 증가",
+            "value": 10,
+            "unit": "%",
+            "trigger": "공격 적중 시",
+            "duration": 10,
+            "dpsRelevant": true,
+            "note": "결계 1/2/4겹 순환, 방어구 파괴 부여"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false,
+            "applyArmorBreak": true
+        },
+        "rawDescription": "공격 적중시, 결계를 생성하여 타겟과 그 주변에 피해를 입히고, 약화 효과: 방어구 파괴를 부여해 10초 동안 받는 피해를 10% 증가시킨다."
+    },
+    {
+        "id": 29,
+        "name": "세상을 삼키는 악의",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "신화",
+        "gradeColor": "#FFD700",
+        "effects": [{
+                "type": "STATE",
+                "name": "피해량 증가",
+                "value": 16,
+                "unit": "%",
+                "trigger": "원소 지속 피해 보유 적 공격 시",
+                "dpsRelevant": true
+            },
+            {
+                "type": "PERMANENT",
+                "name": "무방비 피해 증가",
+                "value": 16,
+                "unit": "%",
+                "dpsRelevant": false,
+                "note": "무방비 조건 한정"
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {
+                "피해량 증가": 3
+            },
+            "15": {
+                "피해량 증가": 3
+            }
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": ["화상", "빙결", "감전"],
+            "removesDemerits": false
+        },
+        "rawDescription": "원소 지속 피해를 보유한 적에게 주는 피해가 16% 증가하고, 적에게 주는 무방비 피해가 16% 증가한다."
+    },
+    {
+        "id": 30,
+        "name": "그림자로 엮은 회랑",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "신화",
+        "gradeColor": "#FFD700",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "마력 사슬 피해",
+            "trigger": "전투 중 2초/3초/4초마다",
+            "dpsRelevant": false,
+            "note": "전방 적에게 피해"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {
+                "마력 사슬": "5초마다 추가"
+            }
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "전투 중 각각 2초, 3초, 4초마다 마력 사슬을 발사해 전방의 적들에게 피해를 준다."
+    },
+    {
+        "id": 31,
+        "name": "쏟아지는 별",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "신화",
+        "gradeColor": "#FFD700",
+        "effects": [{
+                "type": "TRIGGER",
+                "name": "섬광 타격 피해",
+                "trigger": "전투 중 15초마다",
+                "dpsRelevant": false,
+                "note": "15m 범위 무작위 적 타격"
+            },
+            {
+                "type": "TRIGGER",
+                "name": "전체 섬광 타격",
+                "trigger": "궁극기 사용 시",
+                "dpsRelevant": false,
+                "note": "15m 범위 모든 적 타격"
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "전투 중 15초마다 자신 주위 15m 범위 내의 무작위 적을 섬광으로 타격한다."
+    },
+    {
+        "id": 32,
+        "name": "바스러지는 빛",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "신화",
+        "gradeColor": "#FFD700",
+        "effects": [{
+            "type": "STACKING",
+            "name": "공격력 증가",
+            "value": 27.5,
+            "unit": "%",
+            "stackValue": 5.5,
+            "maxStacks": 5,
+            "trigger": "스킬 사용 시",
+            "duration": 8,
+            "dpsRelevant": true,
+            "note": "지속 시간 스택마다 개별"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {
+                "추가 중첩 확률": 50
+            }
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "스킬을 사용할 때마다 8초 동안 공격력이 5.5% 증가한다. 해당 효과는 최대 5회까지 중첩되며 지속 시간은 스택마다 개별로 가진다."
+    },
+    {
+        "id": 33,
+        "name": "영원",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "신화",
+        "gradeColor": "#FFD700",
+        "effects": [{
+            "type": "PERMANENT",
+            "name": "공격력 증가",
+            "value": 10,
+            "unit": "%",
+            "dpsRelevant": true
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": true,
+            "note": "모든 결함 효과 제거"
+        },
+        "rawDescription": "모든 결함 효과를 제거한다. 공격력이 10% 증가한다."
+    },
+    {
+        "id": 34,
+        "name": "눈 먼 예언자",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "신화",
+        "gradeColor": "#FFD700",
+        "effects": [{
+            "type": "PERMANENT",
+            "name": "각성 쿨타임 감소",
+            "value": 38,
+            "unit": "초",
+            "dpsRelevant": false,
+            "note": "각성 재사용 대기 시간 감소"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false,
+            "awakeningCooldownReduction": 38
+        },
+        "rawDescription": "각성의 재사용 대기 시간이 38초 감소한다."
+    },
+    {
+        "id": 35,
+        "name": "황폐+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "STATE",
+                "name": "피해량 증가",
+                "value": 12,
+                "unit": "%",
+                "trigger": "자원 50% 미만 시",
+                "dpsRelevant": true
+            },
+            {
+                "type": "STATE",
+                "name": "추가타 확률 증가",
+                "value": 7,
+                "unit": "%",
+                "trigger": "자원 50% 미만 시",
+                "dpsRelevant": true
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "보유한 자원이 50% 미만일 경우, 적에게 주는 피해가 12%, 추가타 확률이 7% 증가한다."
+    },
+    {
+        "id": 36,
+        "name": "환영+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "공격력 증가",
+                "value": 18,
+                "unit": "%",
+                "dpsRelevant": true
+            },
+            {
+                "type": "TRIGGER",
+                "name": "타겟 받는 피해 증가",
+                "value": 10,
+                "unit": "%",
+                "trigger": "지속 피해(정신) 보유 적 공격 시",
+                "duration": 10,
+                "cooldown": 3,
+                "dpsRelevant": true,
+                "note": "방어구 파괴 부여"
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": ["정신"],
+            "removesDemerits": false,
+            "applyArmorBreak": true
+        },
+        "rawDescription": "공격력이 18% 증가한다. 지속 피해: 정신을 보유한 적 공격 시, 약화 효과: 방어구 파괴를 부여해 10초 동안 받는 피해를 10% 증가시킨다."
+    },
+    {
+        "id": 37,
+        "name": "필사+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "공격력 증가",
+                "value": 10,
+                "unit": "%",
+                "dpsRelevant": true
+            },
+            {
+                "type": "STATE",
+                "name": "공격력 증가",
+                "value": 20,
+                "unit": "%",
+                "trigger": "체력 50% 이하 시",
+                "duration": 20,
+                "cooldown": 15,
+                "dpsRelevant": true
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격력이 10% 증가한다. 체력이 50% 이하로 감소하면 20초 동안 공격력이 20% 추가로 증가한다."
+    },
+    {
+        "id": 38,
+        "name": "파멸+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "공격력 증가",
+            "value": 25,
+            "unit": "%",
+            "trigger": "궁극기 사용 시",
+            "duration": 20,
+            "dpsRelevant": false,
+            "note": "궁극기 조건 - 효율 제외"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "궁극기 사용 시, 20초 동안 공격력이 25% 증가한다."
+    },
+    {
+        "id": 39,
+        "name": "집념+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "캐스팅/차지 속도 증가",
+                "value": 25,
+                "unit": "%",
+                "dpsRelevant": false
+            },
+            {
+                "type": "PERMANENT",
+                "name": "피해량 증가",
+                "value": 10,
+                "unit": "%",
+                "dpsRelevant": true
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "캐스팅 및 차지 속도가 25%, 적에게 주는 피해가 10% 증가한다."
+    },
+    {
+        "id": 40,
+        "name": "절개+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "공격력 증가",
+            "value": 20,
+            "unit": "%",
+            "trigger": "지속 피해(출혈) 보유 적 공격 시",
+            "duration": 5,
+            "cooldown": 3,
+            "dpsRelevant": true
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": ["출혈"],
+            "removesDemerits": false
+        },
+        "rawDescription": "지속 피해: 출혈을 보유한 적 공격 시, 5초 동안 공격력이 20% 증가한다."
+    },
+    {
+        "id": 41,
+        "name": "응징+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "공격력 증가",
+                "value": 12,
+                "unit": "%",
+                "dpsRelevant": true
+            },
+            {
+                "type": "TRIGGER",
+                "name": "체력 회복",
+                "trigger": "적 처치 시",
+                "dpsRelevant": false,
+                "note": "공격력 비례 회복"
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격력이 12% 증가한다. 자신과 전투 중인 적이 처치되었을 경우, 자신의 체력을 회복한다."
+    },
+    {
+        "id": 42,
+        "name": "여명+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STACKING",
+            "name": "공격력 증가",
+            "value": 21,
+            "unit": "%",
+            "stackValue": 3.5,
+            "maxStacks": 6,
+            "trigger": "스킬 사용 시",
+            "duration": 10,
+            "dpsRelevant": true,
+            "note": "지속 시간 스택마다 개별"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "누적: 스킬을 사용할 때마다 10초 동안 공격력이 3.5% 증가한다. 해당 효과는 최대 6회까지 중첩된다."
+    },
+    {
+        "id": 43,
+        "name": "쇄도+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "TRIGGER",
+                "name": "캐스팅/차지 속도 증가",
+                "value": 20,
+                "unit": "%",
+                "trigger": "스킬 사용 시 25% 확률",
+                "duration": 5,
+                "dpsRelevant": false
+            },
+            {
+                "type": "TRIGGER",
+                "name": "스킬 사용 속도 증가",
+                "value": 20,
+                "unit": "%",
+                "trigger": "스킬 사용 시 25% 확률",
+                "duration": 5,
+                "dpsRelevant": false
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "스킬 사용 시, 25% 확률로 5초 동안 캐스팅 및 차지 속도와 스킬 사용 속도가 20% 증가한다."
+    },
+    {
+        "id": 44,
+        "name": "성역+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "STATE",
+                "name": "공격력 증가",
+                "value": 17,
+                "unit": "%",
+                "trigger": "보호막 유지 중",
+                "dpsRelevant": true
+            },
+            {
+                "type": "TRIGGER",
+                "name": "보호막 생성",
+                "trigger": "포션 사용 또는 30초마다",
+                "dpsRelevant": false,
+                "note": "공격력 비례 피해 흡수"
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "보호막 계열 효과가 유지되는 동안 공격력이 17% 증가한다. 포션을 사용하거나 30초가 지날 때마다 보호막이 생성된다."
+    },
+    {
+        "id": 45,
+        "name": "분쇄+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "공격력 증가",
+                "value": 6,
+                "unit": "%",
+                "dpsRelevant": true
+            },
+            {
+                "type": "TRIGGER",
+                "name": "피해량 증가",
+                "value": 28,
+                "unit": "%",
+                "trigger": "무방비 공격 적중 시",
+                "duration": 10,
+                "dpsRelevant": false,
+                "note": "무방비 조건 - 효율 제외"
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격력이 6% 증가한다. 무방비 공격 적중 시, 10초 동안 적에게 주는 피해가 28% 증가한다."
+    },
+    {
+        "id": 46,
+        "name": "바위 감시자",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STACKING",
+            "name": "공격력 증가",
+            "value": 22,
+            "unit": "%",
+            "trigger": "강타 7회 적중 시",
+            "duration": 6,
+            "dpsRelevant": true
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "축적: 강타 7회 적중 시, 6초 동안 공격력이 22% 증가한다."
+    },
+    {
+        "id": 47,
+        "name": "고대 수호자",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "PERMANENT",
+            "name": "공격력 증가",
+            "value": 23,
+            "unit": "%",
+            "dpsRelevant": true
+        }],
+        "demerits": [{
+            "name": "이동 속도 감소",
+            "value": 8,
+            "unit": "%"
+        }],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격력이 23% 증가한다. 결함: 이동 속도가 8% 감소한다."
+    },
+    {
+        "id": 48,
+        "name": "황금 들판",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STATE",
+            "name": "공격력 증가",
+            "value": 20,
+            "unit": "%",
+            "trigger": "체력 75% 이상 시",
+            "dpsRelevant": true
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "체력이 75% 이상일 경우, 공격력이 20% 증가한다."
+    },
+    {
+        "id": 49,
+        "name": "푸른 거목",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STACKING",
+            "name": "스킬 피해 증가",
+            "value": 22,
+            "unit": "%",
+            "stackValue": 2.2,
+            "maxStacks": 10,
+            "trigger": "스킬 5회 사용 시",
+            "dpsRelevant": true,
+            "note": "전투 종료까지 유지"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "축적: 스킬을 5회 사용 시, 전투 종료 시까지 스킬 피해량이 2.2% 증가한다. 이 효과는 최대 10회까지 중첩된다."
+    },
+    {
+        "id": 50,
+        "name": "잊힌 성소",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STACKING",
+            "name": "원소 화살 피해",
+            "trigger": "스킬/기본공격 60회 사용 시",
+            "duration": 5,
+            "dpsRelevant": false,
+            "note": "2.5m 범위 원소 피해"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "축적: 스킬 혹은 기본 공격을 60회 사용 시, 원소 화살을 난사한다."
+    },
+    {
+        "id": 51,
+        "name": "원소 조화",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "3속성 투사체 피해",
+            "trigger": "공격 적중 시",
+            "cooldown": 5,
+            "dpsRelevant": false,
+            "note": "화염/냉기/번개 피해"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격 적중 시, 전방 10m 범위 내의 적에게 3가지 속성의 투사체를 발사한다."
+    },
+    {
+        "id": 52,
+        "name": "요정 무리",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STACKING",
+            "name": "스킬 쿨타임 감소",
+            "value": 2.1,
+            "unit": "초",
+            "trigger": "스킬 7회 사용 시",
+            "cooldown": 3,
+            "dpsRelevant": false,
+            "note": "모든 스킬 쿨타임 감소"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "축적: 스킬을 7회 사용 시, 모든 스킬의 재사용 대기 시간이 2.1초 감소한다."
+    },
+    {
+        "id": 53,
+        "name": "신전 기사",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "PERMANENT",
+            "name": "공격력 증가",
+            "value": 23,
+            "unit": "%",
+            "dpsRelevant": true
+        }],
+        "demerits": [{
+            "name": "치명타 확률 감소",
+            "value": 8,
+            "unit": "%"
+        }],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격력이 23% 증가한다. 결함: 치명타 확률이 8% 감소한다."
+    },
+    {
+        "id": 54,
+        "name": "수정 꽃잎",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STACKING",
+            "name": "공격력 증가",
+            "value": 12,
+            "unit": "%",
+            "trigger": "치명타 6회 적중 시",
+            "duration": 10,
+            "cooldown": 3,
+            "dpsRelevant": true,
+            "note": "추가 피해 포함"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "축적: 치명타 공격을 6회 적중시킬 경우, 다음 공격 적중 시 피해를 입히고, 자신의 공격력이 10초 동안 12% 증가한다."
+    },
+    {
+        "id": 55,
+        "name": "번개 채찍",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "피해량 증가",
+            "value": 10,
+            "unit": "%",
+            "trigger": "공격 시",
+            "duration": 15,
+            "cooldown": 15,
+            "dpsRelevant": true,
+            "note": "9/11% 기본 + 전력 비례 추가"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격 시, 적에게 주는 피해가 15초 동안 9/11% 증가한다. 전력 변환 효과 포함."
+    },
+    {
+        "id": 56,
+        "name": "모래 폭풍",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "스킬 사용 속도 증가",
+                "value": 10,
+                "unit": "%",
+                "dpsRelevant": false
+            },
+            {
+                "type": "PERMANENT",
+                "name": "공격 속도 증가",
+                "value": 10,
+                "unit": "%",
+                "dpsRelevant": false
+            },
+            {
+                "type": "TRIGGER",
+                "name": "스킬/공격 속도 증가",
+                "value": 24,
+                "unit": "%",
+                "trigger": "무방비 공격 적중 시",
+                "duration": 10,
+                "dpsRelevant": false,
+                "note": "무방비 조건 - 효율 제외"
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "스킬 사용 속도 및 공격 속도가 10% 증가한다. 무방비 공격 적중 시, 10초 동안 스킬 사용 속도 및 공격 속도가 24% 추가로 증가한다."
+    },
+    {
+        "id": 57,
+        "name": "나무 사슴",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STACKING",
+            "name": "공격력 증가",
+            "value": 12,
+            "unit": "%",
+            "trigger": "추가타 6회 적중 시",
+            "duration": 10,
+            "cooldown": 4,
+            "dpsRelevant": true,
+            "note": "추가 피해 포함"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "축적: 추가타 공격을 6회 적중시킬 경우, 다음 공격 적중 시 피해를 입히고, 자신의 공격력이 10초 동안 12% 증가한다."
+    },
+    {
+        "id": 58,
+        "name": "해결사+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "공격 속도 증가",
+                "value": 30,
+                "unit": "%",
+                "dpsRelevant": false
+            },
+            {
+                "type": "PERMANENT",
+                "name": "기본 공격 추가타 확률 증가",
+                "value": 30,
+                "unit": "%",
+                "dpsRelevant": false,
+                "note": "기본 공격 한정"
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격 속도가 30% 증가하며, 기본 공격의 추가타 확률이 30% 증가한다."
+    },
+    {
+        "id": 59,
+        "name": "무도가+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "공격력 증가",
+                "value": 12,
+                "unit": "%",
+                "dpsRelevant": true
+            },
+            {
+                "type": "PERMANENT",
+                "name": "궁극기 게이지 획득량 증가",
+                "value": 20,
+                "unit": "%",
+                "dpsRelevant": false
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격력이 12% 증가하며, 궁극기 게이지 획득량이 20% 증가한다."
+    },
+    {
+        "id": 60,
+        "name": "근위병+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "PERMANENT",
+            "name": "공격력 증가",
+            "value": 23,
+            "unit": "%",
+            "dpsRelevant": true
+        }],
+        "demerits": [{
+            "name": "쿨타임 회복 속도 감소",
+            "value": 7,
+            "unit": "%"
+        }],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격력이 23% 증가한다. 결함: 재사용 대기 시간 회복 속도가 7% 감소한다."
+    },
+    {
+        "id": 61,
+        "name": "섬세한 손놀림",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "연타 피해 증가",
+                "value": 6,
+                "unit": "%",
+                "dpsRelevant": true,
+                "note": "각성 시 12%"
+            },
+            {
+                "type": "PERMANENT",
+                "name": "공격력 증가",
+                "value": 6,
+                "unit": "%",
+                "dpsRelevant": true,
+                "note": "각성 시 12%"
+            },
+            {
+                "type": "PERMANENT",
+                "name": "추가타 확률 증가",
+                "value": 4,
+                "unit": "%",
+                "dpsRelevant": true,
+                "note": "각성 시 8%"
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false,
+            "doubleOnAwakening": true
+        },
+        "rawDescription": "연타 피해가 6%, 공격력이 6%, 추가타 확률이 4% 증가한다. 엠블럼의 각성 효과가 활성화된 동안 이 룬으로 증가한 능력치가 두배가 된다."
+    },
+    {
+        "id": 62,
+        "name": "창백한 섬광",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "치명타 확률 증가",
+            "value": 9,
+            "unit": "%",
+            "trigger": "공격 시",
+            "duration": 15,
+            "cooldown": 15,
+            "dpsRelevant": true,
+            "note": "8/10% 기본 + 전력 비례 추가"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격 시, 치명타 확률이 15초 동안 8/10% 증가한다. 전력 변환 효과 포함."
+    },
+    {
+        "id": 63,
+        "name": "어두운 징조",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "STACKING",
+                "name": "공격력 증가",
+                "value": 18,
+                "unit": "%",
+                "stackValue": 0.6,
+                "maxStacks": 30,
+                "trigger": "궁극기 사용 시",
+                "dpsRelevant": false,
+                "note": "전투 종료까지 유지, 궁극기 조건"
+            },
+            {
+                "type": "STACKING",
+                "name": "치명타 확률 증가",
+                "value": 18,
+                "unit": "%",
+                "stackValue": 0.6,
+                "maxStacks": 30,
+                "trigger": "궁극기 사용 시",
+                "dpsRelevant": false
+            },
+            {
+                "type": "STACKING",
+                "name": "피해량 증가",
+                "value": 18,
+                "unit": "%",
+                "stackValue": 0.6,
+                "maxStacks": 30,
+                "trigger": "궁극기 사용 시",
+                "dpsRelevant": false
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "누적: 궁극기 사용 시, 전투가 끝날 때까지 공격력이 0.6%, 치명타 확률이 0.6%, 적에게 주는 피해가 0.6% 증가한다. 이 효과는 최대 30회까지 중첩된다."
+    },
+    {
+        "id": 64,
+        "name": "신성한 칙령",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "TRIGGER",
+                "name": "공격력 증가",
+                "value": 15,
+                "unit": "%",
+                "trigger": "아군 체력 회복 시",
+                "duration": 5,
+                "dpsRelevant": true
+            },
+            {
+                "type": "TRIGGER",
+                "name": "회복량 증가",
+                "value": 9,
+                "unit": "%",
+                "trigger": "아군 체력 회복 시",
+                "duration": 5,
+                "dpsRelevant": false
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "classRestriction": "힐러계열",
+        "rawDescription": "아군의 체력을 회복시키면 5초 동안 공격력이 15% 증가하며 회복량이 9% 증가한다."
+    },
+    {
+        "id": 65,
+        "name": "준비된 자",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "TRIGGER",
+                "name": "피해량 증가",
+                "value": 20,
+                "unit": "%",
+                "trigger": "퀵슬롯 아이템 사용 시",
+                "duration": 15,
+                "dpsRelevant": true
+            },
+            {
+                "type": "PERMANENT",
+                "name": "포션 슬롯 +2",
+                "dpsRelevant": false
+            },
+            {
+                "type": "PERMANENT",
+                "name": "붕대 슬롯 +2",
+                "dpsRelevant": false
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "퀵슬롯 아이템을 사용했을 경우 15초 동안 적에게 주는 피해가 20% 증가한다. 퀵슬롯의 포션 개수가 2개 증가하며, 붕대 개수가 2개 증가한다."
+    },
+    {
+        "id": 66,
+        "name": "저무는 달",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "공격력 증가",
+                "value": 6,
+                "unit": "%",
+                "dpsRelevant": true
+            },
+            {
+                "type": "PERMANENT",
+                "name": "방어력 증가",
+                "value": 6,
+                "unit": "%",
+                "dpsRelevant": false
+            },
+            {
+                "type": "STACKING",
+                "name": "공격력 증가",
+                "value": 20,
+                "unit": "%",
+                "stackValue": 2,
+                "maxStacks": 10,
+                "trigger": "전투 시작 후 30초마다",
+                "dpsRelevant": true,
+                "note": "전투 종료까지 유지"
+            },
+            {
+                "type": "STACKING",
+                "name": "방어력 증가",
+                "value": 20,
+                "unit": "%",
+                "stackValue": 2,
+                "maxStacks": 10,
+                "trigger": "전투 시작 후 30초마다",
+                "dpsRelevant": false
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "누적: 공격력과 방어력이 6% 증가한다. 전투 시작 시, 전투 종료까지 30초마다 공격력과 방어력이 추가로 2%씩 증가하며, 해당 효과는 최대 10회까지 중첩된다."
+    },
+    {
+        "id": 67,
+        "name": "쌍둥이 별",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "캐스팅/차지 속도 증가",
+                "value": 7,
+                "unit": "%",
+                "dpsRelevant": false
+            },
+            {
+                "type": "PERMANENT",
+                "name": "스킬 사용 속도 증가",
+                "value": 7,
+                "unit": "%",
+                "dpsRelevant": false
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false,
+            "stackBonus": 1,
+            "note": "누적 효과 발생 시 +1 추가 발생"
+        },
+        "rawDescription": "누적 효과가 발생할 때, 추가로 한 번 더 발생한다. 캐스팅 및 차지 속도, 스킬 사용 속도가 7% 증가한다."
+    },
+    {
+        "id": 68,
+        "name": "돌격대장+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "TRIGGER",
+                "name": "타겟 받는 피해 증가",
+                "value": 10,
+                "unit": "%",
+                "trigger": "적 도발 시",
+                "duration": 10,
+                "dpsRelevant": true,
+                "note": "방어구 파괴 부여"
+            },
+            {
+                "type": "TRIGGER",
+                "name": "공격력 증가",
+                "value": 20,
+                "unit": "%",
+                "trigger": "적 도발 시",
+                "duration": 15,
+                "dpsRelevant": true
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false,
+            "applyArmorBreak": true
+        },
+        "classRestriction": "전사계열",
+        "rawDescription": "적을 도발할 경우, 약화 효과: 방어구 파괴를 부여해 10초 동안 받는 피해를 10% 증가시키며, 자신의 공격력을 15초 동안 20% 증가시킨다."
+    },
+    {
+        "id": 69,
+        "name": "갈퀴발톱+",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "브레이크 스킬 피해 증가",
+                "value": 24,
+                "unit": "%",
+                "dpsRelevant": false,
+                "note": "브레이크 스킬 한정"
+            },
+            {
+                "type": "PERMANENT",
+                "name": "브레이크 피해 증가",
+                "value": 24,
+                "unit": "%",
+                "dpsRelevant": false,
+                "note": "브레이크 피해 한정"
+            },
+            {
+                "type": "PERMANENT",
+                "name": "무방비 피해 증가",
+                "value": 24,
+                "unit": "%",
+                "dpsRelevant": false,
+                "note": "무방비 조건 한정"
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "브레이크 스킬로 주는 피해가 24% 증가한다. 추가로 적에게 주는 브레이크 피해가 24% 증가하며, 무방비 피해가 24% 증가한다."
+    },
+    {
+        "id": 70,
+        "name": "일렁이는 불꽃",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "추가타 확률 증가",
+            "value": 9,
+            "unit": "%",
+            "trigger": "공격 시",
+            "duration": 15,
+            "cooldown": 15,
+            "dpsRelevant": true,
+            "note": "8/10% 기본 + 전력 비례 추가"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격 시, 추가타 확률이 15초 동안 8/10% 증가한다. 전력 변환 효과 포함."
+    },
+    {
+        "id": 71,
+        "name": "다가오는 죽음",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "암흑 구체 피해",
+            "trigger": "공격 시",
+            "cooldown": 10,
+            "dpsRelevant": false,
+            "note": "거리 비례 피해 (최대 18m)"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "적을 향해 느리게 날아가는 암흑 구체를 발사한다. 거리에 비례하여 피해를 입힌다."
+    },
+    {
+        "id": 72,
+        "name": "침묵하는 산",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STATE",
+            "name": "공격력 증가",
+            "value": 22,
+            "unit": "%",
+            "trigger": "5초간 이동 안함",
+            "dpsRelevant": true,
+            "note": "이동 불가 조건"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "5초 동안 이동하지 않을 경우, 공격력이 22% 증가한다."
+    },
+    {
+        "id": 73,
+        "name": "에메랄드 숲",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "PERMANENT",
+            "name": "피해량 증가",
+            "value": 10,
+            "unit": "%",
+            "dpsRelevant": true
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false,
+            "stackBonus": 1,
+            "note": "축적 횟수 누적 시 +1 추가"
+        },
+        "rawDescription": "축적: 효과에 필요한 횟수를 누적시킬 때, 1회 추가로 누적시킨다. 적에게 주는 피해가 10% 증가한다."
+    },
+    {
+        "id": 74,
+        "name": "압도적인 힘",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "강타 피해 증가",
+                "value": 6,
+                "unit": "%",
+                "dpsRelevant": true,
+                "note": "각성 시 12%"
+            },
+            {
+                "type": "PERMANENT",
+                "name": "공격력 증가",
+                "value": 6,
+                "unit": "%",
+                "dpsRelevant": true,
+                "note": "각성 시 12%"
+            },
+            {
+                "type": "PERMANENT",
+                "name": "치명타 확률 증가",
+                "value": 4,
+                "unit": "%",
+                "dpsRelevant": true,
+                "note": "각성 시 8%"
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false,
+            "doubleOnAwakening": true
+        },
+        "rawDescription": "강타 피해가 6%, 공격력이 6%, 치명타 확률이 4% 증가한다. 엠블럼의 각성 효과가 활성화된 동안 이 룬으로 증가한 능력치가 두배가 된다."
+    },
+    {
+        "id": 75,
+        "name": "붕괴하는 별",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "STACKING",
+                "name": "추가 피해",
+                "trigger": "공격 3회 적중 시 중첩 소모",
+                "dpsRelevant": false,
+                "note": "공격력 비례 피해"
+            },
+            {
+                "type": "TRIGGER",
+                "name": "공격력 증가",
+                "value": 10,
+                "unit": "%",
+                "trigger": "3중첩 소모 시",
+                "duration": 10,
+                "cooldown": 3,
+                "dpsRelevant": true,
+                "note": "대상별 3초 쿨타임"
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "자신의 공격이 적에게 적중 할 때마다 중첩을 쌓는다. 중첩이 3회 쌓일 경우, 중첩을 전부 소모하여 피해를 주고, 자신의 공격력을 10초 동안 10% 증가시킨다."
+    },
+    {
+        "id": 76,
+        "name": "불안정한 힘",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STATE",
+            "name": "피해량 증가",
+            "value": 22,
+            "unit": "%",
+            "trigger": "전투 시작 시",
+            "dpsRelevant": true,
+            "note": "브레이크 당하면 해제, 30초 후 재활성"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "전투 시작 시, 적에게 주는 피해가 22% 증가한다. 브레이크 당할 경우 효과가 사라지며, 30초 후에 재활성화된다."
+    },
+    {
+        "id": 77,
+        "name": "울려퍼지는 천둥",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "스킬/공격/캐스팅 속도 증가",
+            "value": 6,
+            "unit": "%",
+            "trigger": "공격 시",
+            "duration": 15,
+            "cooldown": 15,
+            "dpsRelevant": false,
+            "note": "전력 비례 추가 증가"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격 시 스킬 사용 속도, 공격 속도, 캐스팅 및 차지 속도가 15초 동안 6% 증가한다. 전력 변환 효과 포함."
+    },
+    {
+        "id": 78,
+        "name": "싹쓸바람",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "끌어당기기 + 피해",
+            "trigger": "공격 적중 시",
+            "cooldown": 10,
+            "dpsRelevant": false,
+            "note": "5m 범위 3초간 끌어당기며 피해"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격 적중 시, 대상 주위 5m 범위 내의 적들을 중앙으로 3초간 끌어당기며 매 0.5초마다 피해를 준다."
+    },
+    {
+        "id": 79,
+        "name": "초신성",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "공격력 증가 + 추가 피해",
+            "trigger": "전력 변환 시",
+            "cooldown": 15,
+            "dpsRelevant": false,
+            "note": "전력 0.04% 비례 공격력 증가"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "보유한 모든 충전을 전력으로 변환하고, 변환된 전력 비례 피해 및 공격력 증가."
+    },
+    {
+        "id": 80,
+        "name": "집정관",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "PERMANENT",
+            "name": "공격력 증가",
+            "value": 23,
+            "unit": "%",
+            "dpsRelevant": true
+        }],
+        "demerits": [{
+                "name": "스킬 사용 속도 감소",
+                "value": 8,
+                "unit": "%"
+            },
+            {
+                "name": "캐스팅/차지 속도 감소",
+                "value": 8,
+                "unit": "%"
+            }
+        ],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격력이 23% 증가한다. 결함: 스킬 사용 속도와 캐스팅 및 차지 속도가 8% 감소한다."
+    },
+    {
+        "id": 81,
+        "name": "지휘관",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STACKING",
+            "name": "공격력 증가",
+            "value": 22.5,
+            "unit": "%",
+            "stackValue": 4.5,
+            "maxStacks": 5,
+            "trigger": "강타/연타/무방비/치명타/추가타 공격 시",
+            "duration": 8,
+            "dpsRelevant": true,
+            "note": "각 공격력 효과 별도 지속시간"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "강타, 연타, 무방비, 치명타, 추가타 공격 시, 8초 동안 공격력이 4.5% 증가하며, 해당 효과는 최대 5회까지 중첩된다."
+    },
+    {
+        "id": 82,
+        "name": "약탈자",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "TRIGGER",
+                "name": "체력 회복",
+                "trigger": "추가타 적중 시",
+                "cooldown": 1,
+                "dpsRelevant": false,
+                "note": "공격력 비례 회복"
+            },
+            {
+                "type": "PERMANENT",
+                "name": "추가타 확률 증가",
+                "value": 10,
+                "unit": "%",
+                "dpsRelevant": true
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "추가타 적중 시, 체력이 회복된다. 추가타 확률이 10% 증가한다."
+    },
+    {
+        "id": 83,
+        "name": "싸움꾼",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "STATE",
+                "name": "피해량 증가",
+                "value": 14,
+                "unit": "%",
+                "trigger": "주변 6m 적 수 비례",
+                "dpsRelevant": true,
+                "note": "12~16% (적 3명 시 최대)"
+            },
+            {
+                "type": "STATE",
+                "name": "받는 피해 감소",
+                "value": 10,
+                "unit": "%",
+                "trigger": "주변 6m 적 수 비례",
+                "dpsRelevant": false,
+                "note": "8~12% (적 3명 시 최대)"
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "자신 주변 6m 범위 내에 있는 적의 수가 많을수록, 적에게 입히는 피해가 최소 12%에서 최대 16%까지 증가한다. 적에게 받는 피해는 최소 8%에서 최대 12%까지 감소한다."
+    },
+    {
+        "id": 84,
+        "name": "새벽별",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STACKING",
+            "name": "쿨타임 회복 속도 증가",
+            "value": 18,
+            "unit": "%",
+            "stackValue": 3,
+            "maxStacks": 6,
+            "trigger": "스킬 사용 시",
+            "duration": 8,
+            "dpsRelevant": false,
+            "note": "지속 시간 스택마다 개별"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "누적: 스킬을 사용할 때마다 8초 동안 스킬 재사용 대기 시간 회복 속도가 3% 빨라진다. 해당 효과는 최대 6회까지 중첩된다."
+    },
+    {
+        "id": 85,
+        "name": "땅울림",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "공격력 증가",
+                "value": 8,
+                "unit": "%",
+                "dpsRelevant": true
+            },
+            {
+                "type": "DECAY",
+                "name": "공격력 증가 (전투 시작)",
+                "value": 30,
+                "unit": "%",
+                "trigger": "전투 시작 시",
+                "dpsRelevant": true,
+                "decayInfo": {
+                    "interval": 3,
+                    "decayRate": 2,
+                    "note": "매 3초마다 2% 감소, 45초 후 0%"
+                }
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격력이 8% 증가한다. 전투 시작 시, 공격력이 30% 증가한다. 증가한 공격력은 매 3초마다 2%씩 감소한다."
+    },
+    {
+        "id": 86,
+        "name": "기본기",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "PERMANENT",
+            "name": "공격력 증가",
+            "value": 15,
+            "unit": "%",
+            "dpsRelevant": true
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "공격력이 15% 증가한다."
+    },
+    {
+        "id": 87,
+        "name": "황혼",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STACKING",
+            "name": "피해량 증가",
+            "value": 22.4,
+            "unit": "%",
+            "stackValue": 1.4,
+            "maxStacks": 16,
+            "trigger": "공격 적중 시",
+            "duration": 8,
+            "dpsRelevant": true,
+            "note": "지속 시간 스택마다 개별"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "누적: 공격이 적중할 때마다 8초 동안 적에게 주는 피해가 1.4% 증가한다. 해당 효과는 최대 16회까지 중첩된다."
+    },
+    {
+        "id": 88,
+        "name": "혼돈",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "STACKING",
+            "name": "추가 피해",
+            "trigger": "적이 지속 피해 받을 때 중첩",
+            "dpsRelevant": false,
+            "note": "3중첩 시 소모하여 피해"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": ["화상", "빙결", "감전", "출혈", "중독", "암흑", "정신", "신성"],
+            "removesDemerits": false
+        },
+        "rawDescription": "자신의 공격에 적중당한 대상이 지속 피해 효과를 받을 때마다 중첩을 쌓는다. 중첩이 3회 쌓일 경우 중첩을 소모하여 피해를 준다."
+    },
+    {
+        "id": 89,
+        "name": "태양",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "범위 피해",
+            "trigger": "3.5초마다",
+            "dpsRelevant": false,
+            "note": "3m 범위 피해"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "3.5초마다 자신 주위 3m 범위 내의 적에게 피해를 준다."
+    },
+    {
+        "id": 90,
+        "name": "유성",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "전력 비례 추가 피해",
+            "trigger": "전력 변환 시",
+            "cooldown": 15,
+            "dpsRelevant": false,
+            "note": "과부하 상태 시 범위 피해"
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "보유한 모든 충전을 전력으로 변환하고, 변환된 전력 수치 비례 피해를 준다."
+    },
+    {
+        "id": 91,
+        "name": "설산",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "추가타 확률 증가",
+            "value": 16,
+            "unit": "%",
+            "trigger": "지속 피해(빙결) 보유 적 공격 시",
+            "duration": 5,
+            "cooldown": 3,
+            "dpsRelevant": true
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": ["빙결"],
+            "removesDemerits": false
+        },
+        "rawDescription": "지속 피해: 빙결을 보유한 적 공격 시, 5초 동안 추가타 확률이 16% 증가한다."
+    },
+    {
+        "id": 92,
+        "name": "불사",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+                "type": "PERMANENT",
+                "name": "피해량 증가",
+                "value": 18,
+                "unit": "%",
+                "dpsRelevant": true
+            },
+            {
+                "type": "TRIGGER",
+                "name": "행동 불능 방지 + 회복",
+                "trigger": "행동 불능 공격 받을 시",
+                "cooldown": 180,
+                "dpsRelevant": false,
+                "note": "1회 막고 체력 대량 회복"
+            },
+            {
+                "type": "TRIGGER",
+                "name": "받는 피해 감소",
+                "value": 80,
+                "unit": "%",
+                "trigger": "행동 불능 방지 후",
+                "duration": 3,
+                "dpsRelevant": false
+            }
+        ],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": [],
+            "removesDemerits": false
+        },
+        "rawDescription": "적에게 주는 피해가 18% 증가한다. 행동 불능에 이르는 공격을 1회 막아주고 체력을 대량회복한다. 이 후 3초 동안 받는 피해가 80% 감소한다."
+    },
+    {
+        "id": 93,
+        "name": "들불",
+        "category": "02",
+        "categoryName": "방어구",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
+        "effects": [{
+            "type": "TRIGGER",
+            "name": "치명타 확률 증가",
+            "value": 14,
+            "unit": "%",
+            "trigger": "지속 피해(화상) 보유 적 공격 시",
+            "duration": 5,
+            "cooldown": 3,
+            "dpsRelevant": true
+        }],
+        "demerits": [],
+        "enhanceEffects": {
+            "10": {},
+            "15": {}
+        },
+        "synergy": {
+            "appliesDot": [],
+            "requiresDot": ["화상"],
+            "removesDemerits": false
+        },
+        "rawDescription": "지속 피해: 화상을 보유한 적 공격 시, 5초 동안 치명타 확률이 14% 증가한다."
+    }
+]

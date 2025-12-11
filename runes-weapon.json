@@ -1,0 +1,1011 @@
+{
+    "version": "2.0.0",
+    "lastUpdated": "2025-12-11",
+    "description": "수동 파싱된 룬 데이터 (시즌1 전설 + 신화)",
+    "runes": [{
+            "id": 1,
+            "name": "만 갈래 물길",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "신화",
+            "gradeColor": "#FFD700",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "공격력 증가",
+                    "value": 15,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "STACKING",
+                    "name": "공격력 증가",
+                    "value": 20,
+                    "unit": "%",
+                    "stackValue": 1,
+                    "maxStacks": 20,
+                    "trigger": "클래스 레벨 50 달성마다",
+                    "dpsRelevant": true,
+                    "note": "모든 클래스 레벨 합산 기준"
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "공격력이 15% 증가한다. 클래스 레벨 50을 달성할 때마다 추가로 공격력이 1%씩 증가하며 해당 효과는 최대 20회까지 중첩된다."
+        },
+        {
+            "id": 2,
+            "name": "흰 까마귀",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "신화",
+            "gradeColor": "#FFD700",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "공격 속도 증가",
+                    "value": 10,
+                    "unit": "%",
+                    "dpsRelevant": false
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "이동 속도 증가",
+                    "value": 10,
+                    "unit": "%",
+                    "dpsRelevant": false
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "스킬 사용 속도 증가",
+                    "value": 10,
+                    "unit": "%",
+                    "dpsRelevant": false
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "캐스팅/차지 속도 증가",
+                    "value": 10,
+                    "unit": "%",
+                    "dpsRelevant": false
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "쿨타임 회복 속도 증가",
+                    "value": 10,
+                    "unit": "%",
+                    "dpsRelevant": false
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {
+                    "피해량 증가": 7
+                },
+                "15": {
+                    "공격력 증가": 7
+                }
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "공격, 이동, 스킬 사용 속도, 캐스팅 및 차지 속도, 재사용 대기 시간 회복 속도가 10% 증가한다."
+        },
+        {
+            "id": 3,
+            "name": "메아리치는 진노",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "신화",
+            "gradeColor": "#FFD700",
+            "effects": [{
+                    "type": "TRIGGER",
+                    "name": "추가 피해 + 지속 피해 부여",
+                    "trigger": "연타 적중 시",
+                    "dotType": "빙결",
+                    "cooldown": 8,
+                    "dpsRelevant": false,
+                    "note": "전방 넓은 범위 피해"
+                },
+                {
+                    "type": "TRIGGER",
+                    "name": "추가 피해 + 지속 피해 부여",
+                    "trigger": "강타 적중 시",
+                    "dotType": "화상",
+                    "cooldown": 8,
+                    "dpsRelevant": false,
+                    "note": "전방 넓은 범위 피해"
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "공격력 증가",
+                    "value": 5,
+                    "unit": "%",
+                    "dpsRelevant": true
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {
+                    "공격력 증가": 3
+                },
+                "15": {
+                    "공격력 증가": 3
+                }
+            },
+            "synergy": {
+                "appliesDot": ["빙결", "화상"],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "연타 적중 시, 전방 넓은 범위의 적들에게 피해와 지속 피해: 빙결을 준다. 강타 적중 시, 전방 넓은 범위의 적들에게 피해와 지속 피해: 화상을 준다. 또한, 공격력이 5% 증가한다. 장비를 +10, +15 강화 시 각각 공격력이 3% 추가로 증가한다."
+        },
+        {
+            "id": 4,
+            "name": "무한",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "신화",
+            "gradeColor": "#FFD700",
+            "effects": [{
+                    "type": "TRIGGER",
+                    "name": "스킬 쿨타임 감소",
+                    "value": 9,
+                    "unit": "%",
+                    "trigger": "기본 공격 사용 시",
+                    "dpsRelevant": false,
+                    "note": "모든 스킬의 재사용 대기 시간 감소"
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "공격력 증가",
+                    "value": 20,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "TRIGGER",
+                    "name": "공격 속도 증가",
+                    "value": 12,
+                    "unit": "%",
+                    "trigger": "스킬 사용 시",
+                    "duration": 5,
+                    "dpsRelevant": false
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false,
+                "basicAttackCooldownReduction": 9
+            },
+            "classRestriction": null,
+            "rawDescription": "기본 공격 사용 시, 모든 스킬의 재사용 대기 시간이 9% 감소한다. 공격력이 20% 증가하며, 스킬 사용 시 5초 동안 공격 속도가 12% 증가한다."
+        },
+        {
+            "id": 5,
+            "name": "밤+",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "공격력 증가",
+                    "value": 20,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "TRIGGER",
+                    "name": "지속 피해 부여",
+                    "trigger": "공격 적중 시",
+                    "dotType": "정신",
+                    "cooldown": 10,
+                    "dpsRelevant": false
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": ["정신"],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "공격력이 20% 증가한다. 공격 적중 시, 지속 피해: 정신을 준다.(재사용 대기 시간: 10초)"
+        },
+        {
+            "id": 6,
+            "name": "옛 마법사",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                "type": "PERMANENT",
+                "name": "쿨타임 회복 속도 증가",
+                "value": 29,
+                "unit": "%",
+                "dpsRelevant": false
+            }],
+            "demerits": [{
+                "name": "피해량 감소",
+                "value": 10,
+                "unit": "%"
+            }],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "재사용 대기 시간 회복 속도가 29% 증가한다. 결함: 적에게 주는 피해가 10% 감소한다."
+        },
+        {
+            "id": 7,
+            "name": "투사+",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                "type": "PERMANENT",
+                "name": "피해량 증가",
+                "value": 33,
+                "unit": "%",
+                "dpsRelevant": true
+            }],
+            "demerits": [{
+                "name": "멀티히트 피해 감소",
+                "value": 10,
+                "unit": "%"
+            }],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "적에게 주는 피해가 33% 증가한다. 결함: 멀티히트 피해가 10% 감소한다."
+        },
+        {
+            "id": 8,
+            "name": "종언+",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "STACKING",
+                    "name": "공격력 증가",
+                    "value": 20,
+                    "unit": "%",
+                    "stackValue": 2,
+                    "maxStacks": 10,
+                    "trigger": "전투 중인 적 처치 시",
+                    "duration": 20,
+                    "dpsRelevant": true,
+                    "note": "지속 시간은 스택마다 개별"
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "공격력 증가",
+                    "value": 24,
+                    "unit": "%",
+                    "dpsRelevant": true
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "누적: 자신과 전투 중인 적이 처치되었을 경우, 공격력이 20초 동안 2% 증가한다. 해당 효과는 최대 10회까지 중첩되며 지속 시간은 스택마다 개별로 가진다. 공격력이 24% 증가한다."
+        },
+        {
+            "id": 9,
+            "name": "야수+",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "피해량 증가",
+                    "value": 20,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "TRIGGER",
+                    "name": "지속 피해 부여",
+                    "trigger": "공격 적중 시",
+                    "dotType": "출혈",
+                    "cooldown": 10,
+                    "dpsRelevant": false
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": ["출혈"],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "적에게 주는 피해가 20% 증가한다. 공격 적중 시, 지속 피해: 출혈을 준다.(재사용 대기 시간: 10초)"
+        },
+        {
+            "id": 10,
+            "name": "망각+",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "공격력 증가",
+                    "value": 19,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "TRIGGER",
+                    "name": "스킬 쿨타임 감소",
+                    "value": 9,
+                    "unit": "%",
+                    "trigger": "기본 공격 적중 시",
+                    "dpsRelevant": false,
+                    "note": "모든 스킬의 재사용 대기 시간 감소"
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false,
+                "basicAttackCooldownReduction": 9
+            },
+            "classRestriction": null,
+            "rawDescription": "공격력이 19% 증가한다. 기본 공격 적중 시, 모든 스킬의 재사용 대기 시간이 9% 감소한다."
+        },
+        {
+            "id": 11,
+            "name": "독사+",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "연타 피해 증가",
+                    "value": 20,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "TRIGGER",
+                    "name": "지속 피해 부여",
+                    "trigger": "공격 적중 시",
+                    "dotType": "중독",
+                    "cooldown": 10,
+                    "dpsRelevant": false
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": ["중독"],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "연타 피해가 20% 증가한다. 공격 적중 시, 지속 피해: 중독을 준다.(재사용 대기 시간: 10초)"
+        },
+        {
+            "id": 12,
+            "name": "검무+",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "STACKING",
+                    "name": "공격력 증가",
+                    "value": 20,
+                    "unit": "%",
+                    "stackValue": 2,
+                    "maxStacks": 10,
+                    "trigger": "공격 적중 시",
+                    "duration": 10,
+                    "dpsRelevant": true,
+                    "note": "지속 시간은 스택마다 개별"
+                },
+                {
+                    "type": "STACKING",
+                    "name": "치명타 확률 증가",
+                    "value": 10,
+                    "unit": "%",
+                    "stackValue": 1,
+                    "maxStacks": 10,
+                    "trigger": "공격 적중 시",
+                    "duration": 10,
+                    "dpsRelevant": true,
+                    "note": "지속 시간은 스택마다 개별"
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "누적: 공격이 적중할 때마다 10초 동안 공격력이 2%, 치명타 확률이 1% 증가한다. 해당 효과는 최대 10회까지 중첩되며 지속 시간은 스택마다 개별로 가진다."
+        },
+        {
+            "id": 13,
+            "name": "파괴자+",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "공격력 증가",
+                    "value": 18,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "무방비 피해 증가",
+                    "value": 48,
+                    "unit": "%",
+                    "dpsRelevant": false,
+                    "note": "무방비 조건 한정"
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "공격력이 18% 증가하고, 무방비 피해가 48% 증가한다."
+        },
+        {
+            "id": 14,
+            "name": "무수한 궤적",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "공격력 증가",
+                    "value": 10,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "기본 공격 속도 증가",
+                    "value": 30,
+                    "unit": "%",
+                    "dpsRelevant": false,
+                    "note": "기본 공격 한정"
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "기본 공격 추가타 확률 증가",
+                    "value": 30,
+                    "unit": "%",
+                    "dpsRelevant": false,
+                    "note": "기본 공격 한정"
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "공격력이 10%, 기본 공격 속도가 30% 증가하며, 기본 공격 추가타 확률이 30% 증가한다."
+        },
+        {
+            "id": 15,
+            "name": "마지막 자비",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "공격력 증가",
+                    "value": 20,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "STATE",
+                    "name": "공격력 증가",
+                    "value": 20,
+                    "unit": "%",
+                    "trigger": "적 체력 50% 이하 시",
+                    "duration": 10,
+                    "dpsRelevant": true,
+                    "note": "적 체력 조건"
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "공격력이 20% 증가한다. 남은 체력이 50% 이하인 적을 공격했을 경우, 10초 동안 공격력이 추가로 20% 증가한다."
+        },
+        {
+            "id": 16,
+            "name": "끝없는 순환",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "STACKING",
+                    "name": "암흑 피해 마법진",
+                    "trigger": "아군 20회 회복 후 공격 적중 시",
+                    "duration": 4.5,
+                    "dpsRelevant": false,
+                    "note": "9m 범위 암흑 피해"
+                },
+                {
+                    "type": "STACKING",
+                    "name": "회복 마법진",
+                    "trigger": "적 20회 공격 후 아군 회복 시",
+                    "duration": 4.5,
+                    "dpsRelevant": false,
+                    "note": "9m 범위 회복"
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": "힐러계열",
+            "rawDescription": "축적: 아군을 20회 회복시킨 이후, 다음 공격 적중 시 대상의 위치에 마법진을 펼쳐 9m 범위 내의 적들에게 0.5초마다 암흑 피해를 4.5초 동안 입힌다. 축적: 적을 20회 공격한 이후, 다음 아군 회복 시 대상의 위치에 마법진을 펼쳐 9m 범위 내의 아군의 체력을 0.5초마다 4.5초 동안 회복한다."
+        },
+        {
+            "id": 17,
+            "name": "서리바람+",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "공격력 증가",
+                    "value": 20,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "캐스팅/차지 속도 증가",
+                    "value": 25,
+                    "unit": "%",
+                    "dpsRelevant": false
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "공격력이 20% 증가하고, 캐스팅 및 차지 속도가 25% 증가한다."
+        },
+        {
+            "id": 18,
+            "name": "물결치는 날",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "TRIGGER",
+                    "name": "추가 피해",
+                    "trigger": "스킬 사용 후 기본 공격 적중 시",
+                    "dpsRelevant": false,
+                    "note": "공격력 비례 추가 피해"
+                },
+                {
+                    "type": "TRIGGER",
+                    "name": "기본 공격 속도 증가",
+                    "value": 10,
+                    "unit": "%",
+                    "trigger": "스킬 사용 후",
+                    "duration": 1,
+                    "dpsRelevant": false,
+                    "note": "1회 한정"
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "스킬 사용 시, 다음 기본 공격 적중 시 대상에게 피해를 추가로 입히고, 다음 1회의 기본 공격 속도가 10% 증가한다."
+        },
+        {
+            "id": 19,
+            "name": "집행자",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "치유량 증가",
+                    "value": 20,
+                    "unit": "%",
+                    "dpsRelevant": false
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "피해량 증가",
+                    "value": 10,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "TRIGGER",
+                    "name": "지속 피해 부여",
+                    "trigger": "공격 적중 시",
+                    "dotType": "신성",
+                    "cooldown": 10,
+                    "dpsRelevant": false
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": ["신성"],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "치유량이 20%, 적에게 주는 피해가 10% 증가한다. 공격 적중 시, 지속 피해: 신성을 준다.(재사용 대기 시간: 10초)"
+        },
+        {
+            "id": 20,
+            "name": "은둔자",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                "type": "PERMANENT",
+                "name": "공격력 증가",
+                "value": 33,
+                "unit": "%",
+                "dpsRelevant": true
+            }],
+            "demerits": [{
+                "name": "쿨타임 회복 속도 감소",
+                "value": 9,
+                "unit": "%"
+            }],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "공격력이 33% 증가한다. 결함: 재사용 대기 시간 회복 속도가 9% 감소한다."
+        },
+        {
+            "id": 21,
+            "name": "영웅",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "공격력 증가",
+                    "value": 4.3,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "연타 피해 증가",
+                    "value": 4.3,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "강타 피해 증가",
+                    "value": 4.3,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "콤보 피해 증가",
+                    "value": 4.3,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "스킬 피해 증가",
+                    "value": 4.3,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "치명타 피해 증가",
+                    "value": 4.3,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "PERMANENT",
+                    "name": "멀티히트 피해 증가",
+                    "value": 4.3,
+                    "unit": "%",
+                    "dpsRelevant": true
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": [],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "공격력, 연타 피해, 강타 피해, 콤보 피해, 스킬 피해, 치명타 피해, 멀티 히트 피해가 각각 4.3% 증가한다."
+        },
+        {
+            "id": 22,
+            "name": "불길",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "치명타 확률 증가",
+                    "value": 18,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "TRIGGER",
+                    "name": "지속 피해 부여",
+                    "trigger": "공격 적중 시",
+                    "dotType": "화상",
+                    "cooldown": 10,
+                    "dpsRelevant": false
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": ["화상"],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "치명타 확률이 18% 증가한다. 공격 적중 시, 지속 피해: 화상을 준다.(재사용 대기 시간: 10초)"
+        },
+        {
+            "id": 23,
+            "name": "뇌명",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "강타 피해 증가",
+                    "value": 20,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "TRIGGER",
+                    "name": "지속 피해 부여",
+                    "trigger": "공격 적중 시",
+                    "dotType": "감전",
+                    "cooldown": 10,
+                    "dpsRelevant": false
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": ["감전"],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "강타 피해가 20% 증가한다. 공격 적중 시, 지속 피해: 감전을 준다.(재사용 대기 시간: 10초)"
+        },
+        {
+            "id": 24,
+            "name": "공포",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "치명타 피해 증가",
+                    "value": 18,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "TRIGGER",
+                    "name": "지속 피해 부여",
+                    "trigger": "공격 적중 시",
+                    "dotType": "암흑",
+                    "cooldown": 10,
+                    "dpsRelevant": false
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": ["암흑"],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "치명타 피해가 18% 증가한다. 공격 적중 시, 지속 피해: 암흑을 준다.(재사용 대기 시간: 10초)"
+        },
+        {
+            "id": 25,
+            "name": "결정",
+            "category": "01",
+            "categoryName": "무기",
+            "gradeName": "전설(시즌1)",
+            "gradeColor": "#FF8C00",
+            "effects": [{
+                    "type": "PERMANENT",
+                    "name": "추가타 확률 증가",
+                    "value": 18,
+                    "unit": "%",
+                    "dpsRelevant": true
+                },
+                {
+                    "type": "TRIGGER",
+                    "name": "지속 피해 부여",
+                    "trigger": "공격 적중 시",
+                    "dotType": "빙결",
+                    "cooldown": 10,
+                    "dpsRelevant": false
+                }
+            ],
+            "demerits": [],
+            "enhanceEffects": {
+                "10": {},
+                "15": {}
+            },
+            "synergy": {
+                "appliesDot": ["빙결"],
+                "requiresDot": [],
+                "removesDemerits": false
+            },
+            "classRestriction": null,
+            "rawDescription": "추가타 확률이 18% 증가한다. 공격 적중 시, 지속 피해: 빙결을 준다.(재사용 대기 시간: 10초)"
+        }
+    ]
+}

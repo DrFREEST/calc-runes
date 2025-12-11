@@ -65,63 +65,56 @@
      * - grade 05 + stars 6 → 전설(시즌0)
      * - grade 06 + stars 5 → 유니크(시즌0)
      */
+    /**
+     * 등급 매핑 @updated 2025-12-11 - 시즌1 전설 + 신화만 포함
+     */
     const GRADE_MAP = {
-        '08_8': {
+        '신화': {
             name: '신화',
-            color: 'rainbow',
+            color: '#FFD700',
             priority: 1
         },
-        '05_8': {
+        '전설(시즌1)': {
             name: '전설(시즌1)',
-            color: 'gold',
+            color: '#FF8C00',
             priority: 2
-        },
-        '07_6': {
-            name: '전설(시즌0)',
-            color: 'purple',
-            priority: 3
-        },
-        '05_6': {
-            name: '전설(시즌0)',
-            color: 'purple',
-            priority: 3
-        }, // 07_6과 동일 priority
-        '06_5': {
-            name: '유니크(시즌0)',
-            color: 'blue',
-            priority: 4
         }
     };
 
     /**
-     * 룬의 등급 키 생성 (grade_stars 형식)
+     * 룬의 등급명 반환
      * @param {Object} rune - 룬 데이터
-     * @returns {string} 등급 키
+     * @returns {string} 등급명
+     * @updated 2025-12-11 - 수동 파싱 데이터에서는 gradeName 직접 사용
      */
-    function getGradeKey(rune) {
-        const grade = rune.grade || '';
-        const stars = String(rune.stars || '').replace(/[^0-9]/g, '');
-        return `${grade}_${stars}`;
+    function getGradeName(rune) {
+        return rune.gradeName || '기타';
     }
 
     /**
      * 룬이 유효한 등급인지 확인
      * @param {Object} rune - 룬 데이터
      * @returns {boolean} 유효 여부
+     * @updated 2025-12-11 - gradeName 기반 확인
      */
     function isValidGrade(rune) {
-        const key = getGradeKey(rune);
-        return GRADE_MAP.hasOwnProperty(key);
+        const gradeName = getGradeName(rune);
+        return GRADE_MAP.hasOwnProperty(gradeName);
     }
 
     /**
      * 룬의 등급 정보 반환
      * @param {Object} rune - 룬 데이터
      * @returns {Object|null} 등급 정보
+     * @updated 2025-12-11 - gradeName 기반 조회
      */
     function getGradeInfo(rune) {
-        const key = getGradeKey(rune);
-        return GRADE_MAP[key] || null;
+        const gradeName = getGradeName(rune);
+        return GRADE_MAP[gradeName] || {
+            name: gradeName,
+            color: rune.gradeColor || '#888',
+            priority: 99
+        };
     }
 
     /**
@@ -355,32 +348,62 @@
      * 룬 데이터 JSON 파일 로드
      * @async
      * @returns {Promise<void>}
-     * @updated 2025-12-10 - 유효한 등급(신화/전설/유니크)만 필터링
+     * @updated 2025-12-11 - 수동 파싱된 4개 JSON 파일 로드 (무기/방어구/장신구/엠블럼)
      */
     async function loadRuneData() {
         try {
-            const response = await fetch('runes.json');
-            if (!response.ok) {
-                throw new Error(`HTTP 오류: ${response.status}`);
-            }
+            // 4개의 분리된 JSON 파일 병렬 로드
+            const [weaponRes, armorRes, accessoryRes, emblemRes] = await Promise.all([
+                fetch('runes-weapon.json'),
+                fetch('runes-armor.json'),
+                fetch('runes-accessory.json'),
+                fetch('runes-emblem.json')
+            ]);
 
-            const data = await response.json();
+            // 응답 확인
+            if (!weaponRes.ok) throw new Error(`무기 룬 로드 실패: ${weaponRes.status}`);
+            if (!armorRes.ok) throw new Error(`방어구 룬 로드 실패: ${armorRes.status}`);
+            if (!accessoryRes.ok) throw new Error(`장신구 룬 로드 실패: ${accessoryRes.status}`);
+            if (!emblemRes.ok) throw new Error(`엠블럼 룬 로드 실패: ${emblemRes.status}`);
 
-            // 유효한 등급의 룬만 필터링
-            const validRunes = data.filter(rune => isValidGrade(rune));
+            // JSON 파싱
+            const weaponData = await weaponRes.json();
+            const armorData = await armorRes.json();
+            const accessoryData = await accessoryRes.json();
+            const emblemData = await emblemRes.json();
 
-            state.allRunes = validRunes;
-            state.filteredRunes = [...validRunes];
+            // 무기 룬은 { runes: [...] } 형태, 나머지는 배열
+            const weaponRunes = weaponData.runes || weaponData;
+            const armorRunes = armorData;
+            const accessoryRunes = accessoryData;
+            const emblemRunes = emblemData;
 
-            console.log(`✅ 룬 데이터 로드 완료: 전체 ${data.length}개 중 유효 등급 ${validRunes.length}개`);
+            // 전체 룬 병합
+            const allRunes = [
+                ...weaponRunes,
+                ...armorRunes,
+                ...accessoryRunes,
+                ...emblemRunes
+            ];
+
+            state.allRunes = allRunes;
+            state.filteredRunes = [...allRunes];
+
+            // 카테고리별 통계 출력
+            const categoryStats = {
+                '무기': weaponRunes.length,
+                '방어구': armorRunes.length,
+                '장신구': accessoryRunes.length,
+                '엠블럼': emblemRunes.length
+            };
+            console.log(`✅ 룬 데이터 로드 완료: 총 ${allRunes.length}개`);
+            console.log('📊 카테고리별 룬 수:', categoryStats);
 
             // 등급별 통계 출력
             const gradeStats = {};
-            validRunes.forEach(rune => {
-                const gradeInfo = getGradeInfo(rune);
-                if (gradeInfo) {
-                    gradeStats[gradeInfo.name] = (gradeStats[gradeInfo.name] || 0) + 1;
-                }
+            allRunes.forEach(rune => {
+                const gradeName = rune.gradeName || '기타';
+                gradeStats[gradeName] = (gradeStats[gradeName] || 0) + 1;
             });
             console.log('📊 등급별 룬 수:', gradeStats);
 
@@ -414,8 +437,7 @@
     /**
      * 룬 데이터 필터링
      * @description 현재 필터 조건에 따라 룬 목록 필터링
-     * @updated 2025-12-10 - 새로운 등급 체계 기반 필터링 및 정렬
-     * @updated 2025-12-10 - 전설(시즌0) 통합 필터 (legendary_s0) 지원
+     * @updated 2025-12-11 - 수동 파싱 데이터 구조에 맞게 수정 (gradeName, rawDescription 사용)
      */
     function filterRunes() {
         const {
@@ -430,7 +452,9 @@
             if (search) {
                 const searchLower = search.toLowerCase();
                 const nameMatch = rune.name && rune.name.toLowerCase().includes(searchLower);
-                const descMatch = rune.description && stripHtml(rune.description).toLowerCase().includes(searchLower);
+                // 수동 파싱 데이터에서는 rawDescription 사용
+                const desc = rune.rawDescription || rune.description || '';
+                const descMatch = desc.toLowerCase().includes(searchLower);
                 if (!nameMatch && !descMatch) return false;
             }
 
@@ -439,23 +463,19 @@
                 return false;
             }
 
-            // 등급 필터 (새로운 체계: grade_stars 키 사용)
+            // 등급 필터 (gradeName 직접 비교)
             if (grade !== 'all') {
-                const gradeKey = getGradeKey(rune);
-                // 전설(시즌0) 통합 필터 처리
-                if (grade === 'legendary_s0') {
-                    if (gradeKey !== '07_6' && gradeKey !== '05_6') {
-                        return false;
-                    }
-                } else if (gradeKey !== grade) {
+                const gradeName = getGradeName(rune);
+                if (gradeName !== grade) {
                     return false;
                 }
             }
 
-            // 클래스 필터
+            // 클래스 필터 (수동 파싱 데이터에서는 classRestriction 사용)
             if (klass !== 'all') {
-                // '00'은 전체 클래스, 선택한 클래스와 일치하거나 '00'인 경우만 표시
-                if (rune.klass !== klass && rune.klass !== '00') {
+                const runeClass = rune.classRestriction || rune.klass || null;
+                // 클래스 제한이 없는 룬은 모든 클래스에서 사용 가능
+                if (runeClass && runeClass !== klass && runeClass !== '00') {
                     return false;
                 }
             }
@@ -557,41 +577,45 @@
      * 룬 카드 HTML 생성
      * @param {Object} rune - 룬 데이터
      * @returns {string} HTML 문자열
-     * @updated 2025-12-10 - 새로운 등급 체계(신화/전설/유니크) 적용
+     * @updated 2025-12-11 - 수동 파싱 데이터 구조에 맞게 수정
      */
     function createRuneCard(rune) {
-        const gradeInfo = getGradeInfo(rune) || {
-            name: '??',
-            color: 'gray'
-        };
-        const categoryName = CATEGORY_MAP[rune.category] || '기타';
-        const className = CLASS_MAP[rune.klass] || '알 수 없음';
+        // 수동 파싱 데이터에서는 gradeName, gradeColor, categoryName 직접 사용
+        const gradeName = rune.gradeName || '기타';
+        const gradeColor = rune.gradeColor || '#888';
+        const categoryName = rune.categoryName || CATEGORY_MAP[rune.category] || '기타';
         const isFavorite = state.favorites.includes(rune.id);
-        const description = stripHtml(rune.description) || '설명 없음';
+
+        // 설명: rawDescription (수동 파싱) 또는 description (원본)
+        const description = rune.rawDescription || stripHtml(rune.description) || '설명 없음';
 
         // 등급별 카드 클래스
-        const gradeKey = getGradeKey(rune);
-        const gradeClass = gradeKey === '08_8' ? 'rune-card--grade-myth' :
-            gradeKey === '05_8' ? 'rune-card--grade-legend-s1' :
-            (gradeKey === '07_6' || gradeKey === '05_6') ? 'rune-card--grade-legend' :
-            gradeKey === '06_5' ? 'rune-card--grade-unique' : '';
+        const gradeClass = gradeName === '신화' ? 'rune-card--grade-myth' :
+            gradeName === '전설(시즌1)' ? 'rune-card--grade-legend-s1' :
+            gradeName.includes('전설') ? 'rune-card--grade-legend' :
+            gradeName.includes('유니크') ? 'rune-card--grade-unique' : '';
+
+        // 스킬 변경 룬 표시 (장신구)
+        const isSkillChange = rune.type === 'SKILL_CHANGE';
+        const skillChangeLabel = isSkillChange ? '<span class="rune-card__badge rune-card__badge--skill">스킬변경</span>' : '';
 
         return `
             <div class="rune-card ${gradeClass}" data-rune-id="${rune.id}">
                 <div class="rune-card__header">
                     <img class="rune-card__image" 
-                         src="${rune.image || 'https://via.placeholder.com/56'}" 
+                         src="${rune.image || 'images/runes/rune_common.png'}" 
                          alt="${escapeHtml(rune.name)}"
-                         onerror="this.src='https://via.placeholder.com/56?text=No+Image'">
+                         onerror="this.src='images/runes/rune_common.png'">
                     <div class="rune-card__info">
                         <div class="rune-card__name">${escapeHtml(rune.name)}</div>
                         <div class="rune-card__meta">
-                            <span class="rune-card__badge rune-card__badge--grade rune-card__badge--${gradeInfo.color}">${gradeInfo.name}</span>
+                            <span class="rune-card__badge rune-card__badge--grade" style="background-color: ${gradeColor}">${gradeName}</span>
                             <span class="rune-card__badge rune-card__badge--category">${categoryName}</span>
+                            ${skillChangeLabel}
                         </div>
                     </div>
                 </div>
-                <div class="rune-card__description">${escapeHtml(description)}</div>
+                <div class="rune-card__description">${escapeHtml(description.substring(0, 100))}${description.length > 100 ? '...' : ''}</div>
                 <div class="rune-card__actions">
                     <button class="rune-card__btn rune-card__btn--favorite ${isFavorite ? 'active' : ''}" 
                             data-action="favorite" 

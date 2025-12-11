@@ -1,0 +1,3682 @@
+[
+  {
+    "id": 94,
+    "name": "매+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "궁수",
+    "dpsRelevant": false,
+    "rawDescription": "궁수의 호크 샷 스킬에 변화를 준다.호크 샷의 약화 효과가 부여된 타겟에게 바람결의 도탄 효과가 발생하였으나 주변에 다른 적이 없는 경우, 도탄된 화살이 되돌아와 타겟을 재차 공격한다."
+  },
+  {
+    "id": 95,
+    "name": "닻+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "궁수",
+    "dpsRelevant": false,
+    "rawDescription": "궁수의 이스케이프 스텝 스킬을 앵커 샷 스킬로 교체한다.앵커 샷 사용 시, 더 이상 피해를 입히지 않지만 일정 시간 동안 자신이 입히는 피해와 사거리가 증가한다.이후 기존 자리로 돌아가며 적을 공격하는 와이어 샷 스킬을 사용할 수 있다."
+  },
+  {
+    "id": 96,
+    "name": "희생+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "사제",
+    "dpsRelevant": false,
+    "rawDescription": "사제의 생츄어리 스킬에 변화를 준다.두 배의 체력을 소모하여, 두 배로 강화된 성역을 생성한다."
+  },
+  {
+    "id": 97,
+    "name": "흉성+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "악사",
+    "dpsRelevant": false,
+    "rawDescription": "악사의 연주: 별의 소나타 스킬을 연주: 혼돈의 야상곡으로 교체한다."
+  },
+  {
+    "id": 98,
+    "name": "회전+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "대검전사",
+    "dpsRelevant": false,
+    "rawDescription": "대검전사의 회전 베기 스킬에 변화를 준다.회전 횟수를 대폭 줄여 빠르게 적을 벤다. 사용 시간과 재사용 대기 시간이 크게 감소한다."
+  },
+  {
+    "id": 99,
+    "name": "회심+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "대검전사",
+    "dpsRelevant": false,
+    "rawDescription": "대검전사의 대검술 스킬에 변화를 준다.대검술 사용 시, 차징 단계에 따라 증가된 치명타 확률을 얻고, 적이 일정 체력 이하일 경우에는 치명타 확률이 두 배로 증가한다."
+  },
+  {
+    "id": 100,
+    "name": "환기+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전격술사",
+    "dpsRelevant": false,
+    "rawDescription": "전격술사의 과충전 스킬에 변화를 준다.과충전을 채널링하는 동안 과충전 효과 중첩을 획득하며, 스킬 사용 시마다 중첩을 하나씩 잃는다."
+  },
+  {
+    "id": 101,
+    "name": "화음+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "음유시인",
+    "dpsRelevant": false,
+    "rawDescription": "음유시인의 트리플 스트로크 스킬에 변화를 준다.떠올린 악상에 따라 셋 중 한 곡을 연주해 추가 효과를 얻는다."
+  },
+  {
+    "id": 102,
+    "name": "화약+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "석궁사수",
+    "dpsRelevant": false,
+    "rawDescription": "석궁사수의 버스터 샷 스킬에 변화를 준다.마운팅 쇼크가 공격이 적중한 최대 5명의 적에게 약화 효과: 분진을 부여한다.약화 효과: 분진을 가진 적이 화염 속성 공격을 받으면 폭발을 일으켜 주변에 범위 피해를 준다."
+  },
+  {
+    "id": 103,
+    "name": "화력+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "화염술사",
+    "dpsRelevant": false,
+    "rawDescription": "화염술사의 플레임 캐논 스킬에 변화를 준다.열기가 50 이상일 경우, 5의 열기를 소모해 강화된 형태로 사용한다."
+  },
+  {
+    "id": 104,
+    "name": "해일+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "수도사",
+    "dpsRelevant": false,
+    "rawDescription": "수도사의 쇄도 스킬에 변화를 준다.깨달음 효과 적용 시, 쇄도의 위력이 대폭 강화된다."
+  },
+  {
+    "id": 105,
+    "name": "폭발+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "도적",
+    "dpsRelevant": false,
+    "rawDescription": "도적의 기습 스킬에 변화를 준다.기습을 통해 포이즌 익스플로전 발동 시, 타겟에게 지속 피해: 중독을 부여한 뒤 독성 폭발을 일으켜 주변 넓은 범위의 적들에게도 피해를 입힌다."
+  },
+  {
+    "id": 106,
+    "name": "포효+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전사",
+    "dpsRelevant": false,
+    "rawDescription": "전사의 전장의 함성 스킬에 변화를 준다.투지가 최고조에 이르면, 주변의 모든 적을 넘어뜨리는 매우 강력한 충격파를 일으킨다."
+  },
+  {
+    "id": 107,
+    "name": "평정+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "검술사",
+    "dpsRelevant": false,
+    "rawDescription": "검술사의 비검 스킬에 변화를 준다.비검 사용 시, 집중을 소모하여 일정 시간 동안 자신이 입히는 피해를 증가시킨다."
+  },
+  {
+    "id": 108,
+    "name": "패기+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전사",
+    "dpsRelevant": false,
+    "rawDescription": "전사의 전장의 함성 스킬에 변화를 준다.투지가 상승하는 대신, 함성 피해가 대폭 증가한다."
+  },
+  {
+    "id": 109,
+    "name": "파편+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "빙결술사",
+    "dpsRelevant": false,
+    "rawDescription": "빙결술사의 아이스 스파이크 스킬에 변화를 준다.아이스 스파이크가 활성화된 상태에서 피격될 때마다 반격 피해와 효과 종료 시의 폭발 피해가 증가한다."
+  },
+  {
+    "id": 110,
+    "name": "파쇄+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "장궁병",
+    "dpsRelevant": false,
+    "rawDescription": "장궁병의 쉘 브레이커 스킬에 변화를 준다.쉘 브레이커에 맞은 타겟 주변으로 충격파가 발생하여 범위 피해를 준다.범위 피해에 맞은 적의 받는 피해가 증가한다."
+  },
+  {
+    "id": 111,
+    "name": "투척+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "도적",
+    "dpsRelevant": false,
+    "rawDescription": "도적의 쓰로잉 봄 스킬에 변화를 준다.도적 스킬이 치명타로 적용될 경우 쓰로잉 봄의 재사용 대기 시간이 감소한다."
+  },
+  {
+    "id": 112,
+    "name": "탈출+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "궁수",
+    "dpsRelevant": false,
+    "rawDescription": "궁수의 이스케이프 스텝 스킬에 변화를 준다.브레이크 된 상태에서도 이스케이프 스텝을 사용 가능하며, 자신에게 걸린 브레이크 상태를 해제한다."
+  },
+  {
+    "id": 113,
+    "name": "탄력+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "대검전사",
+    "dpsRelevant": false,
+    "rawDescription": "대검전사의 가르기 스킬에 변화를 준다.스킬 차징이 가능해져 더욱 큰 피해를 준다. 가르기 사용 시, 차징 단계에 따라 탄력 효과를 얻는다.가르기를 제외한 차징스킬을 사용 시, 탄력 효과를 소모해 차징 단계가 증가한다."
+  },
+  {
+    "id": 114,
+    "name": "충돌+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "격투가",
+    "dpsRelevant": false,
+    "rawDescription": "격투가의 차징 피스트 스킬에 변화를 준다.타격한 적을 멀리 날리고, 날아간 적이 충돌한 지점 주변의 적들에게 범위 피해를 주고 밀쳐낸다."
+  },
+  {
+    "id": 115,
+    "name": "축성+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "수도사",
+    "dpsRelevant": false,
+    "rawDescription": "수도사의 화신 스킬에 변화를 준다.화신의 효과가 지속되는 동안 회복력이 증가한다."
+  },
+  {
+    "id": 116,
+    "name": "축복+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "사제",
+    "dpsRelevant": false,
+    "rawDescription": "사제의 서먼 링커 스킬에 변화를 준다.링커를 아군 대상과 연결 시, 추가 공격 효과가 범위 피해를 입히도록 변경되고 발동 확률이 100%로 증가하나 발동 주기가 증가한다."
+  },
+  {
+    "id": 117,
+    "name": "추적+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "궁수",
+    "dpsRelevant": false,
+    "rawDescription": "궁수의 호크 샷 스킬에 변화를 준다.호크 샷의 영향을 받는 적이 죽을 경우, 호크 샷의 재사용 대기시간이 초기화 된다."
+  },
+  {
+    "id": 118,
+    "name": "청염+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "화염술사",
+    "dpsRelevant": false,
+    "rawDescription": "화염술사의 플레임 캐논 스킬에 변화를 준다.열기를 모두 소모해 폭발하는 화염구를 타겟에게 발사한다.화염구는 타겟 주변 적들에게 소모한 열기의 양에 비례하는 피해를 주며, 버닝 소울 단계에 따라 피해량이 추가로 증폭된다."
+  },
+  {
+    "id": 119,
+    "name": "천침+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "듀얼블레이드",
+    "dpsRelevant": false,
+    "rawDescription": "듀얼블레이드의 스플릿 슬래시, 스플릿 다운 스킬을 사우전드 니들로 교체한다.전방의 적들을 빠른 속도로 연속 공격하여 범위 피해를 주며, 사용 시 사우전드 니들의 피해량이 점점 증가한다."
+  },
+  {
+    "id": 120,
+    "name": "천둥+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전격술사",
+    "dpsRelevant": false,
+    "rawDescription": "전격술사의 낙뢰 스킬에 변화를 준다. 차징 단계가 감소하며, 벼락의 개수가 증가한다. 또한, 단일 타겟에게 벼락이 집중될 때의 위력이 소폭 감소한다."
+  },
+  {
+    "id": 121,
+    "name": "참격+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전사",
+    "dpsRelevant": false,
+    "rawDescription": "전사의 블레이드 스매시 스킬에 변화를 준다.항상 주변 원형 범위의 적을 빠르게 공격하며, 추가로 지속 피해: 화상 상태로 만든다."
+  },
+  {
+    "id": 122,
+    "name": "집중+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "장궁병",
+    "dpsRelevant": false,
+    "rawDescription": "장궁병의 플레임 애로우 스킬에 변화를 준다.스킬 차징이 가능해지며, 차징 단계에 따라 타격 범위가 타겟을 향해 집중된다."
+  },
+  {
+    "id": 123,
+    "name": "질주+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "듀얼블레이드",
+    "dpsRelevant": false,
+    "rawDescription": "듀얼블레이드의 글라이딩 퓨리, 라이트닝 퓨리 스킬에 변화를 준다.라이트닝 퓨리 사용 시 글라이딩 퓨리의 재사용 대기 시간을 초기화 하며, 일정 확률로 질풍 자원을 1개 추가로 획득한다."
+  },
+  {
+    "id": 124,
+    "name": "증폭+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "마법사",
+    "dpsRelevant": false,
+    "rawDescription": "마법사의 마나 스톰 스킬에 변화를 준다.엘리멘탈 하모니가 일정시간 발동하며 엘리멘탈 지속 피해량이 증가한다."
+  },
+  {
+    "id": 125,
+    "name": "즉흥+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "음유시인",
+    "dpsRelevant": false,
+    "rawDescription": "음유시인의 바즈 테일 스킬에 변화를 준다.떠오르는 악상이 없으면, 불협화음을 내는 변칙적인 연주로 주변 모든 적에게 강력한 피해를 준다."
+  },
+  {
+    "id": 126,
+    "name": "주입+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "도적",
+    "dpsRelevant": false,
+    "rawDescription": "도적의 은신 스킬에 변활르 준다.일정 시간 동안 포이즌 익스플로전으로 주는 피해가 증가한다."
+  },
+  {
+    "id": 127,
+    "name": "종장+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "악사",
+    "dpsRelevant": false,
+    "rawDescription": "악사의 기교: 클라이맥스 스킬에 변화를 준다.단일 타겟 스킬로 변경되며, 타겟에게 걸린 약화 효과가 많을수록 피해량이 증가한다."
+  },
+  {
+    "id": 128,
+    "name": "조율+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "악사",
+    "dpsRelevant": false,
+    "rawDescription": "악사의 연주: 아르페지오 스킬에 변화를 준다. 스킬 사용 시 무드가 지정된 화률에 따라 증가하며, 증가한 무드의 양에 비례해 일정 시간 동안 기교 스킬의 위력이 강화된다."
+  },
+  {
+    "id": 129,
+    "name": "조롱+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "음유시인",
+    "dpsRelevant": false,
+    "rawDescription": "음유시인의 멜로디 쇼크 스킬에 변화를 준다.적을 브레이크 시키면 승전의 연주를 하는 승리의 세레모니를 1회에 한해 사용할 수 있다."
+  },
+  {
+    "id": 130,
+    "name": "정화+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "수도사",
+    "dpsRelevant": false,
+    "rawDescription": "수도사의 수호진 스킬에 변화를 준다.보호막을 만들 때, 아군의 속성 지속 피해를 모두 해제한다."
+  },
+  {
+    "id": 131,
+    "name": "정열+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "댄서",
+    "dpsRelevant": false,
+    "rawDescription": "댄서의 윈드밀 스킬에 변화를 준다.윈드밀 사용 시 적에게 지속 피해를 주며 해당 효과는 정열 타입의 스킬로 지속 시간이 연장된다."
+  },
+  {
+    "id": 132,
+    "name": "절단+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "대검전사",
+    "dpsRelevant": false,
+    "rawDescription": "대검전사의 회전 베기 스킬에 변화를 준다.스킬 사용 시, 마지막으로 벤 적들에게 지속 피해: 출혈을 준다."
+  },
+  {
+    "id": 133,
+    "name": "전환+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "댄서",
+    "dpsRelevant": false,
+    "rawDescription": "댄서의 내추럴 턴 스킬에 변화를 준다. 내추럴 턴 스킬 사용 시 ,현재 영감 상태에 따라서 지속 피해: 화상 혹은 지속 피해: 빙결을 적용시키고 상태를 전환한다."
+  },
+  {
+    "id": 134,
+    "name": "전진+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "격투가",
+    "dpsRelevant": false,
+    "rawDescription": "격투가의 스러스트 킥 스킬에 변화를 준다.돌진 스킬로 변경되며 마지막 연속기 스킬, 콤보 스킬 피해량이 증가한다."
+  },
+  {
+    "id": 135,
+    "name": "전류+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "석궁사수",
+    "dpsRelevant": false,
+    "rawDescription": "석궁사수의 스프레딩 볼트 스킬에 변화를 준다.일정 확률로 과충전되어 강화 볼트 탄창의 소모 없이 주변의 적들에게 지속 피해: 감전을 주는 썬더 스프레딩 볼트​​를 사용할 수 있다."
+  },
+  {
+    "id": 136,
+    "name": "재치+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "음유시인",
+    "dpsRelevant": false,
+    "rawDescription": "음유시인의 죽은 척 하기 스킬을 맞은 척 하기로 교체한다.뒤로 물러나며 적을 기습 공격하고, 악상: 반격을 떠올린다."
+  },
+  {
+    "id": 137,
+    "name": "장막+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전격술사",
+    "dpsRelevant": false,
+    "rawDescription": "전격술사의 플라즈마 망토 스킬에 변화를 준다. 효과가 지속되는 동안 스킬 추가타 확률과 급소 회피 확률이 증가하며, 급소 회피 시 번개 파장을 내뿜어 주변 적들에게 피해를 준다."
+  },
+  {
+    "id": 138,
+    "name": "일섬+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "검술사",
+    "dpsRelevant": false,
+    "rawDescription": "검술사의 간파 스킬에 변활르 준다.간파 사용 시, 더 이상 상대의 행동에 영향을 받지 않고 즉시 상대를 공격한다.추가로 집중 상태의 진입 시에 즉시 간파의 재사용 대기시간이 초기화 된다."
+  },
+  {
+    "id": 139,
+    "name": "인과+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "수도사",
+    "dpsRelevant": false,
+    "rawDescription": "수도사의 쇄도 스킬에 변화를 준다.활성화된 진언이 많을수록 연타횟수가 증가한다."
+  },
+  {
+    "id": 140,
+    "name": "응보+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "수도사",
+    "dpsRelevant": false,
+    "rawDescription": "수도사의 벽력타 스킬에 변화를 준다.힘, 빛, 정화의 진언을 모두 활성화하면 10초간 벽력장을 1회 사용할 수 있다."
+  },
+  {
+    "id": 141,
+    "name": "운석+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "마법사",
+    "dpsRelevant": false,
+    "rawDescription": "마법사의 파이어 볼 스킬을 메테오 스트라이크로 교체한다."
+  },
+  {
+    "id": 142,
+    "name": "우레+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "마법사",
+    "dpsRelevant": false,
+    "rawDescription": "마법사의 라이트닝 스킬을 썬더로 교체한다.번개 구름을 소환해 범위 내의 적들에게 일정 시간 동안 지속적으로 벼락을 떨어뜨린다.오버 차지 스킬로 변경되며, 피해량과 공격 횟수가 증가한다."
+  },
+  {
+    "id": 143,
+    "name": "열혈+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "격투가",
+    "dpsRelevant": false,
+    "rawDescription": "격투가의 섬머솔트 스킬에 변화를 준다.발에 실은 화염의 기운을 검날의 형태로 발산해 전방의 적에게 범위 피해를 준다."
+  },
+  {
+    "id": 144,
+    "name": "열풍+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "화염술사",
+    "dpsRelevant": false,
+    "rawDescription": "화염술사의 파이어 스톰 스킬에 변화를 준다.불의 소용돌이 지속 시간과 피해가 대폭 증가한다."
+  },
+  {
+    "id": 145,
+    "name": "열상+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "듀얼블레이드",
+    "dpsRelevant": false,
+    "rawDescription": "듀얼블레이드의 스플릿 슬래시, 스플릿 다운 스킬에 변화를 준다.공격할 때 검기를 날려 전방에 범위 피해를 준다.스킬 재사용 시간이 감소한다."
+  },
+  {
+    "id": 146,
+    "name": "연쇄+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "석궁사수",
+    "dpsRelevant": false,
+    "rawDescription": "석궁사수의 거스팅 볼트 스킬에 변화를 준다.거스팅 볼트에 번개 속성이 적용되며, 치명타 적중 시 연쇄적인 번개 줄기를 방출하여 타겟과 근접한 적들에게도 피해를 준다."
+  },
+  {
+    "id": 147,
+    "name": "역장+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전격술사",
+    "dpsRelevant": false,
+    "rawDescription": "전격술사의 전자기 폭풍 스킬에 변화를 준다. 마력 폭발 공격 발동 시, 전자기 폭풍이 사라진 자리에 잠시 동안 피해를 주고 적을 끌어당기는 역장이 생성된다."
+  },
+  {
+    "id": 148,
+    "name": "업화+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "수도사",
+    "dpsRelevant": false,
+    "rawDescription": "수도사의 치유 스킬을 업화로 교체한다.신성력을 모두 소모해 타겟에게 피해를 주고 주변의 아군을 모두 회복시킨다."
+  },
+  {
+    "id": 149,
+    "name": "억압+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "힐러",
+    "dpsRelevant": false,
+    "rawDescription": "힐러의 팬텀 페인 스킬에 변화를 준다.생명력을 응축한 마력 구체가 적과 아군 사이를 이동하며 여러 번에 걸쳐 폭발을 일으킨다."
+  },
+  {
+    "id": 150,
+    "name": "약점+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "격투가",
+    "dpsRelevant": false,
+    "rawDescription": "격투가의 차징 피스트 스킬에 변화를 준다.차징 동작이 사라지며 카운터 시 약화 효과: 약점 노출을 남긴다.약점 노출이 부여된 적에게 가하는 다음 1회의 콤보 스킬은 방어력을 일부 무시하고 치명타 확률이 증가한다."
+  },
+  {
+    "id": 151,
+    "name": "압박+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "검술사",
+    "dpsRelevant": false,
+    "rawDescription": "검술사의 칼집 치기 스킬에 변화를 준다.칼집 치기 혹은 비검: 칼집 치기 스킬의 공격이 적 주변에 영향을 주는 범위 피해로 강화된다."
+  },
+  {
+    "id": 152,
+    "name": "암석+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "마법사",
+    "dpsRelevant": false,
+    "rawDescription": "마법사의 텔레키네시스 스킬에 변화를 준다.생성된 바위들이 몸에 둘러져 타겟을 향해 날아가 범위 피해를 준다."
+  },
+  {
+    "id": 153,
+    "name": "심판+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "사제",
+    "dpsRelevant": false,
+    "rawDescription": "사제의 켈틱 크로스 스킬에 변화를 준다.거대 심볼로 적을 강타하여 타겟 주변 좁은 범위의 적에게 피해를 주고, 아군을 회복시킨다.브레이크된 적에게는 추가 피해를 준다."
+  },
+  {
+    "id": 154,
+    "name": "수정+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "빙결술사",
+    "dpsRelevant": false,
+    "rawDescription": "빙결술사의 크리스탈 엣지 스킬에 변화를 준다.크리스탈 엣지 사용 시, 지속 피해: 빙결의 영향을 받는 대상에게 적중 시 치명타 확률이 증가하며 치명타 적중 시에 지속 피해: 빙결을 적용한다."
+  },
+  {
+    "id": 155,
+    "name": "속행+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "듀얼블레이드",
+    "dpsRelevant": false,
+    "rawDescription": "듀얼블레이드의 하울링 게일, 하울링 템페스트 스킬에 변화를 준다.스킬 사용 중에 궁극기를 제외한 액티브 스킬들의 재사용 대기 시간 회복 속도가 빨라진다."
+  },
+  {
+    "id": 156,
+    "name": "성전+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "사제",
+    "dpsRelevant": false,
+    "rawDescription": "사제의 생츄어리 스킬에 변화를 준다.성역 안에 있는 동안 사제의 모든 스킬 위력이 증가한다."
+  },
+  {
+    "id": 157,
+    "name": "섬광+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전격술사",
+    "dpsRelevant": false,
+    "rawDescription": "전격술사의 전자기 폭풍 스킬에 변화를 준다.초월 상태의 전자기 폭풍을 평상시에도 쓸 수 있게 되나, 약간의 정신 집중을 필요로 한다. 전자기 폭풍의 최대 스택 수가 1 증가한다."
+  },
+  {
+    "id": 158,
+    "name": "서약+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "힐러",
+    "dpsRelevant": false,
+    "rawDescription": "힐러의 라이프 링크 스킬에 변화를 준다.연결된 대상의 적, 아군 여부에 따라 지속 회복 효과를 주고 이동 속도를 증가시키거나, 지속 피해를 주고 이동 속도를 감소시킨다.추가로, 아군과 연결 시 발생하는 빛의 파동의 위력이 증가한다."
+  },
+  {
+    "id": 159,
+    "name": "산탄+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "석궁사수",
+    "dpsRelevant": false,
+    "rawDescription": "석궁사수의 스프레딩 볼트 스킬에 변화를 준다. 궁극기 게이지를 많이 획득하고 강한 피해를 주지만, 스킬 재사용 대기 시간이 적용된다."
+  },
+  {
+    "id": 160,
+    "name": "빙하+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "빙결술사",
+    "dpsRelevant": false,
+    "rawDescription": "빙결술사의 프리징 필드 스킬에 변화를 준다.프리징 필드의 영향을 받는 대상에게 일정 횟수 만큼 빙결술사의 스킬을 적중시키거나 지속 피해: 빙결을 부여할 경우 추가 피해를 주고 얼어붙게 한다."
+  },
+  {
+    "id": 161,
+    "name": "비연+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "장궁병",
+    "dpsRelevant": false,
+    "rawDescription": "장궁병의 하트 시커 스킬에 변화를 준다.차징 동작이 사라져 스킬을 빠르게 사용하고, 적중 시 지속 피해: 출혈을 준다."
+  },
+  {
+    "id": 162,
+    "name": "붕괴+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전사",
+    "dpsRelevant": false,
+    "rawDescription": "전사의 블레이드 스매시 스킬에 변화를 준다.공격 범위가 감소하나 위력이 대폭 증가하며, 일정 체력 이하의 적에게 사용 시 강화 효과: 압도를 얻어 잠시 동안 공격력이 증가한다.투지가 최고조에 이르면 피해량이 증가하며, 타겟의 체력이 낮을수록 많은 투지를 획득한다."
+  },
+  {
+    "id": 163,
+    "name": "불씨+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "화염술사",
+    "dpsRelevant": false,
+    "rawDescription": "화염술사의 래피드 파이어 스킬에 변화를 준다.다수의 화염구를 동시에 발사하여 전방의 모든 적에게 피해를 준다.재사용 대기시간이 늘어나지만, 공격 범위와 열기 생성량이 증가한다."
+  },
+  {
+    "id": 164,
+    "name": "분출+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "화염술사",
+    "dpsRelevant": false,
+    "rawDescription": "화염술사의 플래시오버 스킬에 변화를 준다.스킬이 활성화된 동안, 30의 열기를 소모할 때마다 스킬의 지속 시간이 1초씩 증가하며 화염 파동이 발생한다."
+  },
+  {
+    "id": 165,
+    "name": "분노+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "대검전사",
+    "dpsRelevant": false,
+    "rawDescription": "대검전사의 발구르기와 어깨 치기 스킬에 변화를 준다.어깨 치기 사용 시, 전투 템포가 상승한다.발구르기의 경우, 브레이크 피해가 추가된다."
+  },
+  {
+    "id": 166,
+    "name": "북풍+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "빙결술사",
+    "dpsRelevant": false,
+    "rawDescription": "빙결술사의 글래시어 커터 스킬에 변화를 준다.글래시어 커터의 스킬 사용 속도와 사용 가능 횟수가 증가하고 재사용 대기 시간이 감소한다."
+  },
+  {
+    "id": 167,
+    "name": "봉쇄+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "대검전사",
+    "dpsRelevant": false,
+    "rawDescription": "대검전사의 발구르기와 어깨 치기 스킬에 변화를 준다.자세에 상관없이 항상 어깨 치기를 사용할 수 있으며, 어깨 치기 사용 시, 전투 템포를 높이고 돌진하는 동안 방어력이 증가하고, 넘어지지 않으며 보호막을 생성한다.추가로 어깨 치기의 재사용 대기시간이 감소한다."
+  },
+  {
+    "id": 168,
+    "name": "변주+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "음유시인",
+    "dpsRelevant": false,
+    "rawDescription": "음유시인의 스트링 샷 스킬에 변화를 준다.활성화된 악상이 있을 경우 피해량이 증가하며, 스트링 샷을 연주이자 타격 스킬로 취급한다."
+  },
+  {
+    "id": 169,
+    "name": "벼락+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전격술사",
+    "dpsRelevant": false,
+    "rawDescription": "전격술사의 낙뢰 스킬에 변화를 준다. 차징 시간과 마나 소모량이 증가하며, 타겟 한 명에게 공격이 집중될 때의 위력이 대폭 증가한다."
+  },
+  {
+    "id": 170,
+    "name": "방해+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "석궁사수",
+    "dpsRelevant": false,
+    "rawDescription": "석궁사수의 슬라이딩 스텝 스킬에 변화를 준다.전방의 넓은 범위로 볼트를 퍼트리듯 발사하여 다수의 적에게 더 큰 피해를 준다."
+  },
+  {
+    "id": 171,
+    "name": "방전+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전격술사",
+    "dpsRelevant": false,
+    "rawDescription": "전격술사의 과충전 스킬에 변화를 준다. 과충전 효과가 지속되는 동안 주변의 적들에게 번개 줄기를 내뿜어 주기적인 피해를 주며, 스킬의 위력이 점점 증가하는 대신 번개 줄기의 개수와 위력이 증가한다. 또한, 파괴의 섬광 스킬을 주변에 범위 피해를 주는 번개 폭풍으로 교체..."
+  },
+  {
+    "id": 172,
+    "name": "발화+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "화염술사",
+    "dpsRelevant": false,
+    "rawDescription": "화염술사의 익스플로전 스킬에 변화를 준다.스킬 사용 시, 폭발시킨 적과 불길의 수에 비례해 일정 시간 동안 열기를 생성한다."
+  },
+  {
+    "id": 173,
+    "name": "반전+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "석궁사수",
+    "dpsRelevant": false,
+    "rawDescription": "석궁사수의 슬라이딩 스텝 스킬에 변화를 준다.앞으로 미끄러지며 강화 볼트 탄창을 한 번에 2개 장전한다."
+  },
+  {
+    "id": 174,
+    "name": "반격+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "대검전사",
+    "dpsRelevant": false,
+    "rawDescription": "대검전사의 라이징 스매시 스킬에 변화를 준다.스킬 차징이 가능해져 더욱 큰 피해를 준다.차징 중, 피해를 받으면 차징 단계가 최대로 오르고, 브레이크 피해를 받았을 경우에는 더 강한 브레이크 피해로 반격한다.또한 두 배 증가된 강화 효과: 불굴을 얻는다."
+  },
+  {
+    "id": 175,
+    "name": "박애+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "악사",
+    "dpsRelevant": false,
+    "rawDescription": "악사의 연주: 세레나데 스킬에 변화를 준다.전방의 모든 적들을 매혹한다. 크레센도로 강화 시, 위력이 대폭 증가한다."
+  },
+  {
+    "id": 176,
+    "name": "물결+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "힐러",
+    "dpsRelevant": false,
+    "rawDescription": "힐러의 생명의 고동 스킬에 변화를 준다.최대 스택 수가 증가하며, 더 많은 아군과 적 타겟에게 각기 치유나 피해를 준다.또한 생명의 고동을 통해 라이프 링크의 효과를 전이 시, 주변 아군에게 부여하는 강화 효과의 위력이 상승한다."
+  },
+  {
+    "id": 177,
+    "name": "무희+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "검술사",
+    "dpsRelevant": false,
+    "rawDescription": "검술사의 질풍 베기 스킬에 변화를 준다.질풍 베기와 비검: 질풍 베기를 사용할 때마다 집중 상태 여부에 따라 스킬 사용 속도가 더욱 빨라진다."
+  },
+  {
+    "id": 178,
+    "name": "무아+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "음유시인",
+    "dpsRelevant": false,
+    "rawDescription": "음유시인의 바즈 테일 스킬에 변화를 준다.악상이 떠오를 때 낮은 확률로 궁극의 악상을 얻어 전설의 무곡을 한 번 연주할 수 있다."
+  },
+  {
+    "id": 179,
+    "name": "맹렬+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "검술사",
+    "dpsRelevant": false,
+    "rawDescription": "검술사의 간파 스킬에 변화를 준다.간파에 성공할 경우, 일정 시간 동안 검술사가 적에게 추가 피해를 준다."
+  },
+  {
+    "id": 180,
+    "name": "맹공+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전사",
+    "dpsRelevant": false,
+    "rawDescription": "전사의 연속 베기 스킬에 변화를 준다.가드 상태일 경우, 가드를 해제하며 적에게 맹렬한 연속 공격을 가하고 잠시 동안 공격력을 증가시키는 제압 스킬로 변화한다."
+  },
+  {
+    "id": 181,
+    "name": "매혹+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "악사",
+    "dpsRelevant": false,
+    "rawDescription": "악사의 연주: 세레나데 스킬에 변화를 준다. 단일 타겟 스킬로 변경되며, 대상에게 약화 효과: 여운을 부여해 악사에게 공격받을 때마다 추가 피해를 입게 만든다."
+  },
+  {
+    "id": 182,
+    "name": "돌진+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전사",
+    "dpsRelevant": false,
+    "rawDescription": "전사의 방패 치기 스킬에 변화를 준다.짧은 거리를 돌진해 적을 공격한다. 브레이크된 상태일 때도 사용할 수 있다."
+  },
+  {
+    "id": 183,
+    "name": "돌격+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전사",
+    "dpsRelevant": false,
+    "rawDescription": "전사의 찌르기 스킬을 꿰뚫기로 교체한다.온 힘을 검 끝에 모아, 타겟에게 위력적인 돌진 공격을 가한다."
+  },
+  {
+    "id": 184,
+    "name": "돌개+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "장궁병",
+    "dpsRelevant": false,
+    "rawDescription": "장궁병의 크래시 샷 스킬을 토네이도 샷으로 교체한다.회오리를 만드는 특수 화살을 발사해 타겟 주변 적들을 중점으로 빨아들이며 피해를 준다."
+  },
+  {
+    "id": 185,
+    "name": "독성+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "도적",
+    "dpsRelevant": false,
+    "rawDescription": "도적의 쓰로잉 봄 스킬에 변화를 준다.폭발 속성이 독 속성으로 변경되고, 지속 피해: 중독 피해를 준다."
+  },
+  {
+    "id": 186,
+    "name": "독무+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "도적",
+    "dpsRelevant": false,
+    "rawDescription": "도적의 포이즌 트랩 스킬에 변화를 준다.독 안개는 일정 시간 동안 나를 따라다니며, 범위 내의 적에게 지속 피해: 중독을 준다.독 지대 내에서는 자신의 급소 회피가 증가한다."
+  },
+  {
+    "id": 187,
+    "name": "도약+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "격투가",
+    "dpsRelevant": false,
+    "rawDescription": "격투가의 스톰프 킥 스킬에 변화를 준다.착지 시, 공격 범위가 커지며 스킬의 이동거리에 비례해 거리가 멀수록 적에게 더 큰 피해를 준다."
+  },
+  {
+    "id": 188,
+    "name": "도관+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전격술사",
+    "dpsRelevant": false,
+    "rawDescription": "전격술사의 갈래 번개 스킬을 번개 도관으로 교체한다. 단일 타겟에게 피해를 주고 약화 효과: 번개 도관을 부여한다. 번개 도관이 부여된 적을 공격하면 추가 범위 피해를 주며, 마나를 소량 회복한다."
+  },
+  {
+    "id": 189,
+    "name": "뇌정+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "수도사",
+    "dpsRelevant": false,
+    "rawDescription": "수도사의 벽력타스킬에 변화를 준다.벽력타 사용 시, 깨달음 효과를 즉시 발동시킨다."
+  },
+  {
+    "id": 190,
+    "name": "내상+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "장궁병",
+    "dpsRelevant": false,
+    "rawDescription": "장궁병의 쉘 브레이커 스킬에 변화를 준다.스킬 공격 시 지속 피해: 출혈을 주는 약화 효과: 내상 효과가 추가된다."
+  },
+  {
+    "id": 191,
+    "name": "날개+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "사제",
+    "dpsRelevant": false,
+    "rawDescription": "사제의 디바인 윙 스킬을 헤븐즈 도어로 교체한다.새 형상의 빛무리를 주기적으로 퍼트리는 마법진을 소환한다.대상에 따라 회복과 피해를 주고, 신성력을 소모하면 회복량이 증가한다."
+  },
+  {
+    "id": 192,
+    "name": "낙화+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "검술사",
+    "dpsRelevant": false,
+    "rawDescription": "검술사의 비검 스킬에 변화를 준다.각기 다른 비검 스킬을 모두 사용하였을 경우, 피해량이 높은 비검: 낙화를 사용할 수 있다."
+  },
+  {
+    "id": 193,
+    "name": "낙뢰+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "마법사",
+    "dpsRelevant": false,
+    "rawDescription": "마법사의 라이트닝 스킬에 변화를 준다.연쇄적인 번개 줄기에 피격된 적들의 머리 위로 벼락을 떨어뜨려 주변의 적들에게 범위 피해와 함께 지속 피해: 감전을 준다.벼락은 동일한 적에게 중복으로 피해를 줄 수 있다."
+  },
+  {
+    "id": 194,
+    "name": "나비+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "댄서",
+    "dpsRelevant": false,
+    "rawDescription": "댄서의 내추럴 턴 스킬에 변화를 준다.내추럴 턴 사용 시, 적을 추적하는 3마리의 나비가 나타나 날아간다."
+  },
+  {
+    "id": 195,
+    "name": "기본+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "듀얼블레이드",
+    "dpsRelevant": false,
+    "rawDescription": "듀얼블레이드의 스핀 러시, 스크류 러시 스킬에 변화를 준다.이동 효과가 사라지며 스핀 러시, 스크류 러시 대미지 판정이 기본 공격으로 적용된다. 스핀 러시 재상요 대기 시간이 증가한다. "
+  },
+  {
+    "id": 196,
+    "name": "기만+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "음유시인",
+    "dpsRelevant": false,
+    "rawDescription": "음유시인의 라이징 윈드밀 스킬을 서프라이즈 샷으로 교체한다.다운된 상태일 때, 즉시 기상하며 주변 적들에게 특수탄을 발사해 공격하고 약화시킨다."
+  },
+  {
+    "id": 197,
+    "name": "급습+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "음유시인",
+    "dpsRelevant": false,
+    "rawDescription": "음유시인의 스트링 샷 스킬에 변화를 준다.연주 스킬에 이어서 사용 시, 더 신속히 발사한다."
+  },
+  {
+    "id": 198,
+    "name": "극점+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "전사",
+    "dpsRelevant": false,
+    "rawDescription": "전사의 찌르기 스킬에 변화를 준다.단일 타겟 스킬로 변경되며, 기회 포착 효과를 보유한 동안 위력이 대폭 증가한다.투지가 최고조에 이르면 지속 피해: 출혈을 추가로 주고 다른 스킬의 남은 재사용 대기 시간이 감소한다."
+  },
+  {
+    "id": 199,
+    "name": "균열+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "석궁사수",
+    "dpsRelevant": false,
+    "rawDescription": "석궁사수의 쇼크 익스플로전 스킬을 할로우 샷으로 교체한다.액스트라 액션 발동 시, 훨씬 더 강력한 폭발형 볼트를 추가로 발사한다. 더 이상 강화 볼트 탄창을 장전하지 않는다."
+  },
+  {
+    "id": 200,
+    "name": "광휘+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "수도사",
+    "dpsRelevant": false,
+    "rawDescription": "수도사의 화신 에 변화를 준다.재사용 대기 시간과 지속 시간이 대폭 감소하고, 화신이 활성화될 때 수도사로부터 강렬한 빛이 뿜어져 나와 주변의 모든 적에게 피해를 준다."
+  },
+  {
+    "id": 201,
+    "name": "광륜+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "힐러",
+    "dpsRelevant": false,
+    "rawDescription": "힐러의 프로젝션 스킬에 변화를 준다.스킬 사용 시, 원형 파동이 퍼져나가 주변 넓은 범위의 대상에게 피해를 주거나 회복시키며, 보호막과 약화 효과: 쇠약을 부여한다."
+  },
+  {
+    "id": 202,
+    "name": "관통+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "검술사",
+    "dpsRelevant": false,
+    "rawDescription": "검술사의 강철 쐐기 스킬에 변화를 준다.강철 쐐기 혹은 비검: 강철 쐐기를 1회 사용 시, 범위 피해를 주는 쾌검을 사용할 수 있다."
+  },
+  {
+    "id": 203,
+    "name": "공명+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "악사",
+    "dpsRelevant": false,
+    "rawDescription": "악사의 연주: 아르페지오 스킬에 변화를 준다.약화 효과: 현혹의 지속 피해가 최대 8번까지 중첩된다."
+  },
+  {
+    "id": 204,
+    "name": "결속+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "사제",
+    "dpsRelevant": false,
+    "rawDescription": "사제의 서먼 링커 스킬에 변화를 준다.링커가 연결 대상에 따른 회복과 피해를 주면 신성력을 일부 회복한다.서먼 링커가 아닌 다른 스킬을 사용할 경우, 일정 확률로 링커가 재발동된다."
+  },
+  {
+    "id": 205,
+    "name": "격파+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "격투가",
+    "dpsRelevant": false,
+    "rawDescription": "격투가의 버스트 펀치 스킬에 변화를 준다.버스트 펀치 적중 시, 주변에 또 다른 적이 없다면 추가타를 준다."
+  },
+  {
+    "id": 206,
+    "name": "겨울+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "빙결술사",
+    "dpsRelevant": false,
+    "rawDescription": "빙결술사의 프리징 필드 스킬에 변화를 준다.일정시간 동안 매초마다 피해량이 증가한다."
+  },
+  {
+    "id": 207,
+    "name": "개화+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "힐러",
+    "dpsRelevant": false,
+    "rawDescription": "힐러의 서먼 스프라이트 스킬에 변화를 준다.스킬 사용 시, 지정된 확률에 따라 생명의 고동 스킬의 재사용 대기시간이 초기화되고, 잠시 동안 생명의 고동과 프로텍션의 위력이 증가한다."
+  },
+  {
+    "id": 208,
+    "name": "강화+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "듀얼블레이드",
+    "dpsRelevant": false,
+    "rawDescription": "듀얼블레이드의 하울링 게일 스킬에 변화를 준다.강화 스킬 사용 시 하울링 게일, 하울링 템페스트 스킬 피해량이 증가한다."
+  },
+  {
+    "id": 209,
+    "name": "강격+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "격투가",
+    "dpsRelevant": false,
+    "rawDescription": "격투가의 섬머솔트 스킬에 변화를 준다.연속기 스킬 동작이 사라지며, 섬머솔트가 카운터로 적중 시 재사용 대기 시간이 감소한다."
+  },
+  {
+    "id": 210,
+    "name": "감전+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "석궁사수",
+    "dpsRelevant": false,
+    "rawDescription": "석궁사수의 쇼크 익스플로전 스킬에 변화를 준다.번개 속성이 주입된 볼트로 적에게 지속 피해: 감전을 주고, 일정 시간 치명타 확률이 증가한다."
+  },
+  {
+    "id": 211,
+    "name": "감쌈+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "힐러",
+    "dpsRelevant": false,
+    "rawDescription": "힐러의 프로텍션 스킬에 변화를 준다.잠시 동안 받는 피해가 추가로 감소한다."
+  },
+  {
+    "id": 212,
+    "name": "갈채+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "댄서",
+    "dpsRelevant": false,
+    "rawDescription": "댄서의 애드리브 스킬에 변화를 준다.애드리브 범위 내의 아군에게 추가타 효과를 부여한다."
+  },
+  {
+    "id": 213,
+    "name": "회오리+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "듀얼블레이드",
+    "dpsRelevant": false,
+    "rawDescription": "듀얼블레이드의 스크류 러시 스킬을 3960 허리케인으로 교체한다."
+  },
+  {
+    "id": 214,
+    "name": "피바람+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "검술사",
+    "dpsRelevant": false,
+    "rawDescription": "검술사의 질풍 베기 스킬에 변화를 준다.스킬 사용 시, 지속 피해: 출혈을 추가로 준다."
+  },
+  {
+    "id": 215,
+    "name": "치밀함+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "도적",
+    "dpsRelevant": false,
+    "rawDescription": "도적의 기습 스킬에 변화를 준다.오버 차지 단계에 따라 기습 스킬에 적용되는 치명타 확률이 증가한다."
+  },
+  {
+    "id": 216,
+    "name": "치명적+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "궁수",
+    "dpsRelevant": false,
+    "rawDescription": "궁수의 애로우 리볼버 스킬에 변화를 준다.질주하는 바람 상태에서 운용 시, 치명적인 사격 스킬을 사용할 수 있다."
+  },
+  {
+    "id": 217,
+    "name": "초음파+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "장궁병",
+    "dpsRelevant": false,
+    "rawDescription": "장궁병의 하트 시커 스킬에 변화를 준다.차지 단계마다 타겟 방향으로 반달형 충격파를 발사한다.반달형 충격파는 피해를 주며 뒤로 밀쳐낸다."
+  },
+  {
+    "id": 218,
+    "name": "잿더미+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "화염술사",
+    "dpsRelevant": false,
+    "rawDescription": "화염술사의 익스플로전 스킬을 크로스 파이어로 교체한다.주변의 불길을 곧장 폭발시키지 않고, 화염구의 형태로 응축하여 타겟을 향해 발사한다."
+  },
+  {
+    "id": 219,
+    "name": "재빠른+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "궁수",
+    "dpsRelevant": false,
+    "rawDescription": "궁수의 매그넘 샷 스킬에 변화를 준다.질주하는 바람 발동 유무와 상관없이, 캐스팅 시간이 줄어든다.또한 사용 가능 횟수가 1회 추가되고, 재사용 대기 시간이 감소한다."
+  },
+  {
+    "id": 220,
+    "name": "이중주+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "악사",
+    "dpsRelevant": false,
+    "rawDescription": "악사의 기교: 크레센도 스킬에 변화를 준다.재사용 대기 시간이 소폭 증가하는 대신, 최대 스택 수가 1 증가한다."
+  },
+  {
+    "id": 221,
+    "name": "오로라+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "빙결술사",
+    "dpsRelevant": false,
+    "rawDescription": "빙결술사의 프로즌 오브 스킬에 변화를 준다.프로즌 오브 사용 시, 즉시 폭발하여 범위 피해를 주고 얼음 장막을 만들어 아군을 보호한다."
+  },
+  {
+    "id": 222,
+    "name": "순발력+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "격투가",
+    "dpsRelevant": false,
+    "rawDescription": "격투가의 백 스탭 스킬에 변화를 준다.백 스탭으로 적에게 피해를 주면, 적의 이동 속도가 느려진다."
+  },
+  {
+    "id": 223,
+    "name": "산사태+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "마법사",
+    "dpsRelevant": false,
+    "rawDescription": "마법사의 텔레키네시스 스킬에 변화를 준다.바위 파편 무더기를 몰아치듯 타겟에게 발사하여 피해를 주며, 일정 시간 동안 적에게 주는 원소 피해가 증가한다."
+  },
+  {
+    "id": 224,
+    "name": "산뜻함+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "댄서",
+    "dpsRelevant": false,
+    "rawDescription": "댄서의 피루엣 스킬에 변화를 준다.피루엣으로 강화된 원거리 공격 피해량이 일정 횟수 동안 증가하며 해당 효과를 보유하는 동안 공격 속도가 빨라진다."
+  },
+  {
+    "id": 225,
+    "name": "빛줄기+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "사제",
+    "dpsRelevant": false,
+    "rawDescription": "사제의 홀리 스피어 스킬을 피어싱 라이트로 교체한다.작은 빛의 창을 쏘아 직선상의 모든 적을 꿰뚫는다."
+  },
+  {
+    "id": 226,
+    "name": "빛무리+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "힐러",
+    "dpsRelevant": false,
+    "rawDescription": "힐러의 서먼 루미너스 스킬에 변화를 준다.힐러와 라이프 링크로 연결된 타겟의 위치에 일정 시간 동안 전투를 지원하는 빛의 결정체를 소환한다."
+  },
+  {
+    "id": 227,
+    "name": "불기둥+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "화염술사",
+    "dpsRelevant": false,
+    "rawDescription": "화염술사의 파이어 스톰 스킬에 변화를 준다.스킬이 활성화되는 즉시, 폭발 피해를 주며 스킬을 준비 중인 적은 공중으로 높이 떠오른다.위력이 감소하는 대신, 스킬 연속 사용 횟수가 증가하고 재사용 대기 시간이 감소한다."
+  },
+  {
+    "id": 228,
+    "name": "보름달+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "듀얼블레이드",
+    "dpsRelevant": false,
+    "rawDescription": "듀얼블레이드의 더블 크레센트, 라이징 크레센트 스킬에 변화를 준다.브레이크된 적에게 사용 시 더블 크레센트 재사용 대기 시간이 완전히 감소한다.재사용 대기 시간 감소 효과는 일정 시간마다 한 번만 발동한다."
+  },
+  {
+    "id": 229,
+    "name": "발걸음+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "댄서",
+    "dpsRelevant": false,
+    "rawDescription": "댄서의 프론트 스텝 스킬에 변화를 준다. 정열 상태 돌입 시, 더 강력한 범위 피해를 입히는 강화: 프론트 스텝을 1회 사용할 수 있다."
+  },
+  {
+    "id": 230,
+    "name": "무너짐+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "장궁병",
+    "dpsRelevant": false,
+    "rawDescription": "장궁병의 크래시 샷 스킬에 변화를 준다.스킬 피해량과 약화 효과: 쇠약의 지속 시간이 증가하며, 카운터로 적중 시 대상을 브레이크시킨다."
+  },
+  {
+    "id": 231,
+    "name": "몰아침+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "궁수",
+    "dpsRelevant": false,
+    "rawDescription": "궁수의 매그넘 샷 스킬에 변화를 준다.모든 바람을 소모하여 매그넘 샷 스킬의 피해량을 증가시킨다."
+  },
+  {
+    "id": 232,
+    "name": "땅거미+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "도적",
+    "dpsRelevant": false,
+    "rawDescription": "도적의 은신 스킬에 변화를 준다.은신 스킬 사용 시, 은신 스킬을 제외한 스킬들의 재사용 대기 시간이 감소한다."
+  },
+  {
+    "id": 233,
+    "name": "다가옴+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "댄서",
+    "dpsRelevant": false,
+    "rawDescription": "댄서의 프론트 스텝 스킬에 변화를 준다.프론트 스텝으로 이동한 거리에 비례하여 재사용 대기 시간이 감소한다."
+  },
+  {
+    "id": 234,
+    "name": "날렵함+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "궁수",
+    "dpsRelevant": false,
+    "rawDescription": "궁수의 사이드 스텝 스킬에 변화를 준다.사이드 스텝 스킬 사용 시, 급소 회피 및 이동 속도 증가 효과를 얻는다."
+  },
+  {
+    "id": 235,
+    "name": "끈질김+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "장궁병",
+    "dpsRelevant": false,
+    "rawDescription": "장궁병의 윙 스큐어 스킬에 변화를 준다.투창 지원 공격이 타겟을 중심으로 3번에 걸쳐 떨어진다.윙 스큐어 스킬의 피해와 재사용 대기 시간이 증가한다."
+  },
+  {
+    "id": 236,
+    "name": "깜빡임+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "마법사",
+    "dpsRelevant": false,
+    "rawDescription": "마법사의 마나 스톰 스킬에 변화를 준다.타겟의 위치로 순간 이동해 거센 마나 폭풍으로 주변 적들에게 범위 피해를 주는 동시에 일정량의 마나를 즉시 회복하고, 마나 실드를 얻는다.스킬 재사용 시, 마나 실드의 폭발을 일으켜 주변 적들에게 범위 피해를 주고 후방으로 즉시 ..."
+  },
+  {
+    "id": 237,
+    "name": "교활함+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "도적",
+    "dpsRelevant": false,
+    "rawDescription": "도적의 스크류 대거 스킬에 변화를 준다.스크류 대거 사용 시, 타겟의 체력이 일정 비율 이상일 경우 추가 피해가 적용된다."
+  },
+  {
+    "id": 238,
+    "name": "광전사+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "대검전사",
+    "dpsRelevant": false,
+    "rawDescription": "대검전사의 대검술 스킬에 변화를 준다.전투 템포가 0일 경우, 자신의 여러 능력치와 전투 템포 그리고 강화 효과: 맹공을 획득하는 생기폭발을 사용할 수 있다."
+  },
+  {
+    "id": 239,
+    "name": "고드름+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "빙결술사",
+    "dpsRelevant": false,
+    "rawDescription": "빙결술사의 아이스 스파이크 스킬에 변화를 준다.체력이 일정 이하가 되면 자원 소모와 재사용 대기 시간 없이 아이스 스파이크를 자동 발동시킨다."
+  },
+  {
+    "id": 240,
+    "name": "고동침+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "힐러",
+    "dpsRelevant": false,
+    "rawDescription": "힐러의 생명의 고동 스킬에 변화를 준다.정신 집중 시간과 공격 주기가 감소한다."
+  },
+  {
+    "id": 241,
+    "name": "간결함+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "댄서",
+    "dpsRelevant": false,
+    "rawDescription": "댄서의 피루엣 스킬에 변화를 준다.피루엣 사용 이후, 다음 스킬이 주는 피해가 증가한다."
+  },
+  {
+    "id": 242,
+    "name": "수레바퀴+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "사제",
+    "dpsRelevant": false,
+    "rawDescription": "사제의 켈틱 크로스 스킬에 변화를 준다.켈틱 크로스의 공격 성공 시, 심볼의 이동 속도가 느려지며 지속 시간이 증가한다."
+  },
+  {
+    "id": 243,
+    "name": "서리가시+",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "마법사",
+    "dpsRelevant": false,
+    "rawDescription": "마법사의 아이스 대거 스킬에 변화를 준다.소환하는 얼음 파편의 수가 열 두 개로 증가하며, 소환 즉시 타겟을 향해 파편을 잇달아 발사한다."
+  },
+  {
+    "id": 244,
+    "name": "제사장",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "암흑술사",
+    "dpsRelevant": false,
+    "rawDescription": "암흑술사의 혼돈의 제례 스킬에 변화를 준다.의식 스킬 사용 시, 잠시 동안 공격력과 스킬 사용 속도, 캐스팅 속도가 증가한다."
+  },
+  {
+    "id": 245,
+    "name": "타락",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "암흑술사",
+    "dpsRelevant": false,
+    "rawDescription": "암흑술사의 뒤틀린 성역 스킬에 변화를 준다.채널링 종료 시, 채널링한 시간에 비례하여 성역이 일정 시간 추가로 유지된다."
+  },
+  {
+    "id": 246,
+    "name": "착취",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "암흑술사",
+    "dpsRelevant": false,
+    "rawDescription": "암흑술사의 생명력 흡수 스킬에 변화를 준다.암흑술사의 남은 체력이 적을수록 위력이 증가한다."
+  },
+  {
+    "id": 247,
+    "name": "절제",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "암흑술사",
+    "dpsRelevant": false,
+    "rawDescription": "암흑술사의 생명력 흡수 스킬에 변화를 준다.채널링 시간과 피해량이 증가하며, 잠식 감소 효과가 사라진다.빙의 상태일 때 시전 시, 더는 체력 회복량이 증가하지 않으나 피해량이 대폭 증가한다."
+  },
+  {
+    "id": 248,
+    "name": "심연",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "암흑술사",
+    "dpsRelevant": false,
+    "rawDescription": "암흑술사의 검은 창 스킬에 변화를 준다.빙의 상태일 때, 남은 체력을 일부 소모하여 막대한 피해를 주는 심연의 창으로 변화한다."
+  },
+  {
+    "id": 249,
+    "name": "속주",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "악사",
+    "dpsRelevant": false,
+    "rawDescription": "악사의 기교: 크레센도 스킬에 변화를 준다.기교: 크레센도 사용 시, 연주 스킬들의 재사용 대기시간이 감소한다."
+  },
+  {
+    "id": 250,
+    "name": "속박",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "암흑술사",
+    "dpsRelevant": false,
+    "rawDescription": "암흑술사의 어둠의 손아귀 스킬에 변화를 준다.일정 범위 내의 모든 적에게 효과를 적용하며, 중심부에 가까울수록 더 큰 피해를 준다."
+  },
+  {
+    "id": 251,
+    "name": "빙검",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "빙결술사",
+    "dpsRelevant": false,
+    "rawDescription": "빙결술사의 크리스탈 엣지 스킬에 변화를 준다.서리를 일정량 생성할 때마다 서리검을 획득하며 서리검을 일정 이상 모을 시 크리스탈 소드로 강화된다."
+  },
+  {
+    "id": 252,
+    "name": "나락",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "암흑술사",
+    "dpsRelevant": false,
+    "rawDescription": "암흑술사의 뒤틀린 성역 스킬을 뒤틀린 서약으로 교체한다.적에게 불길한 문장을 새겨 강력한 지속 피해를 입힌다. 시전 시 암흑술사는 한계까지 잠식되며, 이 때 생성한 잠식 수치에 비례해 위력이 증가한다.문장이 새겨진 적을 공격하면 지속 피해량이 점점 증가한다."
+  },
+  {
+    "id": 253,
+    "name": "광기",
+    "category": "03",
+    "categoryName": "장신구",
+    "gradeName": "전설(시즌1)",
+    "gradeColor": "#FF8C00",
+    "type": "SKILL_CHANGE",
+    "effects": [],
+    "demerits": [],
+    "enhanceEffects": {
+      "10": {},
+      "15": {}
+    },
+    "synergy": {
+      "appliesDot": [],
+      "requiresDot": [],
+      "removesDemerits": false
+    },
+    "classRestriction": "암흑술사",
+    "dpsRelevant": false,
+    "rawDescription": "암흑술사의 혼돈의 제례 스킬에 변화를 준다.모든 의식 스킬을 한 번씩 사용하면 의식: 황혼의 시간을 한 번 사용할 수 있다.즉시 빙의 상태가 되고 공격력이 증가하며, 한계까지 잠식된 채 수치가 고정된다.황혼의 시간은 브레이크되거나 어둠을 시전하지 않는 한 무한히 지속된..."
+  }
+]

@@ -117,6 +117,122 @@
         };
     }
 
+    // ============================================
+    // 1.1 외부 모듈 참조 (2025-12-11 추가)
+    // ============================================
+
+    /**
+     * 외부 모듈 참조
+     * @description 클래스 스텟, 효과 가중치, 계산 공식, 효율 계산기 모듈 참조
+     * @requires class-stats.js
+     * @requires effect-weights.js
+     * @requires stat-formulas.js
+     * @requires efficiency-calculator.js
+     */
+    const Modules = {
+        /** 클래스별 스텟 정보 */
+        ClassStats: window.ClassStats || null,
+        /** 효과 가중치 상수 */
+        EffectWeights: window.EffectWeights || null,
+        /** 능력치 계산 공식 */
+        StatFormulas: window.StatFormulas || null,
+        /** 효율 점수 계산기 */
+        EfficiencyCalculator: window.EfficiencyCalculator || null
+    };
+
+    /**
+     * 모듈 로드 확인
+     * @returns {boolean} 모든 모듈이 로드되었는지 여부
+     */
+    function areModulesLoaded() {
+        return !!(Modules.ClassStats && Modules.EffectWeights &&
+            Modules.StatFormulas && Modules.EfficiencyCalculator);
+    }
+
+    /**
+     * 현재 캐릭터 스텟 상태
+     * @type {Object|null}
+     */
+    let currentCharacterStats = null;
+
+    /**
+     * 캐릭터 스텟 초기화
+     * @param {string} className - 클래스명
+     * @returns {Object} CharacterStats 인스턴스
+     */
+    function initCharacterStats(className) {
+        if (!Modules.EfficiencyCalculator) {
+            console.warn('EfficiencyCalculator 모듈이 로드되지 않았습니다.');
+            return null;
+        }
+
+        currentCharacterStats = new Modules.EfficiencyCalculator.CharacterStats({
+            className: className || '전사'
+        });
+
+        return currentCharacterStats;
+    }
+
+    /**
+     * 캐릭터 스텟 업데이트
+     * @param {Object} stats - 업데이트할 스텟 값
+     */
+    function updateCharacterStats(stats) {
+        if (!currentCharacterStats) {
+            initCharacterStats(stats.className);
+        }
+
+        Object.assign(currentCharacterStats, stats);
+    }
+
+    /**
+     * 룬 효율 점수 계산 (새 모듈 사용)
+     * @param {Object} rune - 룬 데이터
+     * @param {number} [enhanceLevel=0] - 강화 단계
+     * @returns {Object} 효율 점수 결과
+     */
+    function calculateRuneEfficiencyScore(rune, enhanceLevel) {
+        enhanceLevel = enhanceLevel || 0;
+
+        if (!Modules.EfficiencyCalculator || !currentCharacterStats) {
+            return {
+                score: 0,
+                breakdown: null
+            };
+        }
+
+        return Modules.EfficiencyCalculator.calculateRuneEfficiency(
+            rune,
+            currentCharacterStats,
+            enhanceLevel
+        );
+    }
+
+    /**
+     * 룬 조합 효율 계산 (새 모듈 사용)
+     * @param {Array<Object>} equippedRunes - 장착된 룬 배열
+     * @param {Object} [enhanceLevels={}] - 룬별 강화 단계
+     * @returns {Object} 조합 효율 결과
+     */
+    function calculateCombinationEfficiencyScore(equippedRunes, enhanceLevels) {
+        enhanceLevels = enhanceLevels || {};
+
+        if (!Modules.EfficiencyCalculator || !currentCharacterStats) {
+            return {
+                totalScore: 0,
+                runeScores: [],
+                synergyBonus: 0,
+                synergyDetails: []
+            };
+        }
+
+        return Modules.EfficiencyCalculator.calculateCombinationEfficiency(
+            equippedRunes,
+            currentCharacterStats,
+            enhanceLevels
+        );
+    }
+
     /**
      * 클래스 코드 매핑
      * @constant {Object}

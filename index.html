@@ -700,7 +700,16 @@
         <p class="footer__version">v1.0.0 | 마지막 업데이트: 2025-12-10</p>
     </footer>
 
-    <!-- JavaScript 파일 로드 -->
+    <!-- JavaScript 모듈 로드 (의존성 순서대로) -->
+    <!-- 1. 상수 모듈 -->
+    <script src="constants/class-stats.js"></script>
+    <script src="constants/effect-weights.js"></script>
+    
+    <!-- 2. 공식 모듈 -->
+    <script src="formulas/stat-formulas.js"></script>
+    <script src="formulas/efficiency-calculator.js"></script>
+    
+    <!-- 3. 메인 계산기 -->
     <script src="rune-calculator.js"></script>
 </body>
 

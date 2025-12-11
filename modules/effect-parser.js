@@ -2364,9 +2364,10 @@ function parseRuneEffects(description, enhanceLevel = 0) {
 
         // 효과 파싱
         parseEffectValues: parseEffectValues,
-        parseRuneEffect: parseRuneEffect,
-        parseEnhanceEffect: parseEnhanceEffect,
-        parseDecayEffect: parseDecayEffect,
+        parseRuneEffect: typeof parseRuneEffectsAdvanced !== 'undefined' ? parseRuneEffectsAdvanced : null,
+        parseRuneEffectsAdvanced: typeof parseRuneEffectsAdvanced !== 'undefined' ? parseRuneEffectsAdvanced : null,
+        parseEnhanceEffect: typeof parseEnhanceEffect !== 'undefined' ? parseEnhanceEffect : null,
+        parseDecayEffect: typeof parseDecayEffect !== 'undefined' ? parseDecayEffect : null,
 
         // 장신구/시너지
         getAccessorySkillName: getAccessorySkillName,

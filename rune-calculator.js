@@ -1,31 +1,35 @@
 /**
  * ============================================
- * 마비노기 모바일 룬 효율 계산기 - JavaScript
+ * 마비노기 모바일 룬 효율 계산기 - 메인 JavaScript
  * ============================================
  * @file        rune-calculator.js
  * @description 룬 데이터 로딩, 필터링, 시뮬레이션, 추천 기능 구현
  * @author      Dalkong Project
  * @created     2025-12-10
  * @modified    2025-12-11
- * @version     1.2.0
+ * @version     1.3.0
  * 
  * @changelog
+ * - v1.3.0 (2025-12-11): 모듈 분할 구조 적용
+ *   - constants/effect-types.js: 효과 유형 상수
+ *   - modules/utils.js: 유틸리티 함수
+ *   - modules/storage-manager.js: LocalStorage 관리
+ *   - modules/ui-manager.js: UI 관리 (토스트/모달/탭)
+ *   - modules/data-loader.js: 데이터 로딩
+ *   - modules/character-manager.js: 캐릭터 프로필 관리
  * - v1.2.0 (2025-12-11): 캐릭터 프로필 관리 시스템 추가
- *   - 여러 캐릭터의 스탯/룬/옵션을 저장하고 관리
- *   - 모듈 분할: StorageManager, CharacterManager
- * - v1.1.0 (2025-12-11): 캐릭터 스탯 및 추천 옵션 LocalStorage 저장/불러오기 기능 추가
- *   - 페이지 새로고침 시에도 입력한 스탯과 옵션이 유지됨
- *   - 입력 변경 시 자동 저장 (debounce 적용)
+ * - v1.1.0 (2025-12-11): 데이터 영속화 기능 추가
  * 
  * @architecture
  * - 모듈 패턴 사용 (IIFE)
  * - 이벤트 위임 패턴 활용
  * - LocalStorage를 통한 데이터 영속화
- *   - 즐겨찾기, 프리셋, 장착된 룬
- *   - 캐릭터 스탯, 추천 옵션, 강화 수치
- *   - 캐릭터 프로필 (2025-12-11 추가)
  * 
+ * @requires EffectTypes (constants/effect-types.js)
+ * @requires Utils (modules/utils.js)
  * @requires StorageManager (modules/storage-manager.js)
+ * @requires UIManager (modules/ui-manager.js)
+ * @requires DataLoader (modules/data-loader.js)
  * @requires CharacterManager (modules/character-manager.js)
  * 
  * @structure
@@ -37,17 +41,22 @@
  * 6. 룬 카드 렌더링 (Rendering)
  * 7. 페이지네이션 (Pagination)
  * 8. 슬롯 관리 (Slot Management)
- *    8.1 강화 수치 저장/불러오기
- *    8.2 캐릭터 스탯 저장/불러오기
  * 9. 효과 파싱 엔진 (Effect Parser)
  * 10. 효과 합산 (Effect Calculator)
  * 11. 추천 시스템 (Recommendation)
  * 12. 즐겨찾기 (Favorites)
  * 13. 모달 관리 (Modal)
- * 14. 토스트 알림 (Toast)
- * 15. 이벤트 핸들러 (Event Handlers)
- * 16. 초기화 (Initialization)
- * 17. 전역 인터페이스 (Global Interface)
+ * 14. 프리셋 관리 (Presets)
+ * 15. 토스트 알림 (Toast)
+ * 16. 탭 관리 (Tab Management)
+ * 17. 이벤트 핸들러 (Event Handlers)
+ * 18. 초기화 (Initialization)
+ * 19. 전역 인터페이스 (Global Interface)
+ * 
+ * @note 향후 분리 예정 모듈:
+ * - effect-parser.js: 효과 파싱 엔진 (약 2,300줄)
+ * - effect-calculator.js: 효과 합산 (약 350줄)
+ * - recommendation.js: 추천 시스템 (약 375줄)
  */
 
 (function() {

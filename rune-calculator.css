@@ -6,8 +6,11 @@
  * @description 다크 테마 기반 반응형 스타일링
  * @author      Dalkong Project
  * @created     2025-12-10
- * @modified    2025-12-10
- * @version     1.0.0
+ * @modified    2025-12-11
+ * @version     1.1.0
+ * 
+ * @changelog
+ * - v1.1.0 (2025-12-11): 캐릭터 프로필 관리 스타일 추가
  * 
  * @structure
  * 1. CSS 변수 (색상, 폰트, 간격 등)
@@ -23,6 +26,7 @@
  * 11. 유틸리티 클래스
  * 12. 반응형 디자인
  * 13. 애니메이션
+ * 14. 캐릭터 프로필 관리 (2025-12-11 추가)
  */
 
 /* ============================================
@@ -1998,4 +2002,153 @@ img {
     background: rgba(251, 191, 36, 0.1);
     border-left: 3px solid var(--color-accent-warning);
     padding-left: var(--spacing-sm);
+}
+
+/* ============================================
+   14. 캐릭터 프로필 관리 스타일
+   @added 2025-12-11
+   ============================================ */
+
+/**
+ * 캐릭터 관리 컨테이너
+ */
+.character-manager {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+/**
+ * 캐릭터 관리 헤더
+ */
+.character-manager__header {
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.character-manager__header .section-title {
+    margin-bottom: var(--spacing-xs);
+}
+
+.character-manager__header .section-desc {
+    margin: 0;
+}
+
+/**
+ * 캐릭터 관리 컨트롤 영역
+ */
+.character-manager__controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    align-items: flex-end;
+    margin-bottom: var(--spacing-md);
+}
+
+/**
+ * 캐릭터 선택 그룹
+ */
+.character-manager__select-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.character-manager__label {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.character-manager__select {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.character-manager__select:hover {
+    border-color: var(--color-accent-primary);
+}
+
+.character-manager__select:focus {
+    outline: none;
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.2);
+}
+
+/**
+ * 버튼 그룹
+ */
+.character-manager__buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+/**
+ * 현재 캐릭터 정보 표시
+ */
+.character-manager__info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.character-manager__current strong,
+.character-manager__count strong {
+    color: var(--color-accent-primary);
+}
+
+/**
+ * 버튼 변형 - 성공 (저장)
+ */
+.btn--success {
+    background: linear-gradient(135deg, var(--color-accent-success), #2ea043);
+    color: white;
+    border: none;
+}
+
+.btn--success:hover {
+    background: linear-gradient(135deg, #3fb950, #2ea043);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(63, 185, 80, 0.3);
+}
+
+/* ============================================
+   14.1 캐릭터 관리 반응형
+   ============================================ */
+
+@media (max-width: 768px) {
+    .character-manager__controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .character-manager__select-group {
+        min-width: 100%;
+    }
+
+    .character-manager__buttons {
+        justify-content: center;
+    }
+
+    .character-manager__info {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        text-align: center;
+    }
 }

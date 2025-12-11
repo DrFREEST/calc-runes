@@ -24,6 +24,24 @@
     // 외부 모듈 참조
     // ============================================
 
+    // DOM 선택자 (Utils 모듈 참조)
+    function $(selector) {
+        if (window.Utils && window.Utils.$) {
+            return window.Utils.$(selector);
+        }
+        return document.querySelector(selector);
+    }
+
+    function escapeHtml(text) {
+        if (window.Utils && window.Utils.escapeHtml) {
+            return window.Utils.escapeHtml(text);
+        }
+        if (!text) return '';
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     function getParser() {
         return window.EffectParser || {};
     }
@@ -35,6 +53,35 @@
         return { equippedRunes: {}, enhanceLevels: {} };
     }
 
+    /**
+     * 외부 함수 참조 (RuneCalculator에서 제공)
+     * @updated 2025-12-11 - 모듈 의존성 해결
+     */
+    function getAllEquippedDotTypes() {
+        if (window.RuneCalculator && window.RuneCalculator.getAllEquippedDotTypes) {
+            return window.RuneCalculator.getAllEquippedDotTypes();
+        }
+        return [];
+    }
+
+    function checkSynergyRunes(runes) {
+        const EP = getParser();
+        if (EP.checkSynergyRunes) {
+            return EP.checkSynergyRunes(runes);
+        }
+        return { hasSynergy: false, synergyTypes: [], totalBoost: 1.0 };
+    }
+
+    // getCharacterStatsFromInput은 아래에서 직접 정의됨 (179줄)
+
+    function calculateRuneEfficiencyScore(rune, enhanceLevel, dotTypes, index, options) {
+        const EP = getParser();
+        if (EP.calculateRuneEfficiencyScore) {
+            return EP.calculateRuneEfficiencyScore(rune, enhanceLevel, dotTypes, index, options);
+        }
+        return { score: 0, effectiveSummary: {}, breakdown: [] };
+    }
+
 // ============================================
 // 10. 효과 합산 (Effect Calculator)
 // ============================================
@@ -44,8 +91,12 @@
  * @updated 2025-12-10 - 고급 효과 파싱 엔진 사용
  * @updated 2025-12-10 - DPS 핵심 효과 구분 표시
  * @updated 2025-12-10 - 한계효용 감소, 시너지 룬, DPS 분석 추가
+ * @updated 2025-12-11 - 모듈 의존성 해결
  */
 function calculateTotalEffects() {
+    // 상태 가져오기
+    const state = getState();
+
     const totalEffects = {
         coreDPS: {}, // DPS 핵심 효과
         demerits: {}, // 결함 효과 @added 2025-12-10

@@ -49,6 +49,63 @@
         return div.innerHTML;
     }
 
+    /**
+     * 외부 함수 참조 (EffectParser/RuneCalculator에서 제공)
+     * @updated 2025-12-11 - 모듈 의존성 해결
+     */
+    function getAllEquippedDotTypes() {
+        if (window.RuneCalculator && window.RuneCalculator.getAllEquippedDotTypes) {
+            return window.RuneCalculator.getAllEquippedDotTypes();
+        }
+        return [];
+    }
+
+    function calculateRuneEfficiencyScore(rune, enhanceLevel, dotTypes, cooldownReduction, options) {
+        const EP = getParser();
+        if (EP.calculateRuneEfficiencyScore) {
+            return EP.calculateRuneEfficiencyScore(rune, enhanceLevel, dotTypes, cooldownReduction, options);
+        }
+        return { score: 0, effectiveSummary: {}, breakdown: [] };
+    }
+
+    function isDuplicateSkillRune(selectedRunes, candidateRune) {
+        const EP = getParser();
+        if (EP.isDuplicateSkillRune) {
+            return EP.isDuplicateSkillRune(selectedRunes, candidateRune);
+        }
+        return false;
+    }
+
+    function parseAwakeningCooldownReduction(rune) {
+        const EP = getParser();
+        if (EP.parseAwakeningCooldownReduction) {
+            return EP.parseAwakeningCooldownReduction(rune);
+        }
+        return 0;
+    }
+
+    function showToast(message, type, duration) {
+        if (window.UIManager && window.UIManager.showToast) {
+            window.UIManager.showToast(message, type, duration);
+        } else if (window.RuneCalculator && window.RuneCalculator.showToast) {
+            window.RuneCalculator.showToast(message, type, duration);
+        } else {
+            console.log('[Toast]', type, message);
+        }
+    }
+
+    function updateEquippedDisplay() {
+        if (window.RuneCalculator && window.RuneCalculator.updateEquippedDisplay) {
+            window.RuneCalculator.updateEquippedDisplay();
+        }
+    }
+
+    function equipRune(rune, slotId) {
+        if (window.RuneCalculator && window.RuneCalculator.equipRune) {
+            window.RuneCalculator.equipRune(rune, slotId);
+        }
+    }
+
 // 11. 추천 시스템 (Recommendation)
 // ============================================
 

@@ -2278,7 +2278,12 @@
         loadProfileData: loadProfileData,
         
         // 토스트 알림
-        showToast: showToast
+        showToast: showToast,
+        
+        // 효과 계산용 함수 노출 @added 2025-12-11
+        getAllEquippedDotTypes: getAllEquippedDotTypes,
+        updateEquippedDisplay: updateEquippedDisplay,
+        equipRune: equipRune
     };
 
     // DOMContentLoaded 시 초기화

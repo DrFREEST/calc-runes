@@ -10,9 +10,12 @@
  * @author      Dalkong Project
  * @created     2025-12-10
  * @modified    2025-12-11
- * @version     1.2.0
+ * @version     1.3.0
  * 
  * @changelog
+ * - v1.3.0 (2025-12-11): script defer 방식으로 변경
+ *   - 스크립트를 head 섹션으로 이동
+ *   - defer 속성으로 병렬 다운로드 및 순서 보장
  * - v1.2.0 (2025-12-11): 캐릭터 프로필 관리 시스템 추가
  *   - 여러 캐릭터의 스탯/룬/옵션 저장 및 관리
  *   - 모듈 분할 구조 적용
@@ -50,6 +53,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>마비노기 모바일 룬 효율 계산기</title>
     <link rel="stylesheet" href="rune-calculator.css">
+    
+    <!-- ============================================
+         JavaScript 모듈 로드 (defer 방식)
+         @updated 2025-12-11 - script defer 방식으로 변경
+         ============================================
+         defer 속성 장점:
+         - HTML 파싱과 병렬로 스크립트 다운로드 (성능 향상)
+         - HTML 파싱 완료 후 문서 순서대로 실행 (의존성 보장)
+         - DOMContentLoaded 이벤트 전에 실행됨
+         ============================================ -->
+    
+    <!-- 1. 상수 모듈 -->
+    <script defer src="constants/class-stats.js"></script>
+    <script defer src="constants/effect-weights.js"></script>
+    <script defer src="constants/effect-types.js"></script>
+    
+    <!-- 2. 공식 모듈 -->
+    <script defer src="formulas/stat-formulas.js"></script>
+    <script defer src="formulas/efficiency-calculator.js"></script>
+    
+    <!-- 3. 유틸리티 모듈 -->
+    <script defer src="modules/utils.js"></script>
+    <script defer src="modules/storage-manager.js"></script>
+    <script defer src="modules/ui-manager.js"></script>
+    <script defer src="modules/data-loader.js"></script>
+    
+    <!-- 4. 효과 파싱/계산 모듈 -->
+    <script defer src="modules/effect-parser.js"></script>
+    <script defer src="modules/effect-calculator.js"></script>
+    <script defer src="modules/recommendation.js"></script>
+    
+    <!-- 5. 메인 계산기 -->
+    <script defer src="rune-calculator.js"></script>
+    
+    <!-- 6. 기능 모듈 (메인 후 로드) -->
+    <script defer src="modules/character-manager.js"></script>
 </head>
 
 <body>
@@ -746,37 +785,6 @@
         <p>© 2025 마비노기 모바일 룬 계산기 | 게임 데이터는 마비노기 모바일의 소유입니다</p>
         <p class="footer__version">v1.4.0 | 마지막 업데이트: 2025-12-11</p>
     </footer>
-
-    <!-- ============================================
-         JavaScript 모듈 로드 (의존성 순서대로)
-         @updated 2025-12-11 - 모듈 분할 및 캐릭터 관리 추가
-         ============================================ -->
-    
-    <!-- 1. 상수 모듈 -->
-    <script src="constants/class-stats.js"></script>
-    <script src="constants/effect-weights.js"></script>
-    <script src="constants/effect-types.js"></script>
-    
-    <!-- 2. 공식 모듈 -->
-    <script src="formulas/stat-formulas.js"></script>
-    <script src="formulas/efficiency-calculator.js"></script>
-    
-    <!-- 3. 유틸리티 모듈 -->
-    <script src="modules/utils.js"></script>
-    <script src="modules/storage-manager.js"></script>
-    <script src="modules/ui-manager.js"></script>
-    <script src="modules/data-loader.js"></script>
-    
-    <!-- 4. 효과 파싱/계산 모듈 @added 2025-12-11 -->
-    <script src="modules/effect-parser.js"></script>
-    <script src="modules/effect-calculator.js"></script>
-    <script src="modules/recommendation.js"></script>
-    
-    <!-- 5. 메인 계산기 -->
-    <script src="rune-calculator.js"></script>
-    
-    <!-- 6. 기능 모듈 (메인 후 로드) -->
-    <script src="modules/character-manager.js"></script>
 </body>
 
 </html>

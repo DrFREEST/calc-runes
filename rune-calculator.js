@@ -6,13 +6,20 @@
  * @description 룬 데이터 로딩, 필터링, 시뮬레이션, 추천 기능 구현
  * @author      Dalkong Project
  * @created     2025-12-10
- * @modified    2025-12-10
- * @version     1.0.0
+ * @modified    2025-12-11
+ * @version     1.1.0
+ * 
+ * @changelog
+ * - v1.1.0 (2025-12-11): 캐릭터 스탯 및 추천 옵션 LocalStorage 저장/불러오기 기능 추가
+ *   - 페이지 새로고침 시에도 입력한 스탯과 옵션이 유지됨
+ *   - 입력 변경 시 자동 저장 (debounce 적용)
  * 
  * @architecture
  * - 모듈 패턴 사용 (IIFE)
  * - 이벤트 위임 패턴 활용
  * - LocalStorage를 통한 데이터 영속화
+ *   - 즐겨찾기, 프리셋, 장착된 룬
+ *   - 캐릭터 스탯, 추천 옵션, 강화 수치 (2025-12-11 추가)
  * 
  * @structure
  * 1. 상수 정의 (Constants)
@@ -23,6 +30,8 @@
  * 6. 룬 카드 렌더링 (Rendering)
  * 7. 페이지네이션 (Pagination)
  * 8. 슬롯 관리 (Slot Management)
+ *    8.1 강화 수치 저장/불러오기
+ *    8.2 캐릭터 스탯 저장/불러오기 (2025-12-11 추가)
  * 9. 효과 파싱 엔진 (Effect Parser)
  * 10. 효과 합산 (Effect Calculator)
  * 11. 추천 시스템 (Recommendation)
@@ -322,11 +331,15 @@
     /**
      * LocalStorage 키
      * @constant {Object}
+     * @updated 2025-12-11 - CHARACTER_STATS, RECOMMEND_OPTIONS, ENHANCE_LEVELS 키 추가
      */
     const STORAGE_KEYS = {
         FAVORITES: 'mabinogi_rune_favorites',
         PRESETS: 'mabinogi_rune_presets',
-        EQUIPPED_RUNES: 'mabinogi_rune_equipped'
+        EQUIPPED_RUNES: 'mabinogi_rune_equipped',
+        CHARACTER_STATS: 'mabinogi_rune_character_stats',
+        RECOMMEND_OPTIONS: 'mabinogi_rune_recommend_options',
+        ENHANCE_LEVELS: 'mabinogi_rune_enhance_levels'
     };
 
     // ============================================
@@ -1029,17 +1042,159 @@
     /**
      * 강화 수치 저장
      * @added 2025-12-10
+     * @updated 2025-12-11 - STORAGE_KEYS 상수 사용
      */
     function saveEnhanceLevels() {
-        saveToStorage('rune_enhance_levels', state.enhanceLevels);
+        saveToStorage(STORAGE_KEYS.ENHANCE_LEVELS, state.enhanceLevels);
     }
 
     /**
      * 강화 수치 불러오기
      * @added 2025-12-10
+     * @updated 2025-12-11 - STORAGE_KEYS 상수 사용
      */
     function loadEnhanceLevels() {
-        state.enhanceLevels = loadFromStorage('rune_enhance_levels', {});
+        state.enhanceLevels = loadFromStorage(STORAGE_KEYS.ENHANCE_LEVELS, {});
+    }
+
+    // ============================================
+    // 8.2 캐릭터 스탯 저장/불러오기 (2025-12-11 추가)
+    // ============================================
+
+    /**
+     * 캐릭터 스탯 입력 필드 ID 목록
+     * @constant {Array<string>}
+     * @added 2025-12-11
+     * @description 추천 시스템에서 사용하는 모든 스탯 입력 필드 ID
+     */
+    const CHARACTER_STAT_FIELDS = [
+        // 5대 기본 스탯
+        'stat-str', 'stat-dex', 'stat-int', 'stat-wil', 'stat-luk',
+        // 주요 스탯
+        'stat-atk', 'stat-def',
+        // 세부 스탯
+        'stat-break', 'stat-smash', 'stat-combo', 'stat-skill',
+        'stat-aoe', 'stat-heal', 'stat-evade', 'stat-extra',
+        'stat-dmgred', 'stat-atkspd', 'stat-chain', 'stat-skillspd',
+        'stat-hp', 'stat-ult', 'stat-crit'
+    ];
+
+    /**
+     * 추천 옵션 필드 ID 목록
+     * @constant {Array<string>}
+     * @added 2025-12-11
+     * @description 추천 시스템에서 사용하는 옵션 선택 필드 ID
+     */
+    const RECOMMEND_OPTION_FIELDS = [
+        'recommend-role',      // 역할군
+        'recommend-class',     // 클래스
+        'recommend-min-grade'  // 최소 등급
+    ];
+
+    /**
+     * 캐릭터 스탯 저장
+     * @description 입력된 캐릭터 스탯을 LocalStorage에 저장
+     * @added 2025-12-11
+     */
+    function saveCharacterStats() {
+        const stats = {};
+
+        CHARACTER_STAT_FIELDS.forEach(function(fieldId) {
+            const element = $('#' + fieldId);
+            if (element) {
+                // 숫자 필드이므로 값이 있으면 숫자로 저장, 없으면 빈 문자열 저장
+                const value = element.value.trim();
+                stats[fieldId] = value !== '' ? parseInt(value) || 0 : '';
+            }
+        });
+
+        saveToStorage(STORAGE_KEYS.CHARACTER_STATS, stats);
+    }
+
+    /**
+     * 캐릭터 스탯 불러오기
+     * @description LocalStorage에서 저장된 캐릭터 스탯을 불러와 입력 필드에 적용
+     * @added 2025-12-11
+     */
+    function loadCharacterStats() {
+        const savedStats = loadFromStorage(STORAGE_KEYS.CHARACTER_STATS, {});
+
+        // 저장된 데이터가 없으면 종료
+        if (Object.keys(savedStats).length === 0) {
+            return;
+        }
+
+        CHARACTER_STAT_FIELDS.forEach(function(fieldId) {
+            const element = $('#' + fieldId);
+            if (element && savedStats.hasOwnProperty(fieldId)) {
+                // 빈 문자열이면 빈 값으로, 아니면 저장된 값 적용
+                element.value = savedStats[fieldId] !== '' ? savedStats[fieldId] : '';
+            }
+        });
+
+        console.log('📊 저장된 캐릭터 스탯 불러오기 완료');
+    }
+
+    /**
+     * 추천 옵션 저장
+     * @description 선택된 추천 옵션을 LocalStorage에 저장
+     * @added 2025-12-11
+     */
+    function saveRecommendOptions() {
+        const options = {};
+
+        RECOMMEND_OPTION_FIELDS.forEach(function(fieldId) {
+            const element = $('#' + fieldId);
+            if (element) {
+                options[fieldId] = element.value;
+            }
+        });
+
+        saveToStorage(STORAGE_KEYS.RECOMMEND_OPTIONS, options);
+    }
+
+    /**
+     * 추천 옵션 불러오기
+     * @description LocalStorage에서 저장된 추천 옵션을 불러와 선택 필드에 적용
+     * @added 2025-12-11
+     */
+    function loadRecommendOptions() {
+        const savedOptions = loadFromStorage(STORAGE_KEYS.RECOMMEND_OPTIONS, {});
+
+        // 저장된 데이터가 없으면 종료
+        if (Object.keys(savedOptions).length === 0) {
+            return;
+        }
+
+        RECOMMEND_OPTION_FIELDS.forEach(function(fieldId) {
+            const element = $('#' + fieldId);
+            if (element && savedOptions.hasOwnProperty(fieldId)) {
+                element.value = savedOptions[fieldId];
+            }
+        });
+
+        console.log('🎯 저장된 추천 옵션 불러오기 완료');
+    }
+
+    /**
+     * 캐릭터 스탯 및 추천 옵션 초기화
+     * @description 모든 스탯 입력 필드와 추천 옵션을 초기값으로 리셋하고 저장
+     * @added 2025-12-11
+     */
+    function resetCharacterStatsAndOptions() {
+        // 스탯 필드 초기화
+        CHARACTER_STAT_FIELDS.forEach(function(fieldId) {
+            const element = $('#' + fieldId);
+            if (element) {
+                element.value = '';
+            }
+        });
+
+        // 저장된 스탯 삭제
+        saveToStorage(STORAGE_KEYS.CHARACTER_STATS, {});
+
+        // 추천 옵션은 초기화하지 않음 (사용자 의도에 따라 별도 처리)
+        console.log('📊 캐릭터 스탯 초기화 완료');
     }
 
     /**
@@ -4068,12 +4223,16 @@
 
     /**
      * 스텟 입력 초기화
+     * @updated 2025-12-11 - LocalStorage 저장된 스탯도 함께 초기화
      */
     function resetStats() {
         const statInputs = $$('.stat-input__field');
         statInputs.forEach(input => {
             input.value = '';
         });
+
+        // LocalStorage에 저장된 캐릭터 스탯 초기화 @added 2025-12-11
+        saveToStorage(STORAGE_KEYS.CHARACTER_STATS, {});
 
         // 추천 결과 초기화
         const emptyEl = $('#recommend-empty');
@@ -4698,6 +4857,28 @@
             applyRecommendBtn.addEventListener('click', applyRecommendations);
         }
 
+        // ============================================
+        // 캐릭터 스탯 자동 저장 이벤트 리스너 @added 2025-12-11
+        // ============================================
+        // 디바운스 적용된 스탯 저장 함수 (입력 후 500ms 후 저장)
+        const debouncedSaveStats = debounce(saveCharacterStats, 500);
+
+        // 모든 스탯 입력 필드에 input 이벤트 리스너 추가
+        CHARACTER_STAT_FIELDS.forEach(function(fieldId) {
+            const element = $('#' + fieldId);
+            if (element) {
+                element.addEventListener('input', debouncedSaveStats);
+            }
+        });
+
+        // 추천 옵션 필드에 change 이벤트 리스너 추가
+        RECOMMEND_OPTION_FIELDS.forEach(function(fieldId) {
+            const element = $('#' + fieldId);
+            if (element) {
+                element.addEventListener('change', saveRecommendOptions);
+            }
+        });
+
         // 모달 닫기 버튼
         var modalClose = $('#modal-close');
         var detailModalClose = $('#detail-modal-close');
@@ -4816,6 +4997,11 @@
     /**
      * 애플리케이션 초기화
      */
+    /**
+     * 애플리케이션 초기화
+     * @async
+     * @updated 2025-12-11 - 캐릭터 스탯 및 추천 옵션 불러오기 추가
+     */
     async function init() {
         console.log('🚀 마비노기 모바일 룬 효율 계산기 초기화 시작...');
 
@@ -4831,6 +5017,12 @@
 
         // 장착된 룬 불러오기
         loadEquippedRunes();
+
+        // 저장된 캐릭터 스탯 불러오기 @added 2025-12-11
+        loadCharacterStats();
+
+        // 저장된 추천 옵션 불러오기 @added 2025-12-11
+        loadRecommendOptions();
 
         // 페이지네이션 렌더링
         renderPagination();

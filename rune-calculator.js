@@ -1,18 +1,36 @@
 /**
  * ============================================
- * 마비노기 모바일 룬 효율 계산기 - JavaScript
+ * 마비노기 모바일 룬 효율 계산기 - 메인 JavaScript
  * ============================================
  * @file        rune-calculator.js
  * @description 룬 데이터 로딩, 필터링, 시뮬레이션, 추천 기능 구현
  * @author      Dalkong Project
  * @created     2025-12-10
- * @modified    2025-12-10
- * @version     1.0.0
+ * @modified    2025-12-11
+ * @version     1.3.0
+ * 
+ * @changelog
+ * - v1.3.0 (2025-12-11): 모듈 분할 구조 적용
+ *   - constants/effect-types.js: 효과 유형 상수
+ *   - modules/utils.js: 유틸리티 함수
+ *   - modules/storage-manager.js: LocalStorage 관리
+ *   - modules/ui-manager.js: UI 관리 (토스트/모달/탭)
+ *   - modules/data-loader.js: 데이터 로딩
+ *   - modules/character-manager.js: 캐릭터 프로필 관리
+ * - v1.2.0 (2025-12-11): 캐릭터 프로필 관리 시스템 추가
+ * - v1.1.0 (2025-12-11): 데이터 영속화 기능 추가
  * 
  * @architecture
  * - 모듈 패턴 사용 (IIFE)
  * - 이벤트 위임 패턴 활용
  * - LocalStorage를 통한 데이터 영속화
+ * 
+ * @requires EffectTypes (constants/effect-types.js)
+ * @requires Utils (modules/utils.js)
+ * @requires StorageManager (modules/storage-manager.js)
+ * @requires UIManager (modules/ui-manager.js)
+ * @requires DataLoader (modules/data-loader.js)
+ * @requires CharacterManager (modules/character-manager.js)
  * 
  * @structure
  * 1. 상수 정의 (Constants)
@@ -28,9 +46,17 @@
  * 11. 추천 시스템 (Recommendation)
  * 12. 즐겨찾기 (Favorites)
  * 13. 모달 관리 (Modal)
- * 14. 토스트 알림 (Toast)
- * 15. 이벤트 핸들러 (Event Handlers)
- * 16. 초기화 (Initialization)
+ * 14. 프리셋 관리 (Presets)
+ * 15. 토스트 알림 (Toast)
+ * 16. 탭 관리 (Tab Management)
+ * 17. 이벤트 핸들러 (Event Handlers)
+ * 18. 초기화 (Initialization)
+ * 19. 전역 인터페이스 (Global Interface)
+ * 
+ * @note 모듈화 완료 (2025-12-11):
+ * - 상수/유틸리티/UI 함수들은 모듈 참조 방식으로 변경됨
+ * - 모듈이 없어도 폴백 코드로 동작하도록 구현
+ * - 분리된 모듈: effect-parser.js, effect-calculator.js, recommendation.js
  */
 
 // ============================================
@@ -61,8 +87,9 @@ function handleRuneImageError(img) {
     'use strict';
 
     // ============================================
-    // 1. 상수 정의 (Constants)
+    // 1. 외부 모듈 참조 및 상수 정의
     // ============================================
+    // @updated 2025-12-11 - 모듈에서 상수 가져오기
 
     /**
      * 기본 이미지 참조 (전역 상수 사용)
@@ -73,9 +100,8 @@ function handleRuneImageError(img) {
     /**
      * 카테고리 코드 매핑
      * @constant {Object}
-     * @updated 2025-12-10 - 카테고리 매핑 수정 (02: 방어구, 04: 엠블럼)
      */
-    const CATEGORY_MAP = {
+    const CATEGORY_MAP = ET.CATEGORY_MAP || {
         '01': '무기',
         '02': '방어구',
         '03': '장신구',
@@ -83,17 +109,8 @@ function handleRuneImageError(img) {
     };
 
     /**
-     * 등급 코드 매핑 (grade + stars 조합)
+     * 등급 매핑 (모듈에서 가져오거나 기본값 사용)
      * @constant {Object}
-     * @updated 2025-12-10 - 신화/전설/유니크 등급 체계로 변경
-     * @updated 2025-12-10 - 전설(시즌0) 7등급/5등급 통합
-     * 
-     * 유효한 등급 조합:
-     * - grade 08 + stars 8 → 신화
-     * - grade 05 + stars 8 → 전설(시즌1)
-     * - grade 07 + stars 6 → 전설(시즌0)
-     * - grade 05 + stars 6 → 전설(시즌0)
-     * - grade 06 + stars 5 → 유니크(시즌0)
      */
     /**
      * 등급 매핑 @updated 2025-12-11 - 시즌1 전설 + 신화만 포함
@@ -534,54 +551,44 @@ function handleRuneImageError(img) {
     // ============================================
     // 3. 유틸리티 함수 (Utilities)
     // ============================================
+    // @updated 2025-12-11 - 모듈 참조 방식으로 변경
 
     /**
-     * DOM 요소 선택 헬퍼
-     * @param {string} selector - CSS 선택자
-     * @returns {Element|null} DOM 요소
+     * DOM 요소 선택 헬퍼 (Utils 모듈 사용)
      */
-    function $(selector) {
+    const $ = Utils.$ || function(selector) {
         return document.querySelector(selector);
-    }
+    };
 
     /**
-     * 다중 DOM 요소 선택 헬퍼
-     * @param {string} selector - CSS 선택자
-     * @returns {NodeList} DOM 요소 목록
+     * 다중 DOM 요소 선택 헬퍼 (Utils 모듈 사용)
      */
-    function $$(selector) {
+    const $$ = Utils.$$ || function(selector) {
         return document.querySelectorAll(selector);
-    }
+    };
 
     /**
-     * HTML 특수문자 이스케이프
-     * @param {string} text - 원본 텍스트
-     * @returns {string} 이스케이프된 텍스트
+     * HTML 특수문자 이스케이프 (Utils 모듈 사용)
      */
-    function escapeHtml(text) {
+    const escapeHtml = Utils.escapeHtml || function(text) {
         if (!text) return '';
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
-    }
+    };
 
     /**
-     * HTML 태그 제거
-     * @param {string} html - HTML 문자열
-     * @returns {string} 태그가 제거된 텍스트
+     * HTML 태그 제거 (Utils 모듈 사용)
      */
-    function stripHtml(html) {
+    const stripHtml = Utils.stripHtml || function(html) {
         if (!html) return '';
         return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
-    }
+    };
 
     /**
-     * 디바운스 함수
-     * @param {Function} func - 실행할 함수
-     * @param {number} wait - 대기 시간 (ms)
-     * @returns {Function} 디바운스된 함수
+     * 디바운스 함수 (Utils 모듈 사용)
      */
-    function debounce(func, wait) {
+    const debounce = Utils.debounce || function(func, wait) {
         let timeout;
         return function executedFunction(...args) {
             const later = () => {
@@ -591,15 +598,12 @@ function handleRuneImageError(img) {
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
         };
-    }
+    };
 
     /**
-     * LocalStorage에서 데이터 로드
-     * @param {string} key - 저장소 키
-     * @param {*} defaultValue - 기본값
-     * @returns {*} 저장된 데이터 또는 기본값
+     * LocalStorage에서 데이터 로드 (StorageManager 모듈 사용)
      */
-    function loadFromStorage(key, defaultValue) {
+    const loadFromStorage = SM.load || function(key, defaultValue) {
         try {
             const data = localStorage.getItem(key);
             return data ? JSON.parse(data) : defaultValue;
@@ -607,20 +611,18 @@ function handleRuneImageError(img) {
             console.error('LocalStorage 로드 오류:', e);
             return defaultValue;
         }
-    }
+    };
 
     /**
-     * LocalStorage에 데이터 저장
-     * @param {string} key - 저장소 키
-     * @param {*} value - 저장할 데이터
+     * LocalStorage에 데이터 저장 (StorageManager 모듈 사용)
      */
-    function saveToStorage(key, value) {
+    const saveToStorage = SM.save || function(key, value) {
         try {
             localStorage.setItem(key, JSON.stringify(value));
         } catch (e) {
             console.error('LocalStorage 저장 오류:', e);
         }
-    }
+    };
 
     // ============================================
     // 4. 데이터 로딩 (Data Loading)
@@ -1308,17 +1310,159 @@ function handleRuneImageError(img) {
     /**
      * 강화 수치 저장
      * @added 2025-12-10
+     * @updated 2025-12-11 - STORAGE_KEYS 상수 사용
      */
     function saveEnhanceLevels() {
-        saveToStorage('rune_enhance_levels', state.enhanceLevels);
+        saveToStorage(STORAGE_KEYS.ENHANCE_LEVELS, state.enhanceLevels);
     }
 
     /**
      * 강화 수치 불러오기
      * @added 2025-12-10
+     * @updated 2025-12-11 - STORAGE_KEYS 상수 사용
      */
     function loadEnhanceLevels() {
-        state.enhanceLevels = loadFromStorage('rune_enhance_levels', {});
+        state.enhanceLevels = loadFromStorage(STORAGE_KEYS.ENHANCE_LEVELS, {});
+    }
+
+    // ============================================
+    // 8.2 캐릭터 스탯 저장/불러오기 (2025-12-11 추가)
+    // ============================================
+
+    /**
+     * 캐릭터 스탯 입력 필드 ID 목록
+     * @constant {Array<string>}
+     * @added 2025-12-11
+     * @description 추천 시스템에서 사용하는 모든 스탯 입력 필드 ID
+     */
+    const CHARACTER_STAT_FIELDS = [
+        // 5대 기본 스탯
+        'stat-str', 'stat-dex', 'stat-int', 'stat-wil', 'stat-luk',
+        // 주요 스탯
+        'stat-atk', 'stat-def',
+        // 세부 스탯
+        'stat-break', 'stat-smash', 'stat-combo', 'stat-skill',
+        'stat-aoe', 'stat-heal', 'stat-evade', 'stat-extra',
+        'stat-dmgred', 'stat-atkspd', 'stat-chain', 'stat-skillspd',
+        'stat-hp', 'stat-ult', 'stat-crit'
+    ];
+
+    /**
+     * 추천 옵션 필드 ID 목록
+     * @constant {Array<string>}
+     * @added 2025-12-11
+     * @description 추천 시스템에서 사용하는 옵션 선택 필드 ID
+     */
+    const RECOMMEND_OPTION_FIELDS = [
+        'recommend-role',      // 역할군
+        'recommend-class',     // 클래스
+        'recommend-min-grade'  // 최소 등급
+    ];
+
+    /**
+     * 캐릭터 스탯 저장
+     * @description 입력된 캐릭터 스탯을 LocalStorage에 저장
+     * @added 2025-12-11
+     */
+    function saveCharacterStats() {
+        const stats = {};
+
+        CHARACTER_STAT_FIELDS.forEach(function(fieldId) {
+            const element = $('#' + fieldId);
+            if (element) {
+                // 숫자 필드이므로 값이 있으면 숫자로 저장, 없으면 빈 문자열 저장
+                const value = element.value.trim();
+                stats[fieldId] = value !== '' ? parseInt(value) || 0 : '';
+            }
+        });
+
+        saveToStorage(STORAGE_KEYS.CHARACTER_STATS, stats);
+    }
+
+    /**
+     * 캐릭터 스탯 불러오기
+     * @description LocalStorage에서 저장된 캐릭터 스탯을 불러와 입력 필드에 적용
+     * @added 2025-12-11
+     */
+    function loadCharacterStats() {
+        const savedStats = loadFromStorage(STORAGE_KEYS.CHARACTER_STATS, {});
+
+        // 저장된 데이터가 없으면 종료
+        if (Object.keys(savedStats).length === 0) {
+            return;
+        }
+
+        CHARACTER_STAT_FIELDS.forEach(function(fieldId) {
+            const element = $('#' + fieldId);
+            if (element && savedStats.hasOwnProperty(fieldId)) {
+                // 빈 문자열이면 빈 값으로, 아니면 저장된 값 적용
+                element.value = savedStats[fieldId] !== '' ? savedStats[fieldId] : '';
+            }
+        });
+
+        console.log('📊 저장된 캐릭터 스탯 불러오기 완료');
+    }
+
+    /**
+     * 추천 옵션 저장
+     * @description 선택된 추천 옵션을 LocalStorage에 저장
+     * @added 2025-12-11
+     */
+    function saveRecommendOptions() {
+        const options = {};
+
+        RECOMMEND_OPTION_FIELDS.forEach(function(fieldId) {
+            const element = $('#' + fieldId);
+            if (element) {
+                options[fieldId] = element.value;
+            }
+        });
+
+        saveToStorage(STORAGE_KEYS.RECOMMEND_OPTIONS, options);
+    }
+
+    /**
+     * 추천 옵션 불러오기
+     * @description LocalStorage에서 저장된 추천 옵션을 불러와 선택 필드에 적용
+     * @added 2025-12-11
+     */
+    function loadRecommendOptions() {
+        const savedOptions = loadFromStorage(STORAGE_KEYS.RECOMMEND_OPTIONS, {});
+
+        // 저장된 데이터가 없으면 종료
+        if (Object.keys(savedOptions).length === 0) {
+            return;
+        }
+
+        RECOMMEND_OPTION_FIELDS.forEach(function(fieldId) {
+            const element = $('#' + fieldId);
+            if (element && savedOptions.hasOwnProperty(fieldId)) {
+                element.value = savedOptions[fieldId];
+            }
+        });
+
+        console.log('🎯 저장된 추천 옵션 불러오기 완료');
+    }
+
+    /**
+     * 캐릭터 스탯 및 추천 옵션 초기화
+     * @description 모든 스탯 입력 필드와 추천 옵션을 초기값으로 리셋하고 저장
+     * @added 2025-12-11
+     */
+    function resetCharacterStatsAndOptions() {
+        // 스탯 필드 초기화
+        CHARACTER_STAT_FIELDS.forEach(function(fieldId) {
+            const element = $('#' + fieldId);
+            if (element) {
+                element.value = '';
+            }
+        });
+
+        // 저장된 스탯 삭제
+        saveToStorage(STORAGE_KEYS.CHARACTER_STATS, {});
+
+        // 추천 옵션은 초기화하지 않음 (사용자 의도에 따라 별도 처리)
+        console.log('📊 캐릭터 스탯 초기화 완료');
     }
 
     /**
@@ -1348,39 +1492,39 @@ function handleRuneImageError(img) {
     // 9. 고급 효과 파싱 엔진 (Advanced Effect Parser)
     // ============================================
     // @updated 2025-12-10 - 효과 유형 분류, 중첩, 업타임 비율 계산 추가
+    // @updated 2025-12-11 - EffectParser 모듈 참조 방식으로 변경
 
     /**
-     * 효과 유형 상수
+     * 효과 유형 상수 (EffectParser 모듈 또는 EffectTypes 모듈에서 가져오기)
      * @constant {Object}
      */
-    const EFFECT_TYPE = {
-        PASSIVE: 'passive', // 상시 효과 (100%)
-        TRIGGER: 'trigger', // 트리거 효과 (80%)
-        STACKING: 'stacking', // 누적/축적 효과 (95%) @added 2025-12-10
-        STATE_CONDITION: 'state', // 상태 조건 효과 (70%)
-        ENEMY_CONDITION: 'enemy', // 적 상태 조건 (시너지 의존)
-        ENHANCEMENT: 'enhance' // 강화 단계별 효과
+    const EFFECT_TYPE = (EP.EFFECT_TYPE) || (ET.EFFECT_TYPE) || {
+        PASSIVE: 'passive',
+        TRIGGER: 'trigger',
+        STACKING: 'stacking',
+        STATE_CONDITION: 'state',
+        ENEMY_CONDITION: 'enemy',
+        ENHANCEMENT: 'enhance'
     };
 
     /**
-     * 효과 유형별 가중치
+     * 효과 유형별 가중치 (EffectParser 모듈 또는 EffectTypes 모듈에서 가져오기)
      * @constant {Object}
      */
-    const EFFECT_TYPE_WEIGHT = {
-        [EFFECT_TYPE.PASSIVE]: 1.0, // 100%
-        [EFFECT_TYPE.TRIGGER]: 0.8, // 80%
-        [EFFECT_TYPE.STACKING]: 0.95, // 95% - 누적/축적 효과는 쉽게 최대 중첩 유지 @added 2025-12-10
-        [EFFECT_TYPE.STATE_CONDITION]: 0.7, // 70%
-        [EFFECT_TYPE.ENEMY_CONDITION]: 0.5, // 50% (시너지 없을 때)
-        [EFFECT_TYPE.ENHANCEMENT]: 1.0 // 100% (강화 조건 충족 시)
+    const EFFECT_TYPE_WEIGHT = (EP.EFFECT_TYPE_WEIGHT) || (ET.EFFECT_TYPE_WEIGHT) || {
+        passive: 1.0,
+        trigger: 0.8,
+        stacking: 0.95,
+        state: 0.7,
+        enemy: 0.5,
+        enhance: 1.0
     };
 
     /**
-     * 엠블럼 각성 기본 쿨타임 (초)
+     * 엠블럼 각성 기본 쿨타임 (초) - 모듈에서 가져오기
      * @constant {number}
-     * @added 2025-12-10
      */
-    const EMBLEM_AWAKENING_BASE_COOLDOWN = 90;
+    const EMBLEM_AWAKENING_BASE_COOLDOWN = (EP.EMBLEM_AWAKENING_BASE_COOLDOWN) || (ET.EMBLEM_AWAKENING_BASE_COOLDOWN) || 90;
 
     /**
      * 엠블럼 각성 효과 파싱
@@ -5677,12 +5821,16 @@ function handleRuneImageError(img) {
 
     /**
      * 스텟 입력 초기화
+     * @updated 2025-12-11 - LocalStorage 저장된 스탯도 함께 초기화
      */
     function resetStats() {
         const statInputs = $$('.stat-input__field');
         statInputs.forEach(input => {
             input.value = '';
         });
+
+        // LocalStorage에 저장된 캐릭터 스탯 초기화 @added 2025-12-11
+        saveToStorage(STORAGE_KEYS.CHARACTER_STATS, {});
 
         // 추천 결과 초기화
         const emptyEl = $('#recommend-empty');
@@ -7785,62 +7933,68 @@ function handleRuneImageError(img) {
     // ============================================
     // 15. 토스트 알림 (Toast)
     // ============================================
+    // @updated 2025-12-11 - UIManager 모듈 참조 방식으로 변경
 
     /**
-     * 토스트 알림 표시
+     * 토스트 알림 표시 (UIManager 모듈 우선 사용)
      * @param {string} message - 메시지
      * @param {string} type - 타입 ('success', 'error', 'warning')
      * @param {number} duration - 표시 시간 (ms)
      */
-    function showToast(message, type = 'success', duration = 3000) {
+    function showToast(message, type, duration) {
+        type = type || 'success';
+        duration = duration || 3000;
+
+        // UIManager 모듈이 있으면 사용
+        if (UI.showToast) {
+            UI.showToast(message, type, duration);
+            return;
+        }
+
+        // 폴백: 직접 구현
         const container = $('#toast-container');
         if (!container) return;
 
-        const icons = {
-            success: '✅',
-            error: '❌',
-            warning: '⚠️'
-        };
-
+        const icons = { success: '✅', error: '❌', warning: '⚠️' };
         const toast = document.createElement('div');
-        toast.className = `toast toast--${type}`;
-        toast.innerHTML = `
-            <span class="toast__icon">${icons[type] || '📢'}</span>
-            <span class="toast__message">${escapeHtml(message)}</span>
-            <button class="toast__close">×</button>
-        `;
+        toast.className = 'toast toast--' + type;
+        toast.innerHTML = 
+            '<span class="toast__icon">' + (icons[type] || '📢') + '</span>' +
+            '<span class="toast__message">' + escapeHtml(message) + '</span>' +
+            '<button class="toast__close">×</button>';
 
         container.appendChild(toast);
-
-        // 닫기 버튼 이벤트
-        toast.querySelector('.toast__close').addEventListener('click', () => {
-            toast.remove();
-        });
-
-        // 자동 제거
-        setTimeout(() => {
+        toast.querySelector('.toast__close').addEventListener('click', function() { toast.remove(); });
+        setTimeout(function() {
             toast.style.animation = 'fadeOut var(--transition-normal)';
-            setTimeout(() => toast.remove(), 250);
+            setTimeout(function() { toast.remove(); }, 250);
         }, duration);
     }
 
     // ============================================
     // 16. 탭 관리 (Tab Management)
     // ============================================
+    // @updated 2025-12-11 - UIManager 모듈 참조 방식으로 변경
 
     /**
-     * 탭 전환
+     * 탭 전환 (UIManager 모듈 우선 사용)
      * @param {string} tabId - 탭 ID
      */
     function switchTab(tabId) {
-        // 탭 버튼 활성화
-        $$('.tab-nav__btn').forEach(btn => {
+        // UIManager 모듈이 있으면 사용
+        if (UI.switchTab) {
+            UI.switchTab(tabId, function(tid) {
+                if (tid === 'favorites') renderFavorites();
+            });
+            return;
+        }
+
+        // 폴백: 직접 구현
+        $$('.tab-nav__btn').forEach(function(btn) {
             btn.classList.toggle('tab-nav__btn--active', btn.dataset.tab === tabId);
         });
-
-        // 탭 컨텐츠 활성화
-        $$('.tab-content').forEach(content => {
-            content.classList.toggle('tab-content--active', content.id === `tab-${tabId}`);
+        $$('.tab-content').forEach(function(content) {
+            content.classList.toggle('tab-content--active', content.id === 'tab-' + tabId);
         });
 
         // 특정 탭 진입 시 추가 동작 @updated 2025-12-11 전역 캐릭터 통합
@@ -8357,6 +8511,12 @@ function handleRuneImageError(img) {
     /**
      * 애플리케이션 초기화
      */
+    /**
+     * 애플리케이션 초기화
+     * @async
+     * @updated 2025-12-11 - 캐릭터 스탯 및 추천 옵션 불러오기 추가
+     * @updated 2025-12-11 - CharacterManager 모듈 초기화 추가
+     */
     async function init() {
         console.log('🚀 마비노기 모바일 룬 효율 계산기 초기화 시작...');
 
@@ -8376,11 +8536,83 @@ function handleRuneImageError(img) {
         // 장착된 룬 불러오기
         loadEquippedRunes();
 
+        // 저장된 캐릭터 스탯 불러오기 @added 2025-12-11
+        loadCharacterStats();
+
+        // 저장된 추천 옵션 불러오기 @added 2025-12-11
+        loadRecommendOptions();
+
         // 페이지네이션 렌더링
         renderPagination();
 
+        // CharacterManager 모듈 초기화 @added 2025-12-11
+        // (모듈 로드 후 자동 실행되므로 여기서 확인만)
+        if (window.CharacterManager) {
+            console.log('📋 CharacterManager 모듈 연동 완료');
+        }
+
         console.log('✅ 초기화 완료!');
     }
+
+    // ============================================
+    // 19. 전역 인터페이스 (Global Interface)
+    // ============================================
+    // @added 2025-12-11 - 외부 모듈과의 연동을 위한 인터페이스
+
+    /**
+     * 현재 상태 반환 (CharacterManager 연동용)
+     * @returns {Object} 현재 앱 상태
+     */
+    function getState() {
+        return {
+            equippedRunes: state.equippedRunes,
+            enhanceLevels: state.enhanceLevels,
+            favorites: state.favorites,
+            presets: state.presets
+        };
+    }
+
+    /**
+     * 프로필 데이터 로드 (CharacterManager 연동용)
+     * @param {Object} data - 프로필 데이터 { equippedRunes, enhanceLevels }
+     */
+    function loadProfileData(data) {
+        if (!data) return;
+
+        // 장착된 룬 적용
+        if (data.equippedRunes) {
+            state.equippedRunes = data.equippedRunes;
+        }
+
+        // 강화 수치 적용
+        if (data.enhanceLevels) {
+            state.enhanceLevels = data.enhanceLevels;
+        }
+
+        // UI 업데이트
+        Object.keys(SLOT_CONFIG).forEach(slotId => renderSlot(slotId));
+        calculateTotalEffects();
+        renderEquippedRuneList();
+
+        // 저장
+        saveEquippedRunes();
+        saveEnhanceLevels();
+    }
+
+    /**
+     * 전역 인터페이스 등록
+     * @global
+     */
+    window.RuneCalculator = {
+        // 상태 조회
+        getState: getState,
+        
+        // 프로필 데이터 로드
+        loadProfileData: loadProfileData,
+        
+        // 토스트 알림
+        showToast: showToast
+    };
 
     // DOMContentLoaded 시 초기화
     if (document.readyState === 'loading') {

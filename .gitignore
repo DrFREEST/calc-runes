@@ -1,0 +1,24 @@
+# ============================================
+# Git Ignore - 마비노기 모바일 룬 효율 계산기
+# @created 2025-12-12
+# ============================================
+
+# Cursor IDE 설정 파일
+.cursor/
+.cursorrules
+
+# OS 생성 파일
+.DS_Store
+Thumbs.db
+
+# 임시 파일
+*.tmp
+*.temp
+*.swp
+*~
+
+# 로그 파일
+*.log
+
+# Node.js (개발 도구용)
+node_modules/

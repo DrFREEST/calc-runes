@@ -77,39 +77,46 @@ const FORMULA_CONSTANTS = Object.freeze({
 
 /**
  * 치명타 확률 계산
- * 공식: (0.5 - 1000/(치명타+2000)) + K₁
+ * 공식: min(0.5 - 1000/(치명타+2000), 0.5) + K₁
+ * 
+ * @description
+ * - 스텟 기반 기본 확률: 최대 50% 캡
+ * - 룬 효과(K₁): 기본 확률에 가산, 최종 100%까지 가능
+ * - 권장 전투력 이상(K₃): +30% 추가
  * 
  * @param {number} critStat - 치명타 스텟 수치
- * @param {number} [critRateBonus=0] - 치명타 확률 % 증가 합계 (K₁)
+ * @param {number} [critRateBonus=0] - 치명타 확률 % 증가 합계 (K₁, 룬 효과)
  * @param {number} [gustingBoltCount=0] - 석궁사수 거스팅 볼트 발사 횟수 (K₂)
  * @param {boolean} [isOverPower=false] - 권장 전투력 이상 여부 (K₃)
  * @returns {number} 치명타 확률 (0~1)
  * 
  * @example
- * const critRate = calculateCritRate(6000, 15);
- * // 약 0.475 (47.5%)
+ * // 스텟 6000, 룬 보너스 18%
+ * const critRate = calculateCritRate(6000, 18);
+ * // 약 0.555 (55.5%) - 기본 37.5% + 룬 18%
  */
 function calculateCritRate(critStat, critRateBonus = 0, gustingBoltCount = 0, isOverPower = false) {
   const { CRIT_RATE_BASE, CRIT_RATE_DIVISOR, CRIT_RATE_OFFSET, CRIT_RATE_CAP } = FORMULA_CONSTANTS;
   
-  // 기본 치명타 확률
+  // 스텟 기반 기본 확률 (50% 캡)
   let baseRate = CRIT_RATE_BASE - (CRIT_RATE_OFFSET / (critStat + CRIT_RATE_DIVISOR));
+  baseRate = Math.min(baseRate, CRIT_RATE_CAP); // 스텟 기반은 50% 캡
   
-  // 치명타 확률 % 보너스 추가 (K₁)
-  baseRate += critRateBonus / 100;
+  // 치명타 확률 % 보너스 추가 (K₁) - 100%까지 가산 가능
+  let totalRate = baseRate + (critRateBonus / 100);
   
   // 석궁사수 거스팅 볼트 감소 적용 (K₂)
   if (gustingBoltCount > 0) {
-    baseRate *= Math.pow(0.75, gustingBoltCount);
+    totalRate *= Math.pow(0.75, gustingBoltCount);
   }
   
   // 권장 전투력 이상 시 30% 추가 (K₃)
   if (isOverPower) {
-    baseRate += 0.3;
+    totalRate += 0.3;
   }
   
-  // 캡 적용 (50%)
-  return Math.min(baseRate, CRIT_RATE_CAP);
+  // 최종 캡 적용 (100%)
+  return Math.min(totalRate, 1.0);
 }
 
 /**

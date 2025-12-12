@@ -70,19 +70,48 @@ const EFFECT_WEIGHTS = Object.freeze({
   
   // ========== 속도 관련 (간접 DPS 기여) ==========
   /** 쿨타임 회복 속도 증가 (%) - 스킬 사용 빈도 증가 */
-  COOLDOWN_RECOVERY: 0.7,
+  COOLDOWN_RECOVERY: 0.8,
   
   /** 스킬 사용 속도 증가 (%) - 시전 시간 단축 */
-  SKILL_SPEED: 0.5,
+  SKILL_SPEED: 0.2,
   
-  /** 캐스팅/차지 속도 증가 (%) - 캐스팅 스킬 한정 */
-  CASTING_SPEED: 0.5,
+  /** 캐스팅/차지 속도 증가 (%) - 동작 속도 (쿨타임보다 체감 낮음) */
+  /** @updated 2025-12-11 - 0.5 → 0.3 (쿨타임 0.7보다 낮게 조정) */
+  CASTING_SPEED: 0.2,
   
   /** 공격 속도 증가 (%) - 기본 공격 위주, DPS 기여 낮음 */
-  ATTACK_SPEED: 0.3,
+  ATTACK_SPEED: 0.2,
   
   /** 이동 속도 증가 (%) - DPS 거의 무관 */
-  MOVE_SPEED: 0.1
+  MOVE_SPEED: 0.1,
+  
+  // ========== 기본 공격 전용 효과 (DPS 기여 매우 낮음) ==========
+  /** 기본 공격 속도 증가 (%) - 스킬에 무관, 대부분 스킬 딜링 */
+  BASIC_ATTACK_SPEED: 0.05,
+  
+  /** 기본 공격 추가타 확률/피해 (%) - 스킬에 무관 */
+  BASIC_ADDITIONAL_HIT: 0.1,
+  
+  // ========== 특정 스킬 유형 한정 효과 ==========
+  /** 차지 스킬 피해 (%) - 차지 스킬 한정, 가동률 제한 */
+  CHARGE_SKILL_DAMAGE: 0.35,
+  
+  // ========== 디버프/타겟 관련 효과 ==========
+  /** 타겟 받는 피해 증가 (%) - 파티 전체 DPS 기여, 매우 높음 */
+  TARGET_DAMAGE_INCREASE: 1.5,
+  
+  // ========== 조건부 효과 (효율 계산 제외/저가중치) ==========
+  /** 무방비 피해 증가 (%) - 적 브레이크 시에만 적용 */
+  BREAK_DAMAGE: 0,
+  
+  /** 브레이크 스킬/피해 (%) - 브레이크 스킬 한정 */
+  BREAK_SKILL_DAMAGE: 0,
+  
+  /** 생존/회복 효과 - DPS 무관 */
+  DEFENSE_EFFECT: 0,
+  
+  /** 받는 피해 감소 - 생존, DPS 무관 */
+  DAMAGE_REDUCTION: 0
 });
 
 // ============================================================================
@@ -147,7 +176,8 @@ const DEMERIT_WEIGHTS = Object.freeze({
   SKILL_SPEED_DECREASE: 0.5,
   
   /** 캐스팅/차지 속도 감소 */
-  CASTING_SPEED_DECREASE: 0.5,
+  /** @updated 2025-12-11 - 0.5 → 0.3 */
+  CASTING_SPEED_DECREASE: 0.3,
   
   /** 받는 피해 증가 - 생존 관련 */
   DAMAGE_TAKEN_INCREASE: 0.2,
@@ -200,6 +230,25 @@ const EFFECT_NAME_MAP = Object.freeze({
   '주는 피해': 'DAMAGE_INCREASE',
   '적에게 주는 피해': 'DAMAGE_INCREASE',
   
+  // 무방비/브레이크 피해 (조건부 - 효율 계산 제외)
+  '무방비 피해': 'BREAK_DAMAGE',
+  '무방비 피해량': 'BREAK_DAMAGE',
+  '무방비 피해 증가': 'BREAK_DAMAGE',
+  '브레이크 피해': 'BREAK_DAMAGE',
+  '브레이크 피해 증가': 'BREAK_DAMAGE',
+  '브레이크 스킬 피해': 'BREAK_SKILL_DAMAGE',
+  '브레이크 스킬 피해 증가': 'BREAK_SKILL_DAMAGE',
+  
+  // 타겟 디버프 (파티 DPS 기여 높음)
+  '타겟 받는 피해 증가': 'TARGET_DAMAGE_INCREASE',
+  '받는 피해 증가': 'TARGET_DAMAGE_INCREASE',
+  '추가 피해 + 타겟 받는 피해 증가': 'TARGET_DAMAGE_INCREASE',
+  
+  // 생존/방어 효과 (DPS 무관)
+  '받는 피해 감소': 'DAMAGE_REDUCTION',
+  '행동 불능 방지': 'DEFENSE_EFFECT',
+  '행동 불능 방지 + 회복': 'DEFENSE_EFFECT',
+  
   // 치명타
   '치명타 확률': 'CRIT_RATE',
   '치명타': 'CRIT_RATE',
@@ -228,12 +277,34 @@ const EFFECT_NAME_MAP = Object.freeze({
   
   // 속도
   '쿨타임 회복 속도': 'COOLDOWN_RECOVERY',
+  '쿨타임 회복 속도 증가': 'COOLDOWN_RECOVERY',
   '재사용 대기시간 회복 속도': 'COOLDOWN_RECOVERY',
+  '재사용 대기시간 회복 속도 증가': 'COOLDOWN_RECOVERY',
   '스킬 사용 속도': 'SKILL_SPEED',
+  '스킬 사용 속도 증가': 'SKILL_SPEED',
   '캐스팅 속도': 'CASTING_SPEED',
+  '캐스팅 속도 증가': 'CASTING_SPEED',
   '차지 속도': 'CASTING_SPEED',
+  '차지 속도 증가': 'CASTING_SPEED',
+  '캐스팅/차지 속도 증가': 'CASTING_SPEED',
+  '스킬/공격/캐스팅 속도 증가': 'SKILL_SPEED',
   '공격 속도': 'ATTACK_SPEED',
-  '이동 속도': 'MOVE_SPEED'
+  '공격 속도 증가': 'ATTACK_SPEED',
+  '이동 속도': 'MOVE_SPEED',
+  // 쿨타임 관련
+  '스킬 쿨타임 감소': 'COOLDOWN_RECOVERY',
+  '각성 쿨타임 감소': 'COOLDOWN_RECOVERY',
+  
+  // 기본 공격 전용 효과 (스킬에 무관하므로 낮은 가중치)
+  '기본 공격 속도': 'BASIC_ATTACK_SPEED',
+  '기본 공격 속도 증가': 'BASIC_ATTACK_SPEED',
+  '기본 공격 추가타': 'BASIC_ADDITIONAL_HIT',
+  '기본 공격 추가타 확률': 'BASIC_ADDITIONAL_HIT',
+  '기본 공격 추가타 확률 증가': 'BASIC_ADDITIONAL_HIT',
+  
+  // 차지 스킬 한정 효과
+  '차지 스킬 피해': 'CHARGE_SKILL_DAMAGE',
+  '차지 스킬 피해 증가': 'CHARGE_SKILL_DAMAGE'
 });
 
 /**
@@ -260,21 +331,41 @@ const DEMERIT_NAME_MAP = Object.freeze({
 // ============================================================================
 
 /**
- * 효과명으로 가중치 조회
+ * 효과명으로 가중치 조회 (가장 긴 매칭 우선)
  * 
  * @param {string} effectName - 효과명
- * @returns {number} 가중치 (0~1)
+ * @returns {number} 가중치 (0~1.5)
  * 
  * @example
  * const weight = getEffectWeight('공격력 증가');
  * // 1.0
  */
 function getEffectWeight(effectName) {
+  // 직접 매핑 확인 (정확히 일치)
   const key = EFFECT_NAME_MAP[effectName];
   if (key && EFFECT_WEIGHTS[key] !== undefined) {
     return EFFECT_WEIGHTS[key];
   }
-  return 0; // 매핑되지 않은 효과는 0
+  
+  // 부분 매칭 시도 (가장 긴 매칭 우선)
+  let bestMatch = null;
+  let bestLength = 0;
+  
+  for (const name in EFFECT_NAME_MAP) {
+    if (effectName.indexOf(name) !== -1 && name.length > bestLength) {
+      bestMatch = name;
+      bestLength = name.length;
+    }
+  }
+  
+  if (bestMatch) {
+    const mappedKey = EFFECT_NAME_MAP[bestMatch];
+    if (EFFECT_WEIGHTS[mappedKey] !== undefined) {
+      return EFFECT_WEIGHTS[mappedKey];
+    }
+  }
+  
+  return 0.5; // 기본값 (매핑되지 않은 효과)
 }
 
 /**

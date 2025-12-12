@@ -6,7 +6,7 @@
  * @description 다크 테마 기반 반응형 스타일링
  * @author      Dalkong Project
  * @created     2025-12-10
- * @modified    2025-12-10
+ * @modified    2025-12-12
  * @version     1.0.0
  * 
  * @structure
@@ -200,23 +200,173 @@ img {
 }
 
 /* ============================================
-   4. 헤더 스타일
+   4. 헤더 스타일 @updated 2025-12-11 전역 캐릭터 선택 추가
    ============================================ */
 .header {
-    text-align: center;
-    padding: var(--spacing-xl) var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-md);
     background: linear-gradient(180deg, var(--color-bg-secondary) 0%, transparent 100%);
     border-bottom: 1px solid var(--color-border);
 }
 
+.header__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: var(--spacing-md);
+}
+
 .header__title {
-    font-size: var(--font-size-3xl);
+    font-size: var(--font-size-2xl);
     font-weight: 700;
-    margin-bottom: var(--spacing-sm);
     background: linear-gradient(135deg, var(--color-accent-primary), var(--color-accent-purple));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+}
+
+.header__subtitle {
+    text-align: center;
+    margin-top: var(--spacing-sm);
+}
+
+/* 전역 캐릭터 선택 @added 2025-12-11 */
+.global-character-select {
+    position: relative;
+}
+
+.global-character-select__current {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg-card);
+    border: 2px solid var(--color-accent-primary);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    min-width: 200px;
+}
+
+.global-character-select__current:hover {
+    background: var(--color-bg-hover);
+    border-color: var(--color-accent-gold);
+}
+
+.global-character-select__icon {
+    font-size: 24px;
+}
+
+.global-character-select__name {
+    flex: 1;
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.global-character-select__arrow {
+    color: var(--color-text-muted);
+    font-size: 12px;
+}
+
+.global-character-select__dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: var(--spacing-xs);
+    min-width: 280px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.global-character-select__list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.global-char-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    transition: background var(--transition-fast);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.global-char-item:hover {
+    background: var(--color-bg-hover);
+}
+
+.global-char-item--active {
+    background: rgba(79, 172, 254, 0.15);
+    border-left: 3px solid var(--color-accent-primary);
+}
+
+.global-char-item__icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--color-bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.global-char-item__info {
+    flex: 1;
+}
+
+.global-char-item__name {
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
+.global-char-item__class {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+}
+
+.global-char-item__stats {
+    font-size: var(--font-size-xs);
+    color: var(--color-accent-primary);
+}
+
+/* 캐릭터 삭제 버튼 @added 2025-12-12 */
+.global-char-item__delete {
+    padding: 4px 8px;
+    font-size: 14px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all var(--transition-fast);
+}
+
+.global-char-item__delete:hover {
+    opacity: 1;
+    background: rgba(248, 81, 73, 0.2);
+    border-color: var(--color-accent-danger);
+}
+
+.global-char-item:hover .global-char-item__delete {
+    opacity: 0.8;
+}
+
+.global-character-select__actions {
+    padding: var(--spacing-sm);
+    background: var(--color-bg-secondary);
+    border-top: 1px solid var(--color-border);
+}
+
+.global-character-select__actions .btn {
+    width: 100%;
 }
 
 .header__icon {
@@ -294,6 +444,10 @@ img {
     border-radius: var(--radius-lg);
     padding: var(--spacing-lg);
     margin-bottom: var(--spacing-lg);
+    /* @updated 2025-12-12 행 간 간격 추가 */
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
 }
 
 .filter-section__row {
@@ -336,6 +490,109 @@ img {
     color: var(--color-text-muted);
 }
 
+/* 필터 버튼 그룹 @updated 2025-12-12 각 행에서 가로 길게 배치 */
+.filter-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* 카테고리/등급 필터: 버튼 균등 배치 @added 2025-12-12 */
+#filter-category,
+#filter-grade {
+    flex-wrap: nowrap;
+}
+
+#filter-category .filter-btn,
+#filter-grade .filter-checkbox {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+}
+
+.filter-btn-group--wrap {
+    gap: 6px;
+}
+
+.filter-btn {
+    padding: 6px 12px;
+    font-size: var(--font-size-sm);
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.filter-btn:hover {
+    border-color: var(--color-accent-primary);
+    color: var(--color-accent-primary);
+}
+
+.filter-btn.active {
+    background: var(--color-accent-primary);
+    border-color: var(--color-accent-primary);
+    color: white;
+}
+
+/* 필터 체크박스 그룹 @updated 2025-12-12 가로 길게 배치 */
+.filter-checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* 등급 필터: 체크박스 균등 배치 @added 2025-12-12 */
+#filter-grade {
+    flex-wrap: nowrap;
+}
+
+#filter-grade .filter-checkbox {
+    flex: 1;
+    justify-content: center;
+}
+
+.filter-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.filter-checkbox:hover {
+    border-color: var(--color-accent-primary);
+}
+
+.filter-checkbox:has(input:checked) {
+    background: var(--color-accent-primary);
+    border-color: var(--color-accent-primary);
+}
+
+.filter-checkbox:has(input:checked) .filter-checkbox__label {
+    color: white;
+}
+
+.filter-checkbox input {
+    width: 14px;
+    height: 14px;
+    accent-color: white;
+}
+
+.filter-checkbox__label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.filter-group--class {
+    grid-column: 1 / -1;
+}
+
 .filter-summary {
     display: flex;
     align-items: center;
@@ -345,6 +602,23 @@ img {
     border-top: 1px solid var(--color-border);
     color: var(--color-text-secondary);
     font-size: var(--font-size-sm);
+}
+
+/* 보유 룬 힌트 (전역 캐릭터 사용) @updated 2025-12-11 */
+.owned-rune-hint {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: rgba(79, 172, 254, 0.1);
+    border: 1px solid var(--color-accent-primary);
+    border-radius: var(--radius-md);
+}
+
+.owned-rune-hint__text {
+    font-size: var(--font-size-sm);
+    color: var(--color-accent-primary);
 }
 
 #filter-result-count {
@@ -421,6 +695,29 @@ img {
    8. 룬 카드 그리드
    ============================================ */
 .rune-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+/* 룬 그룹 (카테고리별) @added 2025-12-11 */
+.rune-group {
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+}
+
+.rune-group__title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-accent-primary);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--color-accent-primary);
+}
+
+.rune-group__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: var(--spacing-md);
@@ -598,14 +895,24 @@ img {
     transition: all var(--transition-fast);
 }
 
-.rune-card__btn--favorite {
+/* 보유 룬 버튼 (라인 → 솔리드) @updated 2025-12-11 */
+.rune-card__btn--favorite,
+.rune-card__btn--owned {
     background: var(--color-bg-tertiary);
-    color: var(--color-text-secondary);
+    border: 2px solid var(--color-border);
+    color: var(--color-text-muted);
 }
 
 .rune-card__btn--favorite:hover,
-.rune-card__btn--favorite.active {
-    background: var(--color-accent-warning);
+.rune-card__btn--owned:hover {
+    border-color: var(--color-accent-primary);
+    color: var(--color-accent-primary);
+}
+
+.rune-card__btn--favorite.active,
+.rune-card__btn--owned.active {
+    background: var(--color-accent-primary);
+    border-color: var(--color-accent-primary);
     color: white;
 }
 
@@ -1382,6 +1689,548 @@ img {
 }
 
 /* ============================================
+   11-2. 내 보유 룬 섹션
+   @updated 2025-12-11 - 보유 룬 목록 중심 UI
+   ============================================ */
+.owned-section {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+/* 장착 현황 미니바 */
+.equipped-minibar {
+    background: linear-gradient(135deg, rgba(79, 172, 254, 0.1), rgba(79, 172, 254, 0.05));
+    border: 1px solid var(--color-accent-primary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.equipped-minibar__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.equipped-minibar__title {
+    font-weight: 700;
+    color: var(--color-accent-primary);
+}
+
+.equipped-minibar__stats {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.equipped-minibar__stats span {
+    font-weight: 700;
+    color: #4CAF50;
+}
+
+.equipped-minibar__slots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-sm);
+    min-height: 40px;
+}
+
+.equipped-mini-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 4px 8px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-xs);
+    cursor: pointer;
+}
+
+.equipped-mini-item:hover {
+    border-color: var(--color-accent-danger);
+    background: rgba(255, 82, 82, 0.1);
+}
+
+.equipped-mini-item__img {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+}
+
+.equipped-mini-item__name {
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.equipped-mini-item__remove {
+    color: var(--color-accent-danger);
+    font-size: 12px;
+}
+
+.equipped-minibar__actions {
+    display: flex;
+    gap: var(--spacing-sm);
+}
+
+/* 보유 룬 목록 */
+.owned-runes-list {
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+}
+
+.owned-runes-list__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--color-accent-primary);
+}
+
+.owned-runes-list__title {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-accent-primary);
+}
+
+.owned-runes-list__count {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+/* 카테고리별 보유 룬 */
+.owned-category {
+    margin-bottom: var(--spacing-lg);
+}
+
+.owned-category__title {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-sm);
+}
+
+.owned-category__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--spacing-sm);
+}
+
+/* 보유 룬 카드 */
+.owned-rune-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-sm);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.owned-rune-item:hover {
+    border-color: var(--color-accent-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.owned-rune-item--equipped {
+    border-color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.owned-rune-item--equipped::after {
+    content: '✓ 장착됨';
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 10px;
+    color: #4CAF50;
+    background: rgba(76, 175, 80, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.owned-rune-item__img {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-xs);
+}
+
+.owned-rune-item__name {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.owned-rune-item__score {
+    font-size: var(--font-size-xs);
+    color: var(--color-accent-primary);
+}
+
+.owned-rune-item__actions {
+    display: flex;
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-xs);
+}
+
+.owned-rune-item__btn {
+    padding: 2px 8px;
+    font-size: 11px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+.owned-rune-item__btn--equip {
+    background: var(--color-accent-primary);
+    color: white;
+}
+
+.owned-rune-item__btn--remove {
+    background: var(--color-accent-danger);
+    color: white;
+}
+
+/* 보유 룬 없을 때 */
+.owned-empty-hint {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--color-text-muted);
+}
+
+/* 캐릭터 미선택 */
+.owned-empty {
+    text-align: center;
+    padding: var(--spacing-xl) * 2;
+    color: var(--color-text-muted);
+}
+
+.owned-empty__icon {
+    font-size: 64px;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+/* 액션 버튼 */
+.owned-actions {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+/* 레거시 호환 (equipment- 클래스) */
+.equipment-section {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+}
+
+.equipment-character-select {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    flex-wrap: wrap;
+}
+
+.equipment-label {
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    min-width: 80px;
+}
+
+.equipment-select {
+    flex: 1;
+    min-width: 200px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-base);
+}
+
+.equipment-summary {
+    background: linear-gradient(135deg, var(--color-bg-secondary), var(--color-bg-card));
+    border: 1px solid var(--color-accent-primary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.equipment-summary__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.equipment-char-name {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-accent-primary);
+}
+
+.equipment-total-score {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: #4CAF50;
+}
+
+.equipment-summary__stats {
+    display: flex;
+    gap: var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.equipment-slots {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.equipment-category {
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+}
+
+.equipment-category__title {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-accent-primary);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.equipment-category__slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.equipment-slot {
+    background: var(--color-bg-primary);
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+
+.equipment-slot:hover {
+    border-color: var(--color-accent-primary);
+    background: var(--color-bg-hover);
+}
+
+.equipment-slot--filled {
+    border-style: solid;
+    border-color: var(--color-accent-secondary);
+}
+
+.equipment-slot__empty {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-sm);
+    text-align: center;
+}
+
+.equipment-slot__rune {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    width: 100%;
+}
+
+.equipment-slot__image {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+}
+
+.equipment-slot__name {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.equipment-slot__score {
+    font-size: var(--font-size-xs);
+    color: #4CAF50;
+}
+
+.equipment-slot__remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    background: var(--color-danger);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.equipment-slot:hover .equipment-slot__remove {
+    opacity: 1;
+}
+
+.equipment-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-lg);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.equipment-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-2xl);
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+.equipment-empty__icon {
+    font-size: 64px;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.5;
+}
+
+/* 보유 룬 섹션 @added 2025-12-11 */
+.equipment-owned {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+}
+
+.equipment-owned__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.equipment-owned__title {
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: var(--color-accent-primary);
+}
+
+.equipment-owned__count {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+}
+
+.equipment-owned__hint {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-md);
+}
+
+.equipment-owned__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: var(--spacing-sm);
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.owned-rune-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--spacing-sm);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.owned-rune-card:hover {
+    border-color: var(--color-accent-primary);
+    background: var(--color-bg-hover);
+}
+
+.owned-rune-card--equipped {
+    border-color: #4CAF50;
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.owned-rune-card__image {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-xs);
+}
+
+.owned-rune-card__name {
+    font-size: var(--font-size-xs);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+.owned-rune-card__category {
+    font-size: 10px;
+    color: var(--color-text-muted);
+}
+
+/* ============================================
    12. 모달 스타일
    ============================================ */
 .modal {
@@ -1843,8 +2692,24 @@ img {
         padding: var(--spacing-md);
     }
 
+    .header__top {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
     .header__title {
-        font-size: var(--font-size-xl);
+        font-size: var(--font-size-lg);
+    }
+
+    .global-character-select__current {
+        min-width: 100%;
+        justify-content: center;
+    }
+
+    .global-character-select__dropdown {
+        left: 0;
+        right: 0;
+        min-width: auto;
     }
 
     .tab-nav__btn {
@@ -1860,6 +2725,10 @@ img {
 
     .stat-group__grid--5col {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .rune-group__grid {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -1998,4 +2867,395 @@ img {
     background: rgba(251, 191, 36, 0.1);
     border-left: 3px solid var(--color-accent-warning);
     padding-left: var(--spacing-sm);
+}
+
+/* ============================================
+   14. 캐릭터 프로필 관리 스타일
+   @added 2025-12-11
+   ============================================ */
+
+/* 프로필 관리 섹션 */
+.profile-management-section {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-lg);
+}
+
+/* 프로필 컨트롤 영역 */
+.profile-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    align-items: flex-end;
+    margin-top: var(--spacing-md);
+}
+
+/* 프로필 선택 그룹 */
+.profile-select-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.profile-select-group__label {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.profile-select-group__select {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-md);
+    cursor: pointer;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.profile-select-group__select:hover {
+    border-color: var(--color-accent-primary);
+}
+
+.profile-select-group__select:focus {
+    outline: none;
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+}
+
+/* 프로필 버튼 그룹 */
+.profile-buttons {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-shrink: 0;
+}
+
+/* 프로필 폼 스타일 */
+.profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.profile-form__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.profile-form__label {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.profile-form__input,
+.profile-form__select {
+    width: 100%;
+    padding: var(--spacing-sm) var(--spacing-md);
+    background: var(--color-bg-tertiary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-size: var(--font-size-md);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.profile-form__input:hover,
+.profile-form__select:hover {
+    border-color: var(--color-border-light);
+}
+
+.profile-form__input:focus,
+.profile-form__select:focus {
+    outline: none;
+    border-color: var(--color-accent-primary);
+    box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+}
+
+.profile-form__input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.profile-form__hint {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-muted);
+    margin-top: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--color-accent-primary);
+}
+
+/* 모달 푸터 */
+.modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--spacing-sm);
+    padding-top: var(--spacing-md);
+    margin-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border);
+}
+
+/* 반응형 - 프로필 관리 */
+@media (max-width: 768px) {
+    .profile-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .profile-select-group {
+        min-width: 100%;
+    }
+
+    .profile-buttons {
+        justify-content: flex-end;
+    }
+}
+
+/* ============================================
+   14. 최적화 진행률 표시
+   @added 2025-12-11 - Branch & Bound 알고리즘 진행률 UI
+   ============================================ */
+
+.optimization-progress {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-accent-primary);
+    animation: fadeIn 0.3s ease-out;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+}
+
+.progress-title {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    font-size: 1.1rem;
+}
+
+.progress-percent {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: var(--color-accent-primary);
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 24px;
+    background: var(--color-bg-primary);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--spacing-md);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, 
+        var(--color-accent-primary) 0%, 
+        var(--color-accent-secondary) 50%, 
+        var(--color-accent-primary) 100%);
+    background-size: 200% 100%;
+    animation: progressShine 2s ease-in-out infinite;
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease-out;
+}
+
+@keyframes progressShine {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.progress-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
+.progress-stats span {
+    background: var(--color-bg-secondary);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--radius-sm);
+}
+
+#progress-best {
+    color: var(--color-grade-legendary);
+    font-weight: 600;
+}
+
+#progress-skipped {
+    color: var(--color-accent-secondary);
+}
+
+/* 중단 버튼 */
+.btn--danger {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    border: none;
+}
+
+.btn--danger:hover {
+    background: linear-gradient(135deg, #c82333, #bd2130);
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   15. 2단계 탐색 프로그레시브 UI
+   @added 2025-12-11 - 2단계 탐색 및 실시간 최적 조합 표시
+   ============================================ */
+
+/* 단계 표시 */
+.progress-phases {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+}
+
+.phase-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-tertiary);
+    color: var(--color-text-tertiary);
+    transition: all 0.3s ease;
+}
+
+.phase-item.phase-active {
+    background: var(--color-accent-primary);
+    color: white;
+    box-shadow: 0 2px 8px rgba(79, 172, 254, 0.4);
+}
+
+.phase-item.phase-complete {
+    background: #28a745;
+    color: white;
+}
+
+.phase-arrow {
+    color: var(--color-text-tertiary);
+    font-size: 1.2rem;
+}
+
+.phase-icon {
+    font-size: 1.1rem;
+}
+
+/* 현재 최적 조합 미리보기 */
+.current-best-preview {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-md);
+    background: linear-gradient(135deg, 
+        rgba(255, 215, 0, 0.1) 0%, 
+        rgba(255, 140, 0, 0.1) 100%);
+    border: 1px solid var(--color-grade-legendary);
+    border-radius: var(--radius-md);
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.3); }
+    50% { box-shadow: 0 0 15px rgba(255, 215, 0, 0.5); }
+}
+
+.preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.preview-title {
+    font-weight: 700;
+    color: var(--color-grade-legendary);
+    font-size: 1rem;
+}
+
+.preview-score {
+    font-weight: 700;
+    color: var(--color-grade-mythic);
+    font-size: 1.1rem;
+}
+
+.preview-runes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.preview-rune {
+    display: flex;
+    gap: var(--spacing-xs);
+    font-size: 0.85rem;
+    padding: var(--spacing-xs);
+    background: var(--color-bg-tertiary);
+    border-radius: var(--radius-xs);
+}
+
+.preview-label {
+    color: var(--color-text-tertiary);
+    min-width: 50px;
+}
+
+.preview-name {
+    color: var(--color-text-primary);
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 진행률 힌트 */
+.progress-hint {
+    margin-top: var(--spacing-md);
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--color-text-tertiary);
+}
+
+/* 반응형 - 진행률 */
+@media (max-width: 768px) {
+    .progress-stats {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .progress-stats span {
+        text-align: center;
+    }
+    
+    .progress-phases {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+    
+    .phase-arrow {
+        transform: rotate(90deg);
+    }
+    
+    .preview-runes {
+        grid-template-columns: 1fr;
+    }
 }

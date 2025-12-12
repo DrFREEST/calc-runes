@@ -9,7 +9,7 @@
  * @description 마비노기 모바일 게임의 룬 효율을 계산하고 최적의 룬 조합을 추천하는 도구
  * @author      Dalkong Project
  * @created     2025-12-10
- * @modified    2025-12-10
+ * @modified    2025-12-12
  * @version     1.0.0
  * 
  * @architecture
@@ -50,13 +50,33 @@
 
 <body>
     <!-- ============================================
-         1. 헤더 섹션
+         1. 헤더 섹션 @updated 2025-12-11 전역 캐릭터 선택 추가
          ============================================ -->
     <header class="header">
-        <h1 class="header__title">
-            <span class="header__icon">💎</span>
-            마비노기 모바일 룬 효율 계산기
-        </h1>
+        <div class="header__top">
+            <h1 class="header__title">
+                <span class="header__icon">💎</span>
+                마비노기 모바일 룬 효율 계산기
+            </h1>
+            <!-- 전역 캐릭터 선택 영역 -->
+            <div class="global-character-select" id="global-character-area">
+                <div class="global-character-select__current" id="global-char-display">
+                    <span class="global-character-select__icon">👤</span>
+                    <span class="global-character-select__name" id="global-char-name">캐릭터 선택</span>
+                    <span class="global-character-select__arrow">▼</span>
+                </div>
+                <div class="global-character-select__dropdown" id="global-char-dropdown" style="display:none;">
+                    <div class="global-character-select__list" id="global-char-list">
+                        <!-- 캐릭터 목록이 동적으로 생성됨 -->
+                    </div>
+                    <div class="global-character-select__actions">
+                        <button class="btn btn--primary btn--sm" id="btn-global-new-char">
+                            ➕ 새 캐릭터 추가
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <p class="header__subtitle">룬 조합을 시뮬레이션하고 최적의 세팅을 찾아보세요</p>
     </header>
 
@@ -80,9 +100,9 @@
                 <span class="tab-nav__icon">🎯</span>
                 추천 시스템
             </button>
-            <button class="tab-nav__btn" data-tab="favorites">
-                <span class="tab-nav__icon">⭐</span>
-                즐겨찾기
+            <button class="tab-nav__btn" data-tab="equipment">
+                <span class="tab-nav__icon">📦</span>
+                내 보유 룬
             </button>
         </nav>
 
@@ -90,83 +110,75 @@
              2.2 탭 컨텐츠: 룬 목록
              ============================================ -->
         <section class="tab-content tab-content--active" id="tab-rune-list">
-            <!-- 필터 영역 -->
+            <!-- 필터 영역 @updated 2025-12-12 각 필터를 별도 행으로 분리하여 가로 배치 -->
             <div class="filter-section">
+                <!-- 행 1: 검색 입력 -->
                 <div class="filter-section__row">
-                    <!-- 검색 입력 -->
-                    <div class="filter-group">
+                    <div class="filter-group" style="flex: 1;">
                         <label class="filter-group__label">🔍 룬 검색</label>
                         <input type="text" id="search-input" class="filter-group__input" placeholder="룬 이름을 입력하세요...">
                     </div>
+                </div>
 
-                    <!-- 카테고리 필터 -->
-                    <!-- @updated 2025-12-10 - 카테고리 코드 수정 (02: 방어구, 04: 엠블럼) -->
-                    <div class="filter-group">
+                <!-- 행 2: 카테고리 필터 (버튼 그룹) @updated 2025-12-12 별도 행 분리 -->
+                <div class="filter-section__row">
+                    <div class="filter-group" style="flex: 1;">
                         <label class="filter-group__label">📦 카테고리</label>
-                        <select id="filter-category" class="filter-group__select">
-                            <option value="all">전체</option>
-                            <option value="01">무기 룬</option>
-                            <option value="02">방어구 룬</option>
-                            <option value="03">장신구 룬</option>
-                            <option value="04">엠블럼 룬</option>
-                        </select>
+                        <div class="filter-btn-group" id="filter-category" style="flex: 1;">
+                            <button class="filter-btn active" data-value="all">전체</button>
+                            <button class="filter-btn" data-value="01">⚔️ 무기</button>
+                            <button class="filter-btn" data-value="04">🔥 엠블럼</button>
+                            <button class="filter-btn" data-value="02">🛡️ 방어구</button>
+                            <button class="filter-btn" data-value="03">💍 장신구</button>
+                        </div>
                     </div>
+                </div>
 
-                    <!-- 등급 필터 -->
-                    <!-- @updated 2025-12-10 - 새로운 등급 체계 (신화/전설/유니크) -->
-                    <!-- @updated 2025-12-10 - 전설(시즌0) 통합 -->
-                    <div class="filter-group">
+                <!-- 행 3: 등급 필터 (버튼 그룹) @updated 2025-12-12 별도 행 분리, S0/유니크 제거 -->
+                <div class="filter-section__row">
+                    <div class="filter-group" style="flex: 1;">
                         <label class="filter-group__label">⭐ 등급</label>
-                        <select id="filter-grade" class="filter-group__select">
-                            <option value="all">전체</option>
-                            <option value="08_8">신화</option>
-                            <option value="05_8">전설(시즌1)</option>
-                            <option value="legendary_s0">전설(시즌0)</option>
-                            <option value="06_5">유니크(시즌0)</option>
-                        </select>
+                        <div class="filter-checkbox-group" id="filter-grade" style="flex: 1;">
+                            <label class="filter-checkbox">
+                                <input type="checkbox" value="08_8" checked>
+                                <span class="filter-checkbox__label">신화</span>
+                            </label>
+                            <label class="filter-checkbox">
+                                <input type="checkbox" value="05_8" checked>
+                                <span class="filter-checkbox__label">전설(S1)</span>
+                            </label>
+                        </div>
                     </div>
+                </div>
 
-                    <!-- 클래스 필터 -->
-                    <div class="filter-group">
+                <!-- 행 4: 클래스 필터 (버튼 그룹) @updated 2025-12-12 별도 행 분리 -->
+                <div class="filter-section__row">
+                    <div class="filter-group filter-group--class" style="flex: 1;">
                         <label class="filter-group__label">🎭 클래스</label>
-                        <select id="filter-class" class="filter-group__select">
-                            <option value="all">전체</option>
-                            <optgroup label="전체 클래스">
-                                <option value="00">모든 클래스 사용 가능</option>
-                            </optgroup>
-                            <optgroup label="전사 계열">
-                                <option value="01">전사 (검과 방패)</option>
-                                <option value="02">검술사 (양손검)</option>
-                                <option value="03">대검전사 (대검)</option>
-                            </optgroup>
-                            <optgroup label="궁수 계열">
-                                <option value="04">궁수 (활)</option>
-                                <option value="05">석궁사수 (석궁)</option>
-                                <option value="06">장궁병 (장궁)</option>
-                            </optgroup>
-                            <optgroup label="힐러 계열">
-                                <option value="10">힐러 (힐링 완드)</option>
-                                <option value="11">사제 (힐링 스태프)</option>
-                                <option value="12">수도사 (쿼터 스태프)</option>
-                                <option value="19">암흑술사 (케인)</option>
-                            </optgroup>
-                            <optgroup label="마법사 계열">
-                                <option value="07">마법사 (완드)</option>
-                                <option value="08">화염술사 (파이어 오브)</option>
-                                <option value="09">빙결술사 (아이스 오브)</option>
-                                <option value="20">전격술사 (라이트닝 오브)</option>
-                            </optgroup>
-                            <optgroup label="도적 계열">
-                                <option value="16">도적 (단검)</option>
-                                <option value="18">듀얼블레이드 (듀얼 소드)</option>
-                                <option value="17">격투가 (너클)</option>
-                            </optgroup>
-                            <optgroup label="음유시인 계열">
-                                <option value="13">음유시인 (류트)</option>
-                                <option value="14">댄서 (부채)</option>
-                                <option value="15">악사 (하프)</option>
-                            </optgroup>
-                        </select>
+                        <div class="filter-btn-group filter-btn-group--wrap" id="filter-class" style="flex: 1;">
+                            <button class="filter-btn active" data-value="all">전체</button>
+                            <button class="filter-btn" data-value="00">공용</button>
+                            <button class="filter-btn" data-value="01">전사</button>
+                            <button class="filter-btn" data-value="02">검술사</button>
+                            <button class="filter-btn" data-value="03">대검전사</button>
+                            <button class="filter-btn" data-value="04">궁수</button>
+                            <button class="filter-btn" data-value="05">석궁사수</button>
+                            <button class="filter-btn" data-value="06">장궁병</button>
+                            <button class="filter-btn" data-value="07">마법사</button>
+                            <button class="filter-btn" data-value="08">화염술사</button>
+                            <button class="filter-btn" data-value="09">빙결술사</button>
+                            <button class="filter-btn" data-value="20">전격술사</button>
+                            <button class="filter-btn" data-value="10">힐러</button>
+                            <button class="filter-btn" data-value="11">사제</button>
+                            <button class="filter-btn" data-value="12">수도사</button>
+                            <button class="filter-btn" data-value="19">암흑술사</button>
+                            <button class="filter-btn" data-value="16">도적</button>
+                            <button class="filter-btn" data-value="18">듀얼블레이드</button>
+                            <button class="filter-btn" data-value="17">격투가</button>
+                            <button class="filter-btn" data-value="13">음유시인</button>
+                            <button class="filter-btn" data-value="14">댄서</button>
+                            <button class="filter-btn" data-value="15">악사</button>
+                        </div>
                     </div>
                 </div>
 
@@ -174,6 +186,13 @@
                 <div class="filter-summary">
                     <span id="filter-result-count">0</span>개의 룬이 검색되었습니다.
                     <button id="btn-reset-filter" class="btn btn--small btn--ghost">필터 초기화</button>
+                </div>
+
+                <!-- 보유 룬 안내 (전역 캐릭터 사용) @updated 2025-12-11 -->
+                <div class="owned-rune-hint" id="owned-rune-hint" style="display:none;">
+                    <span class="owned-rune-hint__text">
+                        📦 버튼을 눌러 선택된 캐릭터의 보유 룬에 추가하세요
+                    </span>
                 </div>
             </div>
 
@@ -235,36 +254,7 @@
                         </div>
                     </div>
 
-                    <!-- 장신구 룬 슬롯 -->
-                    <div class="slot-group">
-                        <h3 class="slot-group__title">
-                            <span class="slot-group__icon">💍</span>
-                            장신구 룬 (3개)
-                        </h3>
-                        <div class="slot-group__slots">
-                            <div class="rune-slot" data-slot="accessory-1" data-category="03">
-                                <div class="rune-slot__empty">
-                                    <span class="rune-slot__plus">+</span>
-                                    <span class="rune-slot__label">장신구 1</span>
-                                </div>
-                            </div>
-                            <div class="rune-slot" data-slot="accessory-2" data-category="03">
-                                <div class="rune-slot__empty">
-                                    <span class="rune-slot__plus">+</span>
-                                    <span class="rune-slot__label">장신구 2</span>
-                                </div>
-                            </div>
-                            <div class="rune-slot" data-slot="accessory-3" data-category="03">
-                                <div class="rune-slot__empty">
-                                    <span class="rune-slot__plus">+</span>
-                                    <span class="rune-slot__label">장신구 3</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 방어구 룬 슬롯 -->
-                    <!-- @updated 2025-12-10 - 카테고리 코드 수정 (02: 방어구) -->
+                    <!-- 방어구 룬 슬롯 @updated 2025-12-11 순서 변경 -->
                     <div class="slot-group">
                         <h3 class="slot-group__title">
                             <span class="slot-group__icon">🛡️</span>
@@ -299,6 +289,34 @@
                                 <div class="rune-slot__empty">
                                     <span class="rune-slot__plus">+</span>
                                     <span class="rune-slot__label">방어구 5</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 장신구 룬 슬롯 -->
+                    <div class="slot-group">
+                        <h3 class="slot-group__title">
+                            <span class="slot-group__icon">💍</span>
+                            장신구 룬 (3개)
+                        </h3>
+                        <div class="slot-group__slots">
+                            <div class="rune-slot" data-slot="accessory-1" data-category="03">
+                                <div class="rune-slot__empty">
+                                    <span class="rune-slot__plus">+</span>
+                                    <span class="rune-slot__label">장신구 1</span>
+                                </div>
+                            </div>
+                            <div class="rune-slot" data-slot="accessory-2" data-category="03">
+                                <div class="rune-slot__empty">
+                                    <span class="rune-slot__plus">+</span>
+                                    <span class="rune-slot__label">장신구 2</span>
+                                </div>
+                            </div>
+                            <div class="rune-slot" data-slot="accessory-3" data-category="03">
+                                <div class="rune-slot__empty">
+                                    <span class="rune-slot__plus">+</span>
+                                    <span class="rune-slot__label">장신구 3</span>
                                 </div>
                             </div>
                         </div>
@@ -381,7 +399,7 @@
              ============================================ -->
         <section class="tab-content" id="tab-recommend">
             <div class="recommend-container">
-                <!-- 캐릭터 스텟 입력 -->
+                <!-- 캐릭터 스텟 입력 @updated 2025-12-12 프로필 관리 섹션 제거 -->
                 <div class="stat-input-section">
                     <h2 class="section-title">📊 캐릭터 스텟 입력</h2>
                     <p class="section-desc">현재 캐릭터의 스텟을 입력하면 최적의 룬을 추천해드립니다</p>
@@ -561,14 +579,82 @@
                         </div>
                     </div>
 
-                    <!-- 추천 버튼 -->
+                    <!-- 추천 버튼 @updated 2025-12-12 스텟 저장 버튼 추가 -->
                     <div class="recommend-actions">
+                        <button id="btn-save-profile" class="btn btn--secondary" title="현재 스텟을 선택된 캐릭터에 저장">
+                            💾 스텟 저장
+                        </button>
                         <button id="btn-recommend" class="btn btn--primary btn--large">
                             🎯 최적 룬 조합 추천받기
+                        </button>
+                        <button id="btn-stop-recommend" class="btn btn--danger" style="display: none;">
+                            ⏹️ 탐색 중단
                         </button>
                         <button id="btn-reset-stats" class="btn btn--ghost">
                             🔄 스텟 초기화
                         </button>
+                    </div>
+
+                    <!-- 진행률 표시 (2단계 탐색 + 프로그레시브 UI) -->
+                    <!-- @updated 2025-12-11 - 2단계 탐색 및 실시간 최적 조합 표시 -->
+                    <div class="optimization-progress" id="optimization-progress" style="display: none;">
+                        <!-- 단계 표시 -->
+                        <div class="progress-phases" id="progress-phases">
+                            <div class="phase-item phase-active" id="phase-1-status">
+                                <span class="phase-icon">⏳</span>
+                                <span class="phase-text">1단계: 빠른 탐색</span>
+                            </div>
+                            <div class="phase-arrow">→</div>
+                            <div class="phase-item" id="phase-2-status">
+                                <span class="phase-icon">⏸️</span>
+                                <span class="phase-text">2단계: 정밀 확장</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 진행률 바 -->
+                        <div class="progress-header">
+                            <span class="progress-title" id="progress-title">🔍 1단계: 빠른 탐색 중...</span>
+                            <span class="progress-percent" id="progress-percent">0%</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
+                        </div>
+                        <div class="progress-stats">
+                            <span id="progress-processed">계산: 0</span>
+                            <span id="progress-total">/ 0</span>
+                            <span id="progress-remaining">예상: --</span>
+                        </div>
+                        
+                        <!-- 현재 최적 조합 미리보기 -->
+                        <div class="current-best-preview" id="current-best-preview" style="display: none;">
+                            <div class="preview-header">
+                                <span class="preview-title">🏆 현재 최적 조합</span>
+                                <span class="preview-score" id="preview-score">점수: 0점</span>
+                            </div>
+                            <div class="preview-runes" id="preview-runes">
+                                <div class="preview-rune">
+                                    <span class="preview-label">무기:</span>
+                                    <span class="preview-name" id="preview-weapon">-</span>
+                                </div>
+                                <div class="preview-rune">
+                                    <span class="preview-label">방어구:</span>
+                                    <span class="preview-name" id="preview-armors">-</span>
+                                </div>
+                                <div class="preview-rune">
+                                    <span class="preview-label">엠블럼:</span>
+                                    <span class="preview-name" id="preview-emblem">-</span>
+                                </div>
+                                <div class="preview-rune">
+                                    <span class="preview-label">장신구:</span>
+                                    <span class="preview-name" id="preview-accessories">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 중단 안내 -->
+                        <div class="progress-hint">
+                            <span>💡 1단계 완료 후에도 결과를 사용할 수 있습니다</span>
+                        </div>
                     </div>
                 </div>
 
@@ -596,18 +682,81 @@
         </section>
 
         <!-- ============================================
-             2.5 탭 컨텐츠: 즐겨찾기
+             2.5 탭 컨텐츠: 내 보유 룬
+             @updated 2025-12-11 - 보유 룬 목록 중심 UI로 재구성
              ============================================ -->
-        <section class="tab-content" id="tab-favorites">
-            <div class="favorites-section">
-                <h2 class="section-title">⭐ 즐겨찾기한 룬</h2>
-                <p class="section-desc">자주 사용하는 룬을 저장하고 빠르게 접근하세요</p>
+        <section class="tab-content" id="tab-equipment">
+            <div class="owned-section">
+                <h2 class="section-title">📦 내 보유 룬</h2>
+                <p class="section-desc">룬 목록 탭에서 ⭐를 눌러 보유 룬에 추가하세요</p>
 
-                <div class="favorites-grid" id="favorites-grid">
-                    <div class="favorites-empty" id="favorites-empty">
-                        <div class="favorites-empty__icon">⭐</div>
-                        <p>즐겨찾기한 룬이 없습니다<br>룬 목록에서 ⭐ 버튼을 클릭하여 추가하세요</p>
+                <!-- 메인 컨텐츠 영역 -->
+                <div class="owned-main" id="owned-main" style="display:none;">
+                    
+                    <!-- 상단: 장착 현황 미니바 -->
+                    <div class="equipped-minibar" id="equipped-minibar">
+                        <div class="equipped-minibar__header">
+                            <span class="equipped-minibar__title">🎯 현재 장착</span>
+                            <span class="equipped-minibar__stats">
+                                <span id="equipped-count">0</span>/10 슬롯 | 
+                                효율 <span id="equipped-score">0</span>점
+                            </span>
+                        </div>
+                        <div class="equipped-minibar__slots" id="equipped-minibar-slots">
+                            <!-- 장착된 룬 미니 아이콘들 (동적 생성) -->
+                        </div>
+                        <div class="equipped-minibar__actions">
+                            <button id="btn-auto-equip" class="btn btn--sm btn--secondary">🎯 자동 장착</button>
+                            <button id="btn-clear-equip" class="btn btn--sm btn--danger">🗑️ 전체 해제</button>
+                        </div>
                     </div>
+
+                    <!-- 보유 룬 전체 목록 (카테고리별) -->
+                    <div class="owned-runes-list" id="owned-runes-list">
+                        <div class="owned-runes-list__header">
+                            <h3 class="owned-runes-list__title">📦 보유 룬 목록</h3>
+                            <span class="owned-runes-list__count">
+                                총 <span id="owned-total-count">0</span>개 보유
+                            </span>
+                        </div>
+                        
+                        <!-- 카테고리별 보유 룬 그리드 -->
+                        <div class="owned-category" id="owned-category-01">
+                            <h4 class="owned-category__title">⚔️ 무기 룬 (<span class="owned-cat-count">0</span>개)</h4>
+                            <div class="owned-category__grid" data-category="01"></div>
+                        </div>
+                        <div class="owned-category" id="owned-category-04">
+                            <h4 class="owned-category__title">🔥 엠블럼 룬 (<span class="owned-cat-count">0</span>개)</h4>
+                            <div class="owned-category__grid" data-category="04"></div>
+                        </div>
+                        <div class="owned-category" id="owned-category-02">
+                            <h4 class="owned-category__title">🛡️ 방어구 룬 (<span class="owned-cat-count">0</span>개)</h4>
+                            <div class="owned-category__grid" data-category="02"></div>
+                        </div>
+                        <div class="owned-category" id="owned-category-03">
+                            <h4 class="owned-category__title">💍 장신구 룬 (<span class="owned-cat-count">0</span>개)</h4>
+                            <div class="owned-category__grid" data-category="03"></div>
+                        </div>
+
+                        <!-- 보유 룬 없을 때 안내 -->
+                        <div class="owned-empty-hint" id="owned-empty-hint" style="display:none;">
+                            <p>📜 룬 목록 탭에서 ⭐ 버튼을 눌러 보유 룬을 추가하세요</p>
+                        </div>
+                    </div>
+
+                    <!-- 액션 버튼 -->
+                    <div class="owned-actions">
+                        <button id="btn-equipment-save" class="btn btn--primary">💾 저장</button>
+                    </div>
+                </div>
+
+                <!-- 캐릭터 미선택 안내 -->
+                <div class="owned-empty" id="owned-empty">
+                    <div class="owned-empty__icon">📦</div>
+                    <p>상단에서 캐릭터를 선택하세요</p>
+                    <p style="font-size:12px;color:#888;margin-top:8px;">
+                        캐릭터가 없다면 상단 캐릭서 선택 메뉴에서 먼저 등록해주세요.
+                    </p>
                 </div>
             </div>
         </section>
@@ -686,7 +835,113 @@
     </div>
 
     <!-- ============================================
-         6. 토스트 알림
+         6. 캐릭터 프로필 모달
+         @added 2025-12-11
+         ============================================ -->
+    <div class="modal" id="profile-modal">
+        <div class="modal__overlay"></div>
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3 class="modal__title" id="profile-modal-title">새 캐릭터 등록</h3>
+                <button class="modal__close" id="profile-modal-close">&times;</button>
+            </div>
+            <div class="modal__body">
+                <div class="profile-form">
+                    <!-- 캐릭터 이름 -->
+                    <div class="profile-form__group">
+                        <label class="profile-form__label">캐릭터 이름 *</label>
+                        <input type="text" id="profile-name-input" class="profile-form__input" 
+                               placeholder="캐릭터 이름을 입력하세요" maxlength="20">
+                    </div>
+                    
+                    <!-- 클래스 선택 -->
+                    <div class="profile-form__group">
+                        <label class="profile-form__label">클래스 *</label>
+                        <select id="profile-class-select" class="profile-form__select">
+                            <option value="">-- 클래스 선택 --</option>
+                            <optgroup label="전사 계열">
+                                <option value="01">전사 (검과 방패)</option>
+                                <option value="02">검술사 (양손검)</option>
+                                <option value="03">대검전사 (대검)</option>
+                            </optgroup>
+                            <optgroup label="궁수 계열">
+                                <option value="04">궁수 (활)</option>
+                                <option value="05">석궁사수 (석궁)</option>
+                                <option value="06">장궁병 (장궁)</option>
+                            </optgroup>
+                            <optgroup label="힐러 계열">
+                                <option value="10">힐러 (힐링 완드)</option>
+                                <option value="11">사제 (힐링 스태프)</option>
+                                <option value="12">수도사 (쿼터 스태프)</option>
+                                <option value="19">암흑술사 (케인)</option>
+                            </optgroup>
+                            <optgroup label="마법사 계열">
+                                <option value="07">마법사 (완드)</option>
+                                <option value="08">화염술사 (파이어 오브)</option>
+                                <option value="09">빙결술사 (아이스 오브)</option>
+                                <option value="20">전격술사 (라이트닝 오브)</option>
+                            </optgroup>
+                            <optgroup label="도적 계열">
+                                <option value="16">도적 (단검)</option>
+                                <option value="18">듀얼블레이드 (듀얼 소드)</option>
+                                <option value="17">격투가 (너클)</option>
+                            </optgroup>
+                            <optgroup label="음유시인 계열">
+                                <option value="13">음유시인 (류트)</option>
+                                <option value="14">댄서 (부채)</option>
+                                <option value="15">악사 (하프)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    
+                    <!-- 메모 (선택) -->
+                    <div class="profile-form__group">
+                        <label class="profile-form__label">메모 (선택)</label>
+                        <input type="text" id="profile-memo-input" class="profile-form__input" 
+                               placeholder="예: PVP용, 레이드용 등" maxlength="50">
+                    </div>
+                    
+                    <!-- 안내 문구 -->
+                    <p class="profile-form__hint">
+                        💡 스텟은 등록 후 추천 탭에서 입력하고 저장할 수 있습니다.
+                    </p>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button id="btn-profile-cancel" class="btn btn--ghost">취소</button>
+                <button id="btn-profile-confirm" class="btn btn--primary">등록하기</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         7. 캐릭터 삭제 컨펌 모달
+         @added 2025-12-12
+         ============================================ -->
+    <div class="modal" id="confirm-delete-modal">
+        <div class="modal__overlay"></div>
+        <div class="modal__content" style="max-width: 400px;">
+            <div class="modal__header">
+                <h3 class="modal__title">⚠️ 캐릭터 삭제</h3>
+                <button class="modal__close" id="confirm-delete-modal-close">&times;</button>
+            </div>
+            <div class="modal__body" style="text-align: center; padding: 24px;">
+                <p style="font-size: 18px; margin-bottom: 16px;">
+                    "<strong id="confirm-delete-char-name"></strong>" 캐릭터를 삭제하시겠습니까?
+                </p>
+                <p style="color: #f85149; font-size: 14px;">
+                    ⚠️ 저장된 스텟, 보유 룬, 장착 정보가 모두 삭제됩니다.
+                </p>
+            </div>
+            <div class="modal__footer" style="justify-content: center; gap: 12px;">
+                <button id="btn-cancel-delete" class="btn btn--secondary">취소</button>
+                <button id="btn-confirm-delete" class="btn btn--danger">🗑️ 삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         8. 토스트 알림
          ============================================ -->
     <div class="toast-container" id="toast-container">
         <!-- 토스트 알림이 동적으로 생성됨 -->
@@ -700,17 +955,23 @@
         <p class="footer__version">v1.0.0 | 마지막 업데이트: 2025-12-10</p>
     </footer>
 
-    <!-- JavaScript 모듈 로드 (의존성 순서대로) -->
+    <!-- 
+      JavaScript 모듈 로드 (defer 방식)
+      - defer: HTML 파싱과 병렬 다운로드, 파싱 완료 후 순서대로 실행
+      - 의존성 순서 보장됨
+    -->
     <!-- 1. 상수 모듈 -->
-    <script src="constants/class-stats.js"></script>
-    <script src="constants/effect-weights.js"></script>
+    <script defer src="constants/game-constants.js"></script>
+    <script defer src="constants/class-stats.js"></script>
+    <script defer src="constants/effect-weights.js"></script>
     
     <!-- 2. 공식 모듈 -->
-    <script src="formulas/stat-formulas.js"></script>
-    <script src="formulas/efficiency-calculator.js"></script>
+    <script defer src="formulas/shared-formulas.js"></script>
+    <script defer src="formulas/stat-formulas.js"></script>
+    <script defer src="formulas/efficiency-calculator.js"></script>
     
     <!-- 3. 메인 계산기 -->
-    <script src="rune-calculator.js"></script>
+    <script defer src="rune-calculator.js"></script>
 </body>
 
 </html>

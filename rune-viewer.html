@@ -278,7 +278,33 @@
             font-size: 11px;
             color: #F472B6;
         }
+        
+        /* 효율 점수 스타일 */
+        .score-base {
+            font-size: 16px;
+            font-weight: bold;
+            color: #60A5FA;
+        }
+        
+        .score-max {
+            font-size: 16px;
+            font-weight: bold;
+            color: #34D399;
+        }
+        
+        .score-cell {
+            text-align: center;
+            min-width: 80px;
+        }
+        
+        .score-diff {
+            font-size: 11px;
+            color: #A78BFA;
+        }
     </style>
+    
+    <!-- 공유 공식 모듈 로드 (캐시 버스팅) -->
+    <script defer src="formulas/shared-formulas.js?v=20251211b"></script>
 </head>
 <body>
     <h1>🔮 룬 파싱 데이터 검수 뷰어</h1>
@@ -342,6 +368,8 @@
                 <th data-sort="name">이름</th>
                 <th data-sort="categoryName">카테고리</th>
                 <th data-sort="gradeName">등급</th>
+                <th data-sort="baseScore">기본점수</th>
+                <th data-sort="maxScore">최대점수</th>
                 <th>파싱된 효과</th>
                 <th>결함</th>
                 <th>강화 효과</th>
@@ -360,6 +388,411 @@
         let runesData = [];
         let sortColumn = 'id';
         let sortDirection = 'asc';
+        
+        // ============================================================================
+        // 효율 점수 계산 함수
+        // ============================================================================
+        
+        /**
+         * 조건부 효과 가동률 계산
+         * @param {Object} effect - 효과 객체
+         * @returns {number} 가동률 배율 (0~1)
+         */
+        function getConditionalMultiplier(effect) {
+            const trigger = effect.trigger || '';
+            const note = effect.note || '';
+            const effectType = effect.type || 'PERMANENT';
+            const combined = (trigger + ' ' + note).toLowerCase();
+            
+            // 적 처치 조건 → 보스전(어비스/레이드)에서 가동률 매우 낮음 (5%)
+            // @added 2025-12-11 - 종언+ 등 적 처치 중첩 룬 밸런스 조정
+            if (combined.indexOf('적 처치') !== -1 || combined.indexOf('처치 시') !== -1 || combined.indexOf('처치시') !== -1) {
+                return 0.05;
+            }
+            // 무방비/브레이크 조건 → 가동률 매우 낮음 (10%)
+            if (combined.indexOf('무방비') !== -1 || combined.indexOf('브레이크') !== -1) {
+                return 0.1;
+            }
+            // 도발 조건 → 도발 스킬 없는 클래스 많음 (15%)
+            if (combined.indexOf('도발') !== -1) {
+                return 0.15;
+            }
+            // 궁극기 조건 → 전투당 1~2회, 가동률 매우 낮음 (15%)
+            if (combined.indexOf('궁극기') !== -1) {
+                return 0.15;
+            }
+            // 기본 공격 조건 → 스킬 위주 게임, 낮음 (20%)
+            if (combined.indexOf('기본 공격') !== -1) {
+                return 0.2;
+            }
+            // 지속 피해(DoT) 조건 → DoT 시너지 필요 (50%)
+            if (combined.indexOf('지속 피해') !== -1) {
+                return 0.5;
+            }
+            // 체력 조건 (적 체력 50% 이하 등) → 절반 정도 (50%)
+            if (combined.indexOf('체력') !== -1 && combined.indexOf('이하') !== -1) {
+                return 0.5;
+            }
+            // 전투 시작 조건 → 초반에만 (30%)
+            if (combined.indexOf('전투 시작') !== -1) {
+                return 0.3;
+            }
+            // 일반 조건
+            return 1.0;
+        }
+        
+        /**
+         * 기본 효율 점수 계산 (강화 포함, 시너지 없음)
+         * @param {Object} rune - 룬 데이터
+         * @returns {number} 기본 효율 점수
+         */
+        /**
+         * DPS 무관 효과 체크 (방어력, 회복, 생존 등)
+         */
+        function isNonDpsEffect(effectName) {
+            // "쿨타임 회복 속도"는 DPS 관련이므로 제외
+            if (effectName.indexOf('쿨타임') !== -1) {
+                return false;
+            }
+            // "치유량 증가"는 힐러 전용, DPS 무관
+            if (effectName.indexOf('치유량') !== -1) {
+                return true;
+            }
+            const nonDpsKeywords = ['방어력', 'HP 회복', '체력 회복', '받는 피해 감소', '체력', '보호막', 'HP'];
+            return nonDpsKeywords.some(kw => effectName.indexOf(kw) !== -1);
+        }
+        
+        function calculateBaseScore(rune) {
+            let score = 0;
+            const Weights = window.SharedEffectWeights;
+            
+            if (!Weights) {
+                console.warn('SharedEffectWeights not loaded');
+                return 0;
+            }
+            
+            // 기본 점수 = PERMANENT 효과만 계산 (조건부 효과 제외)
+            if (rune.effects && rune.effects.length > 0) {
+                rune.effects.forEach(effect => {
+                    const effectName = effect.name || '';
+                    const value = effect.value || 0;
+                    const effectType = effect.type || 'PERMANENT';
+                    
+                    // DPS 무관 효과는 0점
+                    if (isNonDpsEffect(effectName)) {
+                        return;
+                    }
+                    
+                    // 효과 가중치
+                    const effectWeight = Weights.getEffectWeight(effectName);
+                    
+                    // 디버깅: 가중치 0인 효과 확인
+                    if (effectWeight === 0 || effectWeight === 0.5) {
+                        console.log(`[WEIGHT-CHECK] ${rune.name}: "${effectName}" → weight=${effectWeight}`);
+                    }
+                    
+                    // 기본 점수: PERMANENT만 100% 반영
+                    // 다른 유형은 조건부이므로 가동률 적용
+                    let typeWeight = 1.0;
+                    
+                    if (effectType === 'PERMANENT') {
+                        typeWeight = 1.0; // 상시 효과
+                    } else if (effectType === 'STATE') {
+                        // 상태 조건 (적 체력 50% 이하 등) → 가동률 적용
+                        const condMult = getConditionalMultiplier(effect);
+                        typeWeight = 0.7 * condMult;
+                    } else if (effectType === 'TRIGGER') {
+                        // 트리거 조건 → 가동률 적용
+                        const condMult = getConditionalMultiplier(effect);
+                        typeWeight = 0.8 * condMult;
+                    } else if (effectType === 'STACKING') {
+                        // 중첩 효과 → 최대 중첩 기준, 가동률 적용
+                        const condMult = getConditionalMultiplier(effect);
+                        typeWeight = 0.7 * condMult;
+                    } else if (effectType === 'DECAY') {
+                        // 감소 효과 → 평균값 (초반 높고 점점 감소)
+                        typeWeight = 0.4; // 평균 약 40%
+                    } else if (effectType === 'DURATION' && effect.duration && effect.cooldown) {
+                        // 지속 효과 → 업타임 계산
+                        typeWeight = effect.duration / (effect.duration + effect.cooldown);
+                    } else if (effectType === 'AWAKENING') {
+                        typeWeight = 0.22;
+                    } else {
+                        typeWeight = 0.5; // 기본값
+                    }
+                    
+                    // 디버깅: 옛 마법사 룬 전체 효과 확인 (부분 일치)
+                    if (rune.name && rune.name.indexOf('옛') !== -1) {
+                        console.log(`[옛마법사] name="${rune.name}" effect="${effectName}" = ${value}% × weight=${effectWeight} × typeWeight=${typeWeight} → ${value * effectWeight * typeWeight}`);
+                    }
+                    // 쿨타임 관련 효과 디버깅
+                    if (effectName && effectName.indexOf('쿨타임') !== -1) {
+                        console.log(`[쿨타임] ${rune.name}: "${effectName}" = ${value}% × weight=${effectWeight}`);
+                    }
+                    
+                    score += value * effectWeight * typeWeight;
+                });
+            }
+            
+            // 결함 점수 차감
+            if (rune.demerits && rune.demerits.length > 0) {
+                rune.demerits.forEach(demerit => {
+                    const demeritName = demerit.name || '';
+                    const value = demerit.value || 0;
+                    const demeritWeight = Weights.getDemeritWeight(demeritName);
+                    score -= value * demeritWeight;
+                });
+            }
+            
+            // 각성 효과는 기본 점수에서 제외 (최대 점수에서만 반영)
+            // 강화 효과도 기본 점수에서 제외
+            
+            return Math.round(score * 10) / 10;
+        }
+        
+        /**
+         * 최대 효율 시 조건부 가동률 (조건 충족 가정)
+         * @param {Object} effect - 효과 객체
+         * @returns {number} 가동률 배율 (0~1)
+         */
+        function getMaxConditionalMultiplier(effect) {
+            const trigger = effect.trigger || '';
+            const note = effect.note || '';
+            const combined = (trigger + ' ' + note).toLowerCase();
+            
+            // 무방비/브레이크 조건 → 최대 시에도 가동률 낮음 (25%)
+            if (combined.indexOf('무방비') !== -1 || combined.indexOf('브레이크') !== -1) {
+                return 0.25;
+            }
+            // 도발 조건 → 도발 스킬 있는 클래스 한정 (30%)
+            if (combined.indexOf('도발') !== -1) {
+                return 0.3;
+            }
+            // 궁극기 조건 → 최대 시에도 낮음 (30%)
+            if (combined.indexOf('궁극기') !== -1) {
+                return 0.3;
+            }
+            // 기본 공격 조건 → 최대 시에도 낮음 (35%)
+            if (combined.indexOf('기본 공격') !== -1) {
+                return 0.35;
+            }
+            // 지속 피해(DoT) 조건 → 시너지 있으면 높음 (90%)
+            if (combined.indexOf('지속 피해') !== -1) {
+                return 0.9;
+            }
+            // 체력 조건 (적 체력 50% 이하 등) → 절반 이상 (70%)
+            if (combined.indexOf('체력') !== -1 && combined.indexOf('이하') !== -1) {
+                return 0.7;
+            }
+            // 전투 시작/종료 조건 → 최대 시에도 제한 (50%)
+            if (combined.indexOf('전투 시작') !== -1 || combined.indexOf('전투 종료') !== -1) {
+                return 0.5;
+            }
+            return 1.0;
+        }
+        
+        /**
+         * 최대 효율 점수 계산 (모든 시너지/스텟 최대)
+         * - 결함 무효화 (영원 룬 시너지)
+         * - 클래스/밸런스 보너스 적용
+         * - 강화 효과에도 시너지 배율 적용
+         * - 조건부 효과는 최대 시에도 가동률 제한
+         * @param {Object} rune - 룬 데이터
+         * @returns {number} 최대 효율 점수
+         */
+        function calculateMaxScore(rune) {
+            let score = 0;
+            const Weights = window.SharedEffectWeights;
+            const Formulas = window.SharedFormulas;
+            
+            if (!Weights || !Formulas) {
+                console.warn('SharedEffectWeights or SharedFormulas not loaded');
+                return 0;
+            }
+            
+            // 최대 점수 = 모든 조건 충족 시 (결함 무효화, 시너지 최대)
+            // 하지만 특수 조건(도발, 브레이크 등)은 여전히 가동률 제한
+            
+            // 효과 점수 계산
+            if (rune.effects && rune.effects.length > 0) {
+                rune.effects.forEach(effect => {
+                    const effectName = effect.name || '';
+                    let value = effect.value || 0;
+                    const effectType = effect.type || 'PERMANENT';
+                    
+                    // DPS 무관 효과는 0점
+                    if (isNonDpsEffect(effectName)) {
+                        return;
+                    }
+                    
+                    // 중첩 효과는 최대 중첩으로
+                    if (effect.maxStacks && effect.stackValue) {
+                        value = effect.stackValue * effect.maxStacks;
+                    }
+                    
+                    // 효과 가중치
+                    const effectWeight = Weights.getEffectWeight(effectName);
+                    
+                    // 유형별 가동률 (최대 시)
+                    let typeWeight = 1.0;
+                    
+                    if (effectType === 'PERMANENT') {
+                        typeWeight = 1.0;
+                    } else if (effectType === 'STATE') {
+                        // 상태 조건 → 최대 시에도 가동률 적용
+                        const condMult = getMaxConditionalMultiplier(effect);
+                        typeWeight = condMult;
+                    } else if (effectType === 'TRIGGER') {
+                        // 트리거 → 기본 가중치 0.8 × 조건부 가동률
+                        const condMult = getMaxConditionalMultiplier(effect);
+                        typeWeight = 0.8 * condMult;
+                    } else if (effectType === 'STACKING') {
+                        // 중첩 효과 → 최대 중첩 달성 가정
+                        const condMult = getMaxConditionalMultiplier(effect);
+                        typeWeight = condMult;
+                    } else if (effectType === 'DECAY') {
+                        // 감소 효과 → 최대 시에도 평균
+                        typeWeight = 0.6;
+                    } else if (effectType === 'DURATION' && effect.duration && effect.cooldown) {
+                        // 지속 효과 → 쿨감 적용 업타임
+                        typeWeight = Math.min(effect.duration / (effect.cooldown * 0.7), 1);
+                    } else {
+                        typeWeight = 0.8;
+                    }
+                    
+                    score += value * effectWeight * typeWeight;
+                });
+            }
+            
+            // 강화 효과 (+10, +15)
+            // 주의: "최대치" 강화는 범위 효과의 상한만 증가시킴
+            //       기존 범위(min~max) → 강화 후(min~newMax)
+            //       평균 증가분: (newMax - oldMax) / 2
+            if (rune.enhanceEffects) {
+                // 강화 효과는 시너지 배율 없이 그대로 적용
+                const enhanceBonus = 1.0;
+                
+                // 기본 효과의 범위 정보 추출 (있는 경우)
+                const baseRanges = {};
+                if (rune.effects) {
+                    rune.effects.forEach(effect => {
+                        if (effect.range && effect.range.max) {
+                            baseRanges[effect.name || ''] = effect.range;
+                        }
+                    });
+                }
+                
+                const processEnhance = (name, value, rawKey) => {
+                    const combined = (name + ' ' + (rawKey || '')).toLowerCase();
+                    
+                    // 1. "확률", "중첩 확률", "추가 중첩" → 업타임 증가 효과
+                    //    이미 기본 효과의 가동률에 반영되어 있음 (별도 점수 추가 없음)
+                    //    최대 점수 = 최대 효과값 그대로
+                    if (combined.indexOf('확률') !== -1 && 
+                        (combined.indexOf('중첩') !== -1 || combined.indexOf('추가') !== -1)) {
+                        // 업타임 증가는 기본 효과 가동률에 이미 반영됨 → 점수 0
+                        return;
+                    }
+                    
+                    // 2. "최대치" 키워드 → 범위 상한 증가
+                    //    예: 기존 max 30% → 새 max 40% → 증가분 = (40-30)/2 = 5%
+                    if (combined.indexOf('최대치') !== -1 || combined.indexOf('최대') !== -1) {
+                        const baseRange = Object.values(baseRanges).find(r => r);
+                        const oldMax = baseRange ? baseRange.max : value * 0.75;
+                        const avgIncrease = (value - oldMax) / 2;
+                        const effectWeight = Weights.getEffectWeight(name);
+                        score += avgIncrease * effectWeight * enhanceBonus;
+                        return;
+                    }
+                    
+                    // 3. 일반 강화 효과 (수치 직접 증가)
+                    const effectWeight = Weights.getEffectWeight(name);
+                    score += value * effectWeight * enhanceBonus;
+                };
+                
+                if (rune.enhanceEffects['10']) {
+                    const enhance10 = rune.enhanceEffects['10'];
+                    if (Array.isArray(enhance10)) {
+                        enhance10.forEach(e => processEnhance(e.name || '', e.value || 0, e.note || ''));
+                    } else {
+                        Object.entries(enhance10).forEach(([name, value]) => processEnhance(name, value, name));
+                    }
+                }
+                if (rune.enhanceEffects['15']) {
+                    const enhance15 = rune.enhanceEffects['15'];
+                    if (Array.isArray(enhance15)) {
+                        enhance15.forEach(e => processEnhance(e.name || '', e.value || 0, e.note || ''));
+                    } else {
+                        Object.entries(enhance15).forEach(([name, value]) => processEnhance(name, value, name));
+                    }
+                }
+            }
+            
+            // 결함 점수: 최대 시너지 시 영원 룬으로 완전 무효화
+            // (결함 차감 없음)
+            
+            // 각성 효과 점수 (최대)
+            // 주의: 각성 트리거 조건도 가동률에 반영해야 함
+            if (rune.awakening && rune.awakening.effects) {
+                const awakening = rune.awakening;
+                const duration = awakening.duration || 20;
+                const effectiveCooldown = 52; // 90 - 38(눈먼예언자)
+                let uptime = duration / effectiveCooldown;
+                
+                // 각성 트리거 조건 가동률 적용
+                const awakeningTrigger = (awakening.trigger || '').toLowerCase();
+                if (awakeningTrigger.indexOf('무방비') !== -1 || awakeningTrigger.indexOf('브레이크') !== -1) {
+                    uptime *= 0.25; // 무방비 조건: 25%
+                } else if (awakeningTrigger.indexOf('도발') !== -1) {
+                    uptime *= 0.3; // 도발 조건: 30%
+                } else if (awakeningTrigger.indexOf('궁극기') !== -1) {
+                    uptime *= 0.3; // 궁극기 조건: 30%
+                }
+                // 일반 조건은 100%
+                
+                const awakeningBonus = 1.5; // 2배 효과 시너지
+                
+                awakening.effects.forEach(effect => {
+                    const effectName = effect.name || '';
+                    const value = effect.value || 0;
+                    const effectWeight = Weights.getEffectWeight(effectName);
+                    
+                    // DPS 무관 효과는 0점
+                    if (isNonDpsEffect(effectName)) {
+                        return;
+                    }
+                    
+                    score += value * effectWeight * uptime * awakeningBonus;
+                });
+            }
+            
+            // 룬 내 시너지 보너스
+            const allEffects = [];
+            if (rune.effects) allEffects.push(...rune.effects.map(e => e.name || ''));
+            if (rune.enhanceEffects) {
+                if (rune.enhanceEffects['10']) allEffects.push(...Object.keys(rune.enhanceEffects['10']));
+                if (rune.enhanceEffects['15']) allEffects.push(...Object.keys(rune.enhanceEffects['15']));
+            }
+            
+            // 치명타 시너지
+            if (allEffects.some(n => n.indexOf('치명타 확률') !== -1 || n === '치명타') &&
+                allEffects.some(n => n.indexOf('치명타 피해') !== -1)) {
+                score *= 1.3;
+            }
+            // 공격력 + 피해량 시너지 (타겟 받는 피해 증가는 제외)
+            if (allEffects.some(n => n.indexOf('공격력') !== -1) &&
+                allEffects.some(n => (n.indexOf('피해량') !== -1 || n.indexOf('피해 증가') !== -1) 
+                                  && n.indexOf('타겟') === -1 && n.indexOf('받는') === -1)) {
+                score *= 1.2;
+            }
+            // 추가타 시너지
+            if (allEffects.some(n => n.indexOf('추가타 확률') !== -1 || n === '추가타') &&
+                allEffects.some(n => n.indexOf('추가타 피해') !== -1)) {
+                score *= 1.25;
+            }
+            
+            return Math.round(score * 10) / 10;
+        }
         
         // 데이터 로드 (4개 분리된 JSON 파일)
         async function loadData() {
@@ -388,12 +821,31 @@
                 ];
                 
                 console.log('룬 데이터 로드 완료:', runesData.length, '개');
+                
+                // 디버깅: 옛 마법사 로드 확인
+                const oldWizard = runesData.find(r => r.name && r.name.indexOf('옛') !== -1);
+                console.log('[DEBUG] 옛 마법사 로드 확인:', oldWizard);
+                if (oldWizard && oldWizard.effects) {
+                    console.log('[DEBUG] 옛 마법사 효과:', oldWizard.effects);
+                }
+                
+                // 효율 점수 계산 (shared-formulas.js 로드 대기)
+                setTimeout(() => {
+                    runesData.forEach(rune => {
+                        rune.baseScore = calculateBaseScore(rune);
+                        rune.maxScore = calculateMaxScore(rune);
+                    });
+                    console.log('효율 점수 계산 완료');
+                    updateStats();
+                    renderTable();
+                }, 100);
+                
                 updateStats();
                 renderTable();
             } catch (error) {
                 console.error('데이터 로드 실패:', error);
                 document.getElementById('runeTableBody').innerHTML = 
-                    '<tr><td colspan="8" style="text-align:center;color:red;">데이터 로드 실패: ' + error.message + '</td></tr>';
+                    '<tr><td colspan="10" style="text-align:center;color:red;">데이터 로드 실패: ' + error.message + '</td></tr>';
             }
         }
         
@@ -408,13 +860,22 @@
                 stacking: runesData.filter(r => r.effects && r.effects.some(e => e.type === 'STACKING' || e.maxStacks)).length
             };
             
+            // 평균 점수 계산
+            const runesWithScore = runesData.filter(r => r.baseScore > 0);
+            const avgBaseScore = runesWithScore.length > 0 
+                ? (runesWithScore.reduce((sum, r) => sum + (r.baseScore || 0), 0) / runesWithScore.length).toFixed(1)
+                : 0;
+            const avgMaxScore = runesWithScore.length > 0
+                ? (runesWithScore.reduce((sum, r) => sum + (r.maxScore || 0), 0) / runesWithScore.length).toFixed(1)
+                : 0;
+            
             document.getElementById('stats').innerHTML = `
                 <div class="stat-box"><div class="value">${stats.total}</div><div class="label">전체 룬</div></div>
                 <div class="stat-box"><div class="value">${stats.hasEffects}</div><div class="label">효과 있음</div></div>
-                <div class="stat-box"><div class="value" style="color:#3B82F6">${stats.skillChange}</div><div class="label">스킬변경</div></div>
+                <div class="stat-box"><div class="value" style="color:#60A5FA">${avgBaseScore}</div><div class="label">평균 기본점수</div></div>
+                <div class="stat-box"><div class="value" style="color:#34D399">${avgMaxScore}</div><div class="label">평균 최대점수</div></div>
                 <div class="stat-box"><div class="value" style="color:#F59E0B">${stats.hasDemerits}</div><div class="label">결함 보유</div></div>
                 <div class="stat-box"><div class="value" style="color:#EC4899">${stats.awakening}</div><div class="label">각성 효과</div></div>
-                <div class="stat-box"><div class="value" style="color:#A855F7">${stats.stacking}</div><div class="label">중첩 효과</div></div>
             `;
         }
         
@@ -633,11 +1094,23 @@
                 // 원본 설명 (전체 출력)
                 const rawDesc = (rune.rawDescription || '').replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '');
                 
+                // 효율 점수
+                const baseScore = rune.baseScore || 0;
+                const maxScore = rune.maxScore || 0;
+                const scoreDiff = maxScore - baseScore;
+                
                 return `<tr>
                     <td>${index + 1}</td>
                     <td><strong>${rune.name}</strong></td>
                     <td class="${categoryClass}">${rune.categoryName || '-'}</td>
                     <td class="${gradeClass}">${rune.gradeName || '-'}</td>
+                    <td class="score-cell">
+                        <span class="score-base">${baseScore.toFixed(1)}</span>
+                    </td>
+                    <td class="score-cell">
+                        <span class="score-max">${maxScore.toFixed(1)}</span>
+                        ${scoreDiff > 0 ? `<br><span class="score-diff">+${scoreDiff.toFixed(1)}</span>` : ''}
+                    </td>
                     <td>${effectsHtml}</td>
                     <td>${demeritsHtml}</td>
                     <td>${enhanceHtml}</td>

@@ -602,8 +602,9 @@ function handleRuneImageError(img) {
 
     /**
      * LocalStorage에서 데이터 로드 (StorageManager 모듈 사용)
+     * @updated 2025-12-12 - 안전한 모듈 참조
      */
-    const loadFromStorage = SM.load || function(key, defaultValue) {
+    const loadFromStorage = (window.SM && window.SM.load) || (window.StorageManager && window.StorageManager.load) || function(key, defaultValue) {
         try {
             const data = localStorage.getItem(key);
             return data ? JSON.parse(data) : defaultValue;
@@ -615,8 +616,9 @@ function handleRuneImageError(img) {
 
     /**
      * LocalStorage에 데이터 저장 (StorageManager 모듈 사용)
+     * @updated 2025-12-12 - 안전한 모듈 참조
      */
-    const saveToStorage = SM.save || function(key, value) {
+    const saveToStorage = (window.SM && window.SM.save) || (window.StorageManager && window.StorageManager.save) || function(key, value) {
         try {
             localStorage.setItem(key, JSON.stringify(value));
         } catch (e) {
@@ -625,7 +627,62 @@ function handleRuneImageError(img) {
     };
 
     // ============================================
-    // 4. 데이터 로딩 (Data Loading)
+    // 4. 통합 점수 계산 (Unified Score Calculation)
+    // ============================================
+    // @updated 2025-12-12 - shared-formulas.js로 이동, 래퍼 함수만 유지
+
+    /**
+     * 통합 룬 효율 점수 계산 (SharedFormulas 래퍼)
+     * @param {Object} rune - 룬 데이터
+     * @param {Object} options - 옵션
+     * @returns {number} 효율 점수
+     * @updated 2025-12-12 - SharedFormulas.calculateUnifiedScore 사용
+     */
+    function calculateUnifiedScore(rune, options) {
+        // SharedFormulas가 로드되어 있으면 사용
+        if (window.SharedFormulas && window.SharedFormulas.calculateUnifiedScore) {
+            return window.SharedFormulas.calculateUnifiedScore(rune, options);
+        }
+        
+        // 폴백: 간단한 점수 계산
+        console.warn('SharedFormulas not loaded, using fallback score calculation');
+        var score = 0;
+        if (rune.effects && Array.isArray(rune.effects)) {
+            rune.effects.forEach(function(effect) {
+                if (effect.dpsRelevant !== false) {
+                    score += (effect.value || 0) * 0.7;
+                }
+            });
+        }
+        if (rune.demerits && Array.isArray(rune.demerits)) {
+            rune.demerits.forEach(function(demerit) {
+                score -= (demerit.value || 0) * 0.5;
+            });
+        }
+        return score;
+    }
+    
+    /**
+     * 클래스별 우선 효과 반환 (SharedFormulas 래퍼)
+     * @param {string} classCode - 클래스 코드
+     * @returns {Array} 우선 효과 목록
+     */
+    function getClassPriorityEffects(classCode) {
+        if (window.SharedFormulas && window.SharedFormulas.getClassPriorityEffects) {
+            return window.SharedFormulas.getClassPriorityEffects(classCode);
+        }
+        // 폴백
+        if (CLASS_SUB_STATS.LUCK.includes(classCode)) {
+            return SUB_STAT_PRIORITY_EFFECTS.LUCK;
+        }
+        if (CLASS_SUB_STATS.WILL.includes(classCode)) {
+            return SUB_STAT_PRIORITY_EFFECTS.WILL;
+        }
+        return [];
+    }
+
+    // ============================================
+    // 5. 데이터 로딩 (Data Loading)
     // ============================================
 
     /**
@@ -692,6 +749,17 @@ function handleRuneImageError(img) {
                     return { ...rune, image: imageMap[rune.name] };
                 }
                 return rune;
+            });
+
+            // baseScore 계산 (통합 함수 사용)
+            // @updated 2025-12-12 - calculateUnifiedScore 함수로 통합
+            allRunes = allRunes.map(rune => {
+                const score = calculateUnifiedScore(rune, {});
+                return {
+                    ...rune,
+                    baseScore: score,
+                    maxScore: score * 1.5
+                };
             });
 
             state.allRunes = allRunes;
@@ -5067,31 +5135,42 @@ function handleRuneImageError(img) {
         // ========================================
         // Top-N 필터링 (2단계 탐색 최적화)
         // @added 2025-12-11 - 각 기준 상위 10개씩 선정
+        // @updated 2025-12-12 - calculateUnifiedScore 사용
         // ========================================
         const TOP_N = 10;
+        
+        // 현재 장착된 룬에서 DoT 유형 수집 (시너지 계산용)
+        const equippedDotTypes = [];
+        if (state.equippedRunes) {
+            Object.values(state.equippedRunes).forEach(function(rune) {
+                if (rune && rune.synergy && rune.synergy.appliesDot) {
+                    rune.synergy.appliesDot.forEach(function(dot) {
+                        if (!equippedDotTypes.includes(dot)) {
+                            equippedDotTypes.push(dot);
+                        }
+                    });
+                }
+            });
+        }
+        console.log('🔗 현재 장착된 DoT 유형:', equippedDotTypes);
         
         function filterTopN(runes, topN) {
             if (!runes || runes.length <= topN * 2) return runes;
             
-            // 점수가 없으면 임시 계산
+            // @updated 2025-12-12 - calculateUnifiedScore 통합 함수 사용
             const scoredRunes = runes.map(function(rune) {
-                if (rune.baseScore === undefined) {
-                    // 간단한 점수 계산
-                    let score = 0;
-                    if (rune.effects) {
-                        rune.effects.forEach(function(e) {
-                            score += (e.value || 0) * 0.7;
-                        });
-                    }
-                    if (rune.demerits) {
-                        rune.demerits.forEach(function(d) {
-                            score -= (d.value || 0) * 0.5;
-                        });
-                    }
-                    rune.baseScore = score;
-                    rune.maxScore = score * 1.5;
-                }
-                return rune;
+                // 통합 점수 계산 (시너지, 클래스 반영)
+                const score = calculateUnifiedScore(rune, {
+                    equippedDotTypes: equippedDotTypes,
+                    classCode: selectedClass,
+                    role: role
+                });
+                
+                return {
+                    ...rune,
+                    baseScore: score,
+                    maxScore: score * 1.5
+                };
             });
             
             // baseScore 정렬
@@ -6460,7 +6539,8 @@ function handleRuneImageError(img) {
                 renderProfileList();
                 break;
             case 'equipment':
-                renderEquipmentSlots(state.selectedCharacterId);
+                // @fixed 2025-12-12 - updateEquipmentTabUI로 변경
+                updateEquipmentTabUI();
                 break;
         }
     }
@@ -6612,7 +6692,13 @@ function handleRuneImageError(img) {
      * @added 2025-12-11
      */
     function addOwnedRune(charId, runeId) {
-        if (!charId) return false;
+        // @debug 2025-12-12
+        console.log('[보유룬추가] charId:', charId, 'runeId:', runeId);
+        
+        if (!charId) {
+            console.log('[보유룬추가] 실패: charId 없음');
+            return false;
+        }
         
         if (!state.characterOwnedRunes[charId]) {
             state.characterOwnedRunes[charId] = [];
@@ -6620,10 +6706,12 @@ function handleRuneImageError(img) {
         
         // 이미 보유 중이면 추가하지 않음
         if (state.characterOwnedRunes[charId].includes(runeId)) {
+            console.log('[보유룬추가] 이미 보유 중:', runeId);
             return false;
         }
         
         state.characterOwnedRunes[charId].push(runeId);
+        console.log('[보유룬추가] 추가 완료. 현재 목록:', state.characterOwnedRunes[charId]);
         saveCharacterOwnedRunes();
         return true;
     }
@@ -6665,8 +6753,14 @@ function handleRuneImageError(img) {
      */
     function getOwnedRunes(charId) {
         if (!charId || !state.characterOwnedRunes[charId]) return [];
+        
+        // @fixed 2025-12-12 - 타입 불일치 문제 해결 (숫자/문자열)
         return state.characterOwnedRunes[charId]
-            .map(id => state.allRunes.find(r => r.id === id))
+            .map(id => {
+                // 숫자와 문자열 모두 비교
+                const numId = typeof id === 'string' ? parseInt(id, 10) : id;
+                return state.allRunes.find(r => r.id === id || r.id === numId);
+            })
             .filter(r => r);
     }
 
@@ -6725,7 +6819,13 @@ function handleRuneImageError(img) {
      * @added 2025-12-11
      */
     function renderOwnedRunesTab(charId) {
+        // @debug 2025-12-12 - 보유 룬 탭 디버깅
+        console.log('[보유룬탭] charId:', charId);
+        console.log('[보유룬탭] 저장된 보유룬 ID:', state.characterOwnedRunes[charId]);
+        
         const ownedRunes = getOwnedRunes(charId);
+        console.log('[보유룬탭] 변환된 보유룬 객체:', ownedRunes);
+        
         const equipment = state.characterEquipments[charId] || {
             weapon: null,
             armors: [null, null, null, null, null],
@@ -7110,7 +7210,8 @@ function handleRuneImageError(img) {
 
         // 저장 및 렌더링
         saveCharacterEquipments();
-        renderEquipmentSlots(charId);
+        // @fixed 2025-12-12 - updateEquipmentTabUI로 변경
+        updateEquipmentTabUI();
     }
 
     /**
@@ -7288,11 +7389,34 @@ function handleRuneImageError(img) {
         }
 
         // 카테고리별 사용 가능한 보유 룬 (장착되지 않은 것만)
+        // @updated 2025-12-12 - 장신구는 캐릭터 클래스에 맞는 것만 필터링
+        const charClass = profile.classCode || profile.klass || '00';
+        const charClassName = CLASS_MAP[charClass] || '';
+        const charClassShort = charClassName.split(' ')[0]; // "궁수 (활)" → "궁수"
+        console.log('[자동장착] 캐릭터 클래스:', charClass, charClassName, charClassShort);
+        
         const availableByCategory = {
             '01': ownedRunes.filter(r => r.category === '01' && !equippedIds.has(r.id)),
             '02': ownedRunes.filter(r => r.category === '02' && !equippedIds.has(r.id)),
             '04': ownedRunes.filter(r => r.category === '04' && !equippedIds.has(r.id)),
-            '03': ownedRunes.filter(r => r.category === '03' && !equippedIds.has(r.id))
+            '03': ownedRunes.filter(r => {
+                if (r.category !== '03' || equippedIds.has(r.id)) return false;
+                
+                // 장신구 클래스 필터링
+                const runeClass = r.classRestriction || r.klass || null;
+                
+                // 클래스 제한이 없는 룬(null, '00', '전체')은 모두 사용 가능
+                if (!runeClass || runeClass === '00' || runeClass === '전체') return true;
+                
+                // 캐릭터 클래스와 일치하는 경우 (코드, 전체이름, 짧은이름 모두 비교)
+                if (runeClass === charClass) return true;
+                if (runeClass === charClassName) return true;
+                if (runeClass === charClassShort) return true;
+                if (charClassShort && runeClass.includes(charClassShort)) return true;
+                if (charClassName && charClassName.includes(runeClass)) return true;
+                
+                return false;
+            })
         };
 
         // 각 카테고리 효율 점수 순 정렬
@@ -7358,7 +7482,9 @@ function handleRuneImageError(img) {
         // 장착 정보 업데이트
         state.characterEquipments[charId] = newEquipment;
         saveCharacterEquipments();
-        renderEquipmentSlots(charId);
+        
+        // @fixed 2025-12-12 - 전체 UI 리렌더링으로 변경
+        updateEquipmentTabUI();
         
         // @added 2025-12-12 - 장착 시뮬레이터에도 연동
         syncEquipmentToSimulator(charId, newEquipment);
@@ -7984,7 +8110,19 @@ function handleRuneImageError(img) {
         // UIManager 모듈이 있으면 사용
         if (UI.switchTab) {
             UI.switchTab(tabId, function(tid) {
-                if (tid === 'favorites') renderFavorites();
+                // @updated 2025-12-12 - 각 탭별 처리 추가
+                if (tid === 'rune-list') {
+                    renderRuneList();
+                } else if (tid === 'favorites') {
+                    renderFavorites();
+                } else if (tid === 'equipment') {
+                    updateEquipmentTabUI();
+                } else if (tid === 'recommend') {
+                    if (state.selectedCharacterId) {
+                        const profile = state.characterProfiles.find(p => p.id === state.selectedCharacterId);
+                        if (profile) applyProfileToStatForm(profile);
+                    }
+                }
             });
             return;
         }
@@ -8034,11 +8172,22 @@ function handleRuneImageError(img) {
         const globalCharList = $('#global-char-list');
         const globalNewCharBtn = $('#btn-global-new-char');
 
-        if (globalCharDisplay) {
+        // @debug 2025-12-12 - 드롭다운 이벤트 등록 확인
+        // @fixed 2025-12-12 - 중복 이벤트 등록 방지
+        console.log('[이벤트등록] globalCharDisplay 요소:', globalCharDisplay);
+        
+        if (globalCharDisplay && !globalCharDisplay.dataset.listenerAdded) {
+            globalCharDisplay.dataset.listenerAdded = 'true';
             globalCharDisplay.addEventListener('click', function(e) {
+                console.log('[드롭다운] 클릭됨');
                 e.stopPropagation();
                 toggleGlobalCharDropdown();
             });
+            console.log('[이벤트등록] globalCharDisplay 클릭 이벤트 등록 완료');
+        } else if (globalCharDisplay && globalCharDisplay.dataset.listenerAdded) {
+            console.log('[이벤트등록] globalCharDisplay 이미 등록됨 - 스킵');
+        } else {
+            console.error('[이벤트등록] globalCharDisplay 요소를 찾을 수 없음!');
         }
 
         // @updated 2025-12-12 삭제 버튼 클릭 처리 추가
@@ -8335,8 +8484,11 @@ function handleRuneImageError(img) {
         }
 
         // 전체 해제 버튼
-        if (clearEquipBtn) {
-            clearEquipBtn.addEventListener('click', function() {
+        // @fixed 2025-12-12 - 중복 이벤트 등록 방지
+        if (clearEquipBtn && !clearEquipBtn.dataset.listenerAdded) {
+            clearEquipBtn.dataset.listenerAdded = 'true';
+            clearEquipBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
                 if (confirm('모든 장착을 해제하시겠습니까?')) {
                     clearAllEquipment();
                 }
@@ -8517,18 +8669,39 @@ function handleRuneImageError(img) {
      * @updated 2025-12-11 - 캐릭터 스탯 및 추천 옵션 불러오기 추가
      * @updated 2025-12-11 - CharacterManager 모듈 초기화 추가
      */
+    // @added 2025-12-12 - 초기화 중복 방지 플래그
+    let isInitialized = false;
+    
     async function init() {
+        // 중복 초기화 방지
+        if (isInitialized) {
+            console.log('⚠️ 이미 초기화됨 - 스킵');
+            return;
+        }
+        isInitialized = true;
+        
         console.log('🚀 마비노기 모바일 룬 효율 계산기 초기화 시작...');
 
-        // 저장된 데이터 불러오기
-        loadFavorites();
-        loadPresets();
-        loadCharacterProfiles(); // @added 2025-12-11
-        loadCharacterEquipments(); // @added 2025-12-11
-        loadCharacterOwnedRunes(); // @added 2025-12-11
+        try {
+            // 저장된 데이터 불러오기
+            loadFavorites();
+            console.log('✅ loadFavorites 완료');
+            loadPresets();
+            console.log('✅ loadPresets 완료');
+            loadCharacterProfiles(); // @added 2025-12-11
+            console.log('✅ loadCharacterProfiles 완료');
+            loadCharacterEquipments(); // @added 2025-12-11
+            console.log('✅ loadCharacterEquipments 완료');
+            loadCharacterOwnedRunes(); // @added 2025-12-11
+            console.log('✅ loadCharacterOwnedRunes 완료');
 
-        // 이벤트 리스너 설정
-        setupEventListeners();
+            // 이벤트 리스너 설정
+            console.log('🔧 setupEventListeners 시작...');
+            setupEventListeners();
+            console.log('✅ setupEventListeners 완료');
+        } catch (error) {
+            console.error('❌ 초기화 중 에러 발생:', error);
+        }
 
         // 룬 데이터 로드
         await loadRuneData();

@@ -209,6 +209,9 @@
         getUsage: getStorageUsage
     };
 
+    // SM 약어도 등록 (하위 호환)
+    window.SM = window.StorageManager;
+
     console.log('✅ StorageManager 모듈 로드 완료');
 
 })();

@@ -2383,6 +2383,9 @@ function parseRuneEffects(description, enhanceLevel = 0) {
         calculateEfficiencyForSlot: typeof calculateEfficiencyForSlot !== 'undefined' ? calculateEfficiencyForSlot : null
     };
 
+    // EP 약어도 등록 (하위 호환)
+    window.EP = window.EffectParser;
+
     console.log('✅ EffectParser 모듈 로드 완료');
 
 })();

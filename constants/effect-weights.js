@@ -6,6 +6,7 @@
  * @description 룬 효과별 가중치 및 유형별 가중치 정의
  * @author AI Assistant
  * @created 2025-12-11
+ * @modified 2025-12-12 - IIFE 패턴 적용 (전역 충돌 방지)
  * 
  * @architecture
  * - EFFECT_WEIGHTS: DPS 관련 효과별 기본 가중치
@@ -15,6 +16,7 @@
  * ============================================================================
  */
 
+(function() {
 'use strict';
 
 // ============================================================================
@@ -436,5 +438,11 @@ if (typeof window !== 'undefined') {
     getTypeWeight,
     getSynergyWeight
   };
+  
+  // Weights 약어도 등록 (하위 호환)
+  window.Weights = window.EffectWeights;
 }
+
+console.log('✅ EffectWeights 상수 모듈 로드 완료');
+})();
 

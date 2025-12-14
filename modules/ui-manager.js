@@ -277,6 +277,9 @@
         scrollToTop: scrollToTop
     };
 
+    // UI 약어도 등록 (하위 호환)
+    window.UI = window.UIManager;
+
     console.log('✅ UIManager 모듈 로드 완료');
 
 })();

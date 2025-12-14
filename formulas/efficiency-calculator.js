@@ -6,6 +6,7 @@
  * @description 룬 효율 점수 계산 및 동적 가중치 조정
  * @author AI Assistant
  * @created 2025-12-11
+ * @modified 2025-12-12 - IIFE 패턴 적용 (전역 충돌 방지)
  * 
  * @architecture
  * - EfficiencyCalculator: 개별 룬 및 조합 효율 점수 계산
@@ -19,6 +20,7 @@
  * ============================================================================
  */
 
+(function() {
 'use strict';
 
 // ============================================================================
@@ -783,4 +785,7 @@ if (typeof module !== 'undefined' && module.exports) {
 if (typeof window !== 'undefined') {
   window.EfficiencyCalculator = EfficiencyCalculator;
 }
+
+console.log('✅ EfficiencyCalculator 모듈 로드 완료');
+})();
 

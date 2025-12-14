@@ -6,6 +6,7 @@
  * @description 클래스별 메인/서브 스텟 매핑 및 관련 상수 정의
  * @author AI Assistant
  * @created 2025-12-11
+ * @modified 2025-12-12 - IIFE 패턴 적용 (전역 충돌 방지)
  * 
  * @architecture
  * - CLASS_STATS: 18개 세부 클래스의 메인/서브 스텟 정의
@@ -14,6 +15,7 @@
  * ============================================================================
  */
 
+(function() {
 'use strict';
 
 // ============================================================================
@@ -354,3 +356,6 @@ if (typeof window !== 'undefined') {
         getClassesByCategory
     };
 }
+
+console.log('✅ ClassStats 상수 모듈 로드 완료');
+})();

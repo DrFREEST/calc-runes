@@ -438,7 +438,249 @@
   }
 
   // ============================================================================
-  // 섹션 6: 모듈 내보내기
+  // 섹션 6: 통합 점수 계산 (Unified Score Calculation)
+  // @added 2025-12-12 - 메인 스레드와 Worker에서 동일하게 사용
+  // ============================================================================
+
+  /**
+   * 클래스별 Sub 스텟 매핑
+   * @constant {Object}
+   */
+  var CLASS_SUB_STATS = {
+    LUCK: ["02", "05", "08", "14", "17", "18", "19", "20"],
+    WILL: ["03", "06", "09", "11", "12", "15"],
+  };
+
+  /**
+   * Sub 스텟별 우선 효과
+   * @constant {Object}
+   */
+  var SUB_STAT_PRIORITY_EFFECTS = {
+    LUCK: ["치명타 확률", "치명타 피해", "추가타 확률", "추가타"],
+    WILL: ["강타 피해", "궁극기", "회복력"],
+  };
+
+  /**
+   * 클래스별 우선 효과 반환
+   * @param {string} classCode - 클래스 코드
+   * @returns {Array} 우선 효과 목록
+   */
+  function getClassPriorityEffects(classCode) {
+    if (CLASS_SUB_STATS.LUCK.indexOf(classCode) !== -1) {
+      return SUB_STAT_PRIORITY_EFFECTS.LUCK;
+    }
+    if (CLASS_SUB_STATS.WILL.indexOf(classCode) !== -1) {
+      return SUB_STAT_PRIORITY_EFFECTS.WILL;
+    }
+    return [];
+  }
+
+  /**
+   * 통합 룬 효율 점수 계산
+   * @param {Object} rune - 룬 데이터
+   * @param {Object} options - 옵션
+   * @param {Array} options.equippedDotTypes - 장착된 DoT 유형 (시너지 계산용)
+   * @param {string} options.classCode - 캐릭터 클래스 코드
+   * @returns {number} 효율 점수
+   * @added 2025-12-12
+   */
+  function calculateUnifiedScore(rune, options) {
+    options = options || {};
+    var equippedDotTypes = options.equippedDotTypes || [];
+    var classCode = options.classCode || "00";
+
+    var score = 0;
+
+    // ========================================
+    // 1. 긍정적 효과 합산 (dpsRelevant + trigger 가중치)
+    // ========================================
+    if (rune.effects && Array.isArray(rune.effects)) {
+      rune.effects.forEach(function (effect) {
+        var weight = 0; // dpsRelevant: false → 제외
+
+        if (effect.dpsRelevant === true) {
+          var trigger = effect.trigger || "";
+
+          if (!trigger) {
+            // 상시 효과
+            weight = 1.0;
+          } else if (
+            trigger.indexOf("스킬 사용") !== -1 ||
+            trigger.indexOf("공격 적중") !== -1 ||
+            trigger.indexOf("전투 중") !== -1 ||
+            trigger.indexOf("연타") !== -1 ||
+            trigger.indexOf("강타") !== -1 ||
+            trigger.indexOf("스킬 7회") !== -1 ||
+            trigger.indexOf("스킬 5회") !== -1
+          ) {
+            // 상시/거의 상시
+            weight = 0.9;
+          } else if (trigger.indexOf("기본 공격") !== -1) {
+            // 중간 가동률
+            weight = 0.65;
+          } else if (
+            trigger.indexOf("체력") !== -1 ||
+            trigger.indexOf("자원") !== -1 ||
+            trigger.indexOf("HP") !== -1 ||
+            trigger.indexOf("이하") !== -1 ||
+            trigger.indexOf("이상") !== -1 ||
+            trigger.indexOf("미만") !== -1
+          ) {
+            // 조건부
+            weight = 0.45;
+          } else if (
+            trigger.indexOf("궁극기") !== -1 ||
+            trigger.indexOf("각성") !== -1 ||
+            trigger.indexOf("무방비") !== -1 ||
+            trigger.indexOf("처치") !== -1
+          ) {
+            // 특수 조건
+            weight = 0.25;
+          } else if (trigger.indexOf("지속 피해") !== -1) {
+            // @added 2025-12-12 - DoT 시너지 없으면 발동 불가
+            // 시너지 계산에서만 추가됨
+            weight = 0;
+          } else {
+            // 기타 trigger
+            weight = 0.5;
+          }
+        }
+
+        score += (effect.value || 0) * weight;
+      });
+    }
+
+    // ========================================
+    // 2. 각성(Awakening) 효과 합산 (가중치 0.25)
+    // ========================================
+    if (
+      rune.awakening &&
+      rune.awakening.effects &&
+      Array.isArray(rune.awakening.effects)
+    ) {
+      rune.awakening.effects.forEach(function (effect) {
+        score += (effect.value || 0) * 0.25;
+      });
+    }
+
+    // ========================================
+    // 3. 부정적 효과 감산
+    // ========================================
+    if (rune.demerits && Array.isArray(rune.demerits)) {
+      rune.demerits.forEach(function (demerit) {
+        var name = demerit.name || "";
+
+        // DPS 직접 영향 패널티: 가중치 1.0
+        var isDpsDirectPenalty =
+          name.indexOf("피해량 감소") !== -1 ||
+          name.indexOf("피해 감소") !== -1 ||
+          name.indexOf("쿨타임") !== -1 ||
+          name.indexOf("치명타") !== -1 ||
+          name.indexOf("멀티히트") !== -1;
+
+        var weight = isDpsDirectPenalty ? 1.0 : 0.15;
+        score -= (demerit.value || 0) * weight;
+      });
+    }
+
+    // ========================================
+    // 4. 시너지 보너스 (DoT 요구 룬 - 실제 효과 값 기반)
+    // ========================================
+    if (
+      rune.synergy &&
+      rune.synergy.requiresDot &&
+      rune.synergy.requiresDot.length > 0
+    ) {
+      var hasRequiredDot = rune.synergy.requiresDot.some(function (dot) {
+        return equippedDotTypes.indexOf(dot) !== -1;
+      });
+
+      if (hasRequiredDot && rune.effects) {
+        rune.effects.forEach(function (effect) {
+          var trigger = effect.trigger || "";
+          if (
+            trigger.indexOf("지속 피해") !== -1 &&
+            effect.dpsRelevant !== false
+          ) {
+            var duration = effect.duration || 5;
+            var cooldown = effect.cooldown || 3;
+            var uptime = duration / (duration + cooldown);
+            score += (effect.value || 0) * uptime;
+          }
+        });
+      }
+    }
+
+    // ========================================
+    // 5. 클래스별 우선 효과 보너스
+    // ========================================
+    if (classCode !== "00" && rune.effects) {
+      var classPriorityEffects = getClassPriorityEffects(classCode);
+
+      rune.effects.forEach(function (effect) {
+        var effectName = effect.name || "";
+        var isPriority = classPriorityEffects.some(function (pe) {
+          return effectName.indexOf(pe) !== -1;
+        });
+        if (isPriority) {
+          score += (effect.value || 0) * 0.2; // 20% 추가 보너스
+        }
+      });
+    }
+
+    // ========================================
+    // 6. 시너지 잠재력 점수 (Top-N 필터링용)
+    // @updated 2025-12-12 - 매직넘버 제거, 실제 효과 값 기반
+    // ========================================
+    var synergyPotential = 0;
+
+    // DoT 부여 룬: 각 DoT 유형당 예상 시너지 기여도
+    // DoT 부여 시 수혜 룬의 조건부 효과 활성화 가능 (평균 10~15% DPS 기대)
+    if (rune.synergy && rune.synergy.appliesDot && rune.synergy.appliesDot.length > 0) {
+      // DoT 유형당 평균 기대 시너지 = 수혜 룬 효과의 평균값 추정
+      // 실제 조합에서 계산되므로 여기서는 필터링 생존을 위한 잠재력만 표시
+      synergyPotential += rune.synergy.appliesDot.length * 
+        FORMULA_CONSTANTS.SUB_STAT_BONUS * 100; // 10% × DoT 종류 수
+    }
+
+    // 결함 제거 룬: 해당 룬의 결함 값을 기반으로 잠재력 추정
+    // 조합 내 결함 있는 룬의 평균 결함값 예상 (약 5~10%)
+    if (rune.synergy && rune.synergy.removesDemerits) {
+      synergyPotential += FORMULA_CONSTANTS.SUB_STAT_BONUS * 100; // 10%
+    }
+
+    // 각성 제공 룬: 각성 효과의 업타임 향상 잠재력
+    if (rune.synergy && rune.synergy.providesAwakening) {
+      // 각성 업타임 향상으로 인한 DPS 증가 예상
+      synergyPotential += FORMULA_CONSTANTS.SUB_STAT_BONUS * 50; // 5%
+    }
+
+    // 치명타/추가타 효과: 실제 효과 값의 시너지 잠재력
+    // 다른 룬과 조합 시 곱연산 시너지 발생 가능
+    if (rune.effects) {
+      rune.effects.forEach(function (e) {
+        var name = e.name || "";
+        var value = e.value || 0;
+        
+        // 치명타 효과: 다른 치명타 효과와 시너지 잠재력
+        if (name.indexOf("치명타") !== -1 && value > 0) {
+          // 시너지 잠재력 = 효과값 × 예상 조합 효과값 비율
+          synergyPotential += value * FORMULA_CONSTANTS.SUB_STAT_BONUS; // 효과값 × 10%
+        }
+        // 추가타 효과
+        if (name.indexOf("추가타") !== -1 && value > 0) {
+          synergyPotential += value * FORMULA_CONSTANTS.SUB_STAT_BONUS;
+        }
+      });
+    }
+
+    score += synergyPotential;
+
+    return score;
+  }
+
+  // ============================================================================
+  // 섹션 7: 모듈 내보내기
   // ============================================================================
 
   /**
@@ -447,6 +689,8 @@
   var SharedFormulas = {
     // 상수
     FORMULA_CONSTANTS: FORMULA_CONSTANTS,
+    CLASS_SUB_STATS: CLASS_SUB_STATS,
+    SUB_STAT_PRIORITY_EFFECTS: SUB_STAT_PRIORITY_EFFECTS,
 
     // 업타임/시간 함수
     calculateUptime: calculateUptime,
@@ -456,6 +700,10 @@
     // 한계효용/밸런스 함수
     calculateCritMarginalUtility: calculateCritMarginalUtility,
     calculateBonusBalance: calculateBonusBalance,
+
+    // 통합 점수 계산 (2025-12-12 추가)
+    calculateUnifiedScore: calculateUnifiedScore,
+    getClassPriorityEffects: getClassPriorityEffects,
   };
 
   /**

@@ -199,9 +199,10 @@ function getConditionalMultiplier(effect) {
   if (combined.indexOf("기본 공격") !== -1) {
     return 0.2;
   }
-  // 지속 피해(DoT) 조건 → DoT 시너지 필요 (50%)
+  // 지속 피해(DoT) 조건 → DoT 시너지 없으면 발동 불가 (0%)
+  // @updated 2025-12-12 - DoT 매칭은 calculateSynergyScore에서만 처리
   if (combined.indexOf("지속 피해") !== -1) {
-    return 0.5;
+    return 0; // 기본 점수에서 제외, 시너지 계산에서만 추가
   }
   // 체력 조건 (적 체력 50% 이하 등) → 절반 정도 (50%)
   if (combined.indexOf("체력") !== -1 && combined.indexOf("이하") !== -1) {
@@ -1095,6 +1096,97 @@ function calculateSynergyScore(combination) {
     );
   }
 
+  // ========================================
+  // 7. 조합 간 시너지 (Cross-Rune Synergy)
+  // @added 2025-12-12 - 룬 간 효과 조합 시너지
+  // ========================================
+  
+  // 조합 전체에서 효과 합산
+  let totalCritRate = 0;      // 치명타 확률 합계
+  let totalCritDamage = 0;    // 치명타 피해 합계
+  let totalAddHitRate = 0;    // 추가타 확률 합계
+  let totalAddHitDamage = 0;  // 추가타 피해 합계
+  let totalAttackIncrease = 0; // 공격력 증가 합계
+  let totalDamageIncrease = 0; // 피해량 증가 합계
+  let totalTargetDamageIncrease = 0; // 타겟 받는 피해 증가 합계
+  
+  allRunes.forEach((rune) => {
+    if (rune.effects && Array.isArray(rune.effects)) {
+      rune.effects.forEach((effect) => {
+        const name = effect.name || "";
+        const value = effect.value || 0;
+        
+        // 치명타 관련
+        if (name.includes("치명타 확률")) {
+          totalCritRate += value;
+        } else if (name.includes("치명타 피해") || name.includes("치명타 피해량")) {
+          totalCritDamage += value;
+        }
+        // 추가타 관련
+        else if (name.includes("추가타 확률")) {
+          totalAddHitRate += value;
+        } else if (name.includes("추가타 피해") || name.includes("추가타")) {
+          totalAddHitDamage += value;
+        }
+        // 공격력/피해량 관련
+        else if (name.includes("공격력 증가") || name.includes("공격력")) {
+          totalAttackIncrease += value;
+        } else if (name.includes("피해량 증가") || name === "피해 증가") {
+          totalDamageIncrease += value;
+        }
+        // 타겟 받는 피해 증가 (디버프)
+        else if (name.includes("받는 피해 증가") && !name.includes("(나)")) {
+          totalTargetDamageIncrease += value;
+        }
+      });
+    }
+  });
+  
+  // 7-1. 치명타 조합 시너지 (DPS 기대값 공식)
+  // @updated 2025-12-12 - 매직넘버 제거, 실제 DPS 기대값 계산
+  // DPS 증가 = 확률 × 피해 (곱연산 상승효과)
+  // 예: 30% 확률 + 50% 피해 → 0.3 × 0.5 = 0.15 = 15% DPS 증가
+  if (totalCritRate > 0 && totalCritDamage > 0) {
+    // 확률(%)과 피해(%)를 곱하면 기대 DPS 증가율(%)
+    const critSynergyBonus = (totalCritRate / 100) * (totalCritDamage / 100) * 100;
+    // 이 값 자체가 시너지 점수 (% 단위)
+    synergyScore += critSynergyBonus;
+    synergyDetails.push(
+      `치명타 조합 (${totalCritRate.toFixed(0)}% × ${totalCritDamage.toFixed(0)}%): +${critSynergyBonus.toFixed(1)}% DPS`
+    );
+  }
+  
+  // 7-2. 추가타 조합 시너지 (DPS 기대값 공식)
+  // DPS 증가 = 확률 × 피해
+  if (totalAddHitRate > 0 && totalAddHitDamage > 0) {
+    const addHitSynergyBonus = (totalAddHitRate / 100) * (totalAddHitDamage / 100) * 100;
+    synergyScore += addHitSynergyBonus;
+    synergyDetails.push(
+      `추가타 조합 (${totalAddHitRate.toFixed(0)}% × ${totalAddHitDamage.toFixed(0)}%): +${addHitSynergyBonus.toFixed(1)}% DPS`
+    );
+  }
+  
+  // 7-3. 공격력 + 피해량 조합 시너지 (곱연산 상승효과)
+  // 공격력과 피해량은 독립적으로 곱연산되므로 시너지 발생
+  // (1 + 공격력%) × (1 + 피해량%) - 1 - 공격력% - 피해량% = 공격력% × 피해량%
+  if (totalAttackIncrease > 0 && totalDamageIncrease > 0) {
+    const atkDmgSynergyBonus = (totalAttackIncrease / 100) * (totalDamageIncrease / 100) * 100;
+    synergyScore += atkDmgSynergyBonus;
+    synergyDetails.push(
+      `공격력×피해량 조합 (${totalAttackIncrease.toFixed(0)}% × ${totalDamageIncrease.toFixed(0)}%): +${atkDmgSynergyBonus.toFixed(1)}% DPS`
+    );
+  }
+  
+  // 7-4. 디버프 시너지 (타겟 받는 피해 증가)
+  // 실제 효과 값 그대로 사용 (파티원 전체에게 이득이므로 중요)
+  if (totalTargetDamageIncrease > 0) {
+    // 실제 피해 증가율을 그대로 점수로 사용
+    synergyScore += totalTargetDamageIncrease;
+    synergyDetails.push(
+      `디버프 시너지 (타겟 피해 +${totalTargetDamageIncrease.toFixed(0)}%): +${totalTargetDamageIncrease.toFixed(1)}% DPS`
+    );
+  }
+
   return {
     score: synergyScore,
     details: synergyDetails,
@@ -1111,19 +1203,44 @@ function calculateSynergyScore(combination) {
  * @param {Object} combination - 룬 조합
  * @param {Object} options - 계산 옵션
  * @returns {number} 총 점수
+ * @updated 2025-12-12 - DoT 매칭 안되는 룬 페널티 추가
  */
 function calculateCombinationScore(combination, options) {
   const { weapon, armors, emblem, accessories } = combination;
+  const allRunes = [weapon, ...armors, emblem, ...accessories];
+
+  // 조합 내 DoT 부여 유형 수집
+  const providedDotTypes = new Set();
+  allRunes.forEach((rune) => {
+    if (rune.synergy && rune.synergy.appliesDot) {
+      rune.synergy.appliesDot.forEach((dot) => providedDotTypes.add(dot));
+    }
+  });
 
   // 기본 점수
   let totalScore = 0;
 
   // 무기 점수
   totalScore += calculateRuneBaseScore(weapon, options);
+  // DoT 요구 페널티 체크
+  if (weapon.synergy && weapon.synergy.requiresDot && weapon.synergy.requiresDot.length > 0) {
+    const hasMatchingDot = weapon.synergy.requiresDot.some((dot) => providedDotTypes.has(dot));
+    if (!hasMatchingDot) {
+      // DoT 매칭 안되면 해당 룬 점수의 50% 페널티
+      totalScore -= calculateRuneBaseScore(weapon, options) * 0.5;
+    }
+  }
 
   // 방어구 점수
   armors.forEach((armor) => {
     totalScore += calculateRuneBaseScore(armor, options);
+    // DoT 요구 페널티 체크
+    if (armor.synergy && armor.synergy.requiresDot && armor.synergy.requiresDot.length > 0) {
+      const hasMatchingDot = armor.synergy.requiresDot.some((dot) => providedDotTypes.has(dot));
+      if (!hasMatchingDot) {
+        totalScore -= calculateRuneBaseScore(armor, options) * 0.5;
+      }
+    }
   });
 
   // 시너지 계산 (각성 쿨감 포함)
@@ -1141,6 +1258,13 @@ function calculateCombinationScore(combination, options) {
   // 장신구 점수
   accessories.forEach((accessory) => {
     totalScore += calculateRuneBaseScore(accessory, options);
+    // DoT 요구 페널티 체크
+    if (accessory.synergy && accessory.synergy.requiresDot && accessory.synergy.requiresDot.length > 0) {
+      const hasMatchingDot = accessory.synergy.requiresDot.some((dot) => providedDotTypes.has(dot));
+      if (!hasMatchingDot) {
+        totalScore -= calculateRuneBaseScore(accessory, options) * 0.5;
+      }
+    }
   });
 
   return Math.round(totalScore * 10) / 10;
@@ -1166,37 +1290,39 @@ function findOptimalCombination(data) {
     });
 
     // 1. 각 카테고리별 기본/최대 점수 사전 계산 및 정렬 (maxScore 순)
+    // @updated 2025-12-12 - 메인에서 전달된 baseScore 재사용 (일관성 보장)
     console.log("[Worker] 점수 계산 시작 (baseScore + maxScore)...");
 
     const scoredWeapons = weapons
       .map((w) => ({
         ...w,
-        baseScore: calculateRuneBaseScore(w, options),
-        maxScore: calculateRuneMaxScore(w, options),
+        // 메인에서 전달된 baseScore가 있으면 재사용, 없으면 계산
+        baseScore: w.baseScore !== undefined ? w.baseScore : calculateRuneBaseScore(w, options),
+        maxScore: w.maxScore !== undefined ? w.maxScore : calculateRuneMaxScore(w, options),
       }))
       .sort((a, b) => b.maxScore - a.maxScore); // maxScore 순 정렬
 
     const scoredArmors = armors
       .map((a) => ({
         ...a,
-        baseScore: calculateRuneBaseScore(a, options),
-        maxScore: calculateRuneMaxScore(a, options),
+        baseScore: a.baseScore !== undefined ? a.baseScore : calculateRuneBaseScore(a, options),
+        maxScore: a.maxScore !== undefined ? a.maxScore : calculateRuneMaxScore(a, options),
       }))
       .sort((a, b) => b.maxScore - a.maxScore);
 
     const scoredEmblems = emblems
       .map((e) => ({
         ...e,
-        baseScore: calculateRuneBaseScore(e, options),
-        maxScore: calculateRuneMaxScore(e, options),
+        baseScore: e.baseScore !== undefined ? e.baseScore : calculateRuneBaseScore(e, options),
+        maxScore: e.maxScore !== undefined ? e.maxScore : calculateRuneMaxScore(e, options),
       }))
       .sort((a, b) => b.maxScore - a.maxScore);
 
     const scoredAccessories = accessories
       .map((a) => ({
         ...a,
-        baseScore: calculateRuneBaseScore(a, options),
-        maxScore: calculateRuneMaxScore(a, options),
+        baseScore: a.baseScore !== undefined ? a.baseScore : calculateRuneBaseScore(a, options),
+        maxScore: a.maxScore !== undefined ? a.maxScore : calculateRuneMaxScore(a, options),
       }))
       .sort((a, b) => b.maxScore - a.maxScore);
 
@@ -2024,11 +2150,12 @@ function findOptimalCombinationPartial(data) {
     }
 
     // 1. 각 카테고리별 기본/최대 점수 사전 계산 및 정렬 (maxScore 순)
+    // @updated 2025-12-12 - 메인에서 전달된 baseScore 재사용 (일관성 보장)
     const scoredWeapons = weapons
       .map((w) => ({
         ...w,
-        baseScore: calculateRuneBaseScore(w, options),
-        maxScore: calculateRuneMaxScore(w, options),
+        baseScore: w.baseScore !== undefined ? w.baseScore : calculateRuneBaseScore(w, options),
+        maxScore: w.maxScore !== undefined ? w.maxScore : calculateRuneMaxScore(w, options),
       }))
       .sort((a, b) => b.maxScore - a.maxScore);
 
@@ -2044,24 +2171,24 @@ function findOptimalCombinationPartial(data) {
     const scoredArmors = armors
       .map((a) => ({
         ...a,
-        baseScore: calculateRuneBaseScore(a, options),
-        maxScore: calculateRuneMaxScore(a, options),
+        baseScore: a.baseScore !== undefined ? a.baseScore : calculateRuneBaseScore(a, options),
+        maxScore: a.maxScore !== undefined ? a.maxScore : calculateRuneMaxScore(a, options),
       }))
       .sort((a, b) => b.maxScore - a.maxScore);
 
     const scoredEmblems = emblems
       .map((e) => ({
         ...e,
-        baseScore: calculateRuneBaseScore(e, options),
-        maxScore: calculateRuneMaxScore(e, options),
+        baseScore: e.baseScore !== undefined ? e.baseScore : calculateRuneBaseScore(e, options),
+        maxScore: e.maxScore !== undefined ? e.maxScore : calculateRuneMaxScore(e, options),
       }))
       .sort((a, b) => b.maxScore - a.maxScore);
 
     const scoredAccessories = accessories
       .map((a) => ({
         ...a,
-        baseScore: calculateRuneBaseScore(a, options),
-        maxScore: calculateRuneMaxScore(a, options),
+        baseScore: a.baseScore !== undefined ? a.baseScore : calculateRuneBaseScore(a, options),
+        maxScore: a.maxScore !== undefined ? a.maxScore : calculateRuneMaxScore(a, options),
       }))
       .sort((a, b) => b.maxScore - a.maxScore);
 

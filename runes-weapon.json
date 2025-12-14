@@ -81,7 +81,7 @@
                     "name": "쿨타임 회복 속도 증가",
                     "value": 10,
                     "unit": "%",
-                    "dpsRelevant": false
+                    "dpsRelevant": true
                 }
             ],
             "demerits": [],
@@ -164,7 +164,7 @@
                     "value": 9,
                     "unit": "%",
                     "trigger": "기본 공격 사용 시",
-                    "dpsRelevant": false,
+                    "dpsRelevant": true,
                     "note": "모든 스킬의 재사용 대기 시간 감소"
                 },
                 {
@@ -181,7 +181,7 @@
                     "unit": "%",
                     "trigger": "스킬 사용 시",
                     "duration": 5,
-                    "dpsRelevant": false
+                    "dpsRelevant": true
                 }
             ],
             "demerits": [],
@@ -392,7 +392,7 @@
                     "value": 9,
                     "unit": "%",
                     "trigger": "기본 공격 적중 시",
-                    "dpsRelevant": false,
+                    "dpsRelevant": true,
                     "note": "모든 스킬의 재사용 대기 시간 감소"
                 }
             ],

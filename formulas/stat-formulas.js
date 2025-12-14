@@ -6,6 +6,7 @@
  * @description 게임 내 능력치 계산 공식 (나무위키 참조)
  * @author AI Assistant
  * @created 2025-12-11
+ * @modified 2025-12-12 - IIFE 패턴 적용 (전역 충돌 방지)
  * @source https://namu.wiki/w/마비노기 모바일/능력치
  * 
  * @architecture
@@ -14,6 +15,7 @@
  * ============================================================================
  */
 
+(function() {
 'use strict';
 
 // ============================================================================
@@ -492,4 +494,7 @@ if (typeof module !== 'undefined' && module.exports) {
 if (typeof window !== 'undefined') {
   window.StatFormulas = StatFormulas;
 }
+
+console.log('✅ StatFormulas 공식 모듈 로드 완료');
+})();
 

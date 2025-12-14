@@ -186,6 +186,9 @@
         ITEMS_PER_PAGE: ITEMS_PER_PAGE
     };
 
+    // ET 약어도 등록 (하위 호환)
+    window.ET = window.EffectTypes;
+
     console.log('✅ EffectTypes 상수 모듈 로드 완료');
 
 })();

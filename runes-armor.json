@@ -261,8 +261,8 @@
         "name": "눈 먼 예언자",
         "category": "02",
         "categoryName": "방어구",
-        "gradeName": "신화",
-        "gradeColor": "#FFD700",
+        "gradeName": "전설(시즌1)",
+        "gradeColor": "#FF8C00",
         "effects": [{
             "type": "PERMANENT",
             "name": "각성 쿨타임 감소",
@@ -846,7 +846,7 @@
             "unit": "초",
             "trigger": "스킬 7회 사용 시",
             "cooldown": 3,
-            "dpsRelevant": false,
+            "dpsRelevant": true,
             "note": "모든 스킬 쿨타임 감소"
         }],
         "demerits": [],
